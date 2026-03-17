@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SimulatorResults, DealStatus } from "@/hooks/useSimulator";
+import { FileDown, FileSpreadsheet } from "lucide-react";
 
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -37,13 +38,30 @@ const MetricRow: React.FC<{ label: string; value: string; muted?: boolean }> = (
   </div>
 );
 
-interface Props {
-  results: SimulatorResults;
+interface ClientInfo {
+  cnpj: string;
+  executivo: string;
+  faturamento_estimado: number;
+  anual: boolean;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results }) => {
+interface Props {
+  results: SimulatorResults;
+  clientInfo: ClientInfo;
+}
+
+export const SummaryPanel: React.FC<Props> = ({ results, clientInfo }) => {
   const cfg = statusConfig[results.status];
-  const marginBarHeight = Math.max(0, Math.min(100, results.margem_percentual * 250)); // 0-40% scale
+  const marginBarHeight = Math.max(0, Math.min(100, results.margem_percentual * 250));
+
+  const handleExportPDF = async () => {
+    const { exportPDF } = await import("@/utils/exportReport");
+    exportPDF(results, clientInfo);
+  };
+
+  const handleExportCSV = () => {
+    import("@/utils/exportReport").then(({ exportCSV }) => exportCSV(results, clientInfo));
+  };
 
   return (
     <div className="sticky top-6 space-y-4">
@@ -98,12 +116,16 @@ export const SummaryPanel: React.FC<Props> = ({ results }) => {
           <div className="pb-3">
             <MetricRow label="TPV" value={formatCurrency(results.tpv)} />
             <MetricRow label="TPV Online" value={formatCurrency(results.tpv_online)} muted />
-            <MetricRow label="TPV Offline" value={formatCurrency(results.tpv_offline)} muted />
+            <MetricRow label="TPV Offline (PDV)" value={formatCurrency(results.tpv_offline)} muted />
           </div>
           <div className="py-3">
             <MetricRow label="Receita Bruta" value={formatCurrency(results.receita_bruta)} />
-            <MetricRow label="  Online" value={formatCurrency(results.receita_online)} muted />
-            <MetricRow label="  Offline" value={formatCurrency(results.receita_offline)} muted />
+            <MetricRow label="  Administrativa" value={formatCurrency(results.receita_administrativa)} muted />
+            <MetricRow label="  Processamento" value={formatCurrency(results.receita_processamento)} muted />
+            <MetricRow label="  PDV" value={formatCurrency(results.receita_pdv)} muted />
+            {results.receita_produtor_pdv > 0 && (
+              <MetricRow label="  Custo Produtor PDV" value={formatCurrency(results.receita_produtor_pdv)} muted />
+            )}
           </div>
           <div className="py-3">
             <MetricRow label="(−) Rebate" value={formatCurrency(results.rebate_valor)} muted />
@@ -131,6 +153,24 @@ export const SummaryPanel: React.FC<Props> = ({ results }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Export Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleExportPDF}
+          className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          <FileDown className="w-4 h-4" />
+          Exportar PDF
+        </button>
+        <button
+          onClick={handleExportCSV}
+          className="flex-1 flex items-center justify-center gap-2 bg-secondary text-secondary-foreground rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-secondary/80 transition-colors border border-border"
+        >
+          <FileSpreadsheet className="w-4 h-4" />
+          Exportar Excel
+        </button>
       </div>
     </div>
   );
