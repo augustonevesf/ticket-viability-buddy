@@ -21,7 +21,13 @@ const Index = () => {
     const e: Record<string, string> = {};
     const paySum = inputs.pagamentos_online.credito + inputs.pagamentos_online.pix_debito + inputs.pagamentos_online.picpay;
     if (Math.abs(paySum - 1) > 0.001) {
-      e.pagamentos = `Mix de pagamento soma ${(paySum * 100).toFixed(1)}% (deve ser 100%)`;
+      e.pagamentos_online = `Mix de pagamento soma ${(paySum * 100).toFixed(1)}% (deve ser 100%)`;
+    }
+    if (!inputs.taxas_pdv.taxa_unica_ativa) {
+      const pdvSum = inputs.pagamentos_pdv.credito + inputs.pagamentos_pdv.pix_debito;
+      if (Math.abs(pdvSum - 1) > 0.001) {
+        e.pagamentos_pdv = `Mix PDV soma ${(pdvSum * 100).toFixed(1)}% (deve ser 100%)`;
+      }
     }
     return e;
   }, [inputs]);
@@ -60,7 +66,7 @@ const Index = () => {
             />
           </div>
           <div className="lg:col-span-5">
-            <SummaryPanel results={results} />
+            <SummaryPanel results={results} clientInfo={clientInfo} />
           </div>
         </div>
       </main>
