@@ -1,11 +1,23 @@
 import React from "react";
 import { SimulatorInputs } from "@/hooks/useSimulator";
-import { SimulatorInput, SimulatorToggle } from "./SimulatorInput";
+import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
+import { Lock, Unlock } from "lucide-react";
+
+interface ClientInfo {
+  cnpj: string;
+  executivo: string;
+  faturamento_estimado: number;
+  anual: boolean;
+}
 
 interface Props {
   inputs: SimulatorInputs;
   setInputs: React.Dispatch<React.SetStateAction<SimulatorInputs>>;
   errors: Record<string, string>;
+  clientInfo: ClientInfo;
+  setClientInfo: React.Dispatch<React.SetStateAction<ClientInfo>>;
+  isAdmin: boolean;
+  onToggleAdmin: () => void;
 }
 
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -16,7 +28,7 @@ const SectionCard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="bg-card border border-border rounded-xl p-5 shadow-card">{children}</div>
 );
 
-export const InputSections: React.FC<Props> = ({ inputs, setInputs, errors }) => {
+export const InputSections: React.FC<Props> = ({ inputs, setInputs, errors, clientInfo, setClientInfo, isAdmin, onToggleAdmin }) => {
   const upd = <K extends keyof SimulatorInputs>(section: K) =>
     <F extends keyof SimulatorInputs[K]>(field: F) =>
       (val: SimulatorInputs[K][F]) =>
@@ -24,6 +36,20 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs, errors }) =>
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Identificação do Cliente */}
+      <SectionCard>
+        <SectionTitle>Identificação</SectionTitle>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <SimulatorTextInput label="CNPJ do Cliente" value={clientInfo.cnpj} onChange={(v) => setClientInfo((p) => ({ ...p, cnpj: v }))} placeholder="00.000.000/0000-00" mask="cnpj" />
+          <SimulatorTextInput label="Nome do Executivo" value={clientInfo.executivo} onChange={(v) => setClientInfo((p) => ({ ...p, executivo: v }))} placeholder="Nome completo" />
+          <SimulatorInput label="Faturamento Estimado" value={clientInfo.faturamento_estimado} onChange={(v) => setClientInfo((p) => ({ ...p, faturamento_estimado: v }))} prefix="R$" min={0} />
+          <div className="flex items-end pb-2">
+            <SimulatorToggle label="Anual" checked={clientInfo.anual} onChange={(v) => setClientInfo((p) => ({ ...p, anual: v }))} />
+            <span className="text-xs text-muted-foreground ml-2">{clientInfo.anual ? "(Anual)" : "(Pontual)"}</span>
+          </div>
+        </div>
+      </SectionCard>
+
       {/* Evento */}
       <SectionCard>
         <SectionTitle>Evento</SectionTitle>
@@ -77,16 +103,25 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs, errors }) =>
         </div>
       </SectionCard>
 
-      {/* Custos */}
+      {/* Custos - Admin only editable */}
       <SectionCard>
-        <SectionTitle>Custos</SectionTitle>
+        <div className="flex items-center justify-between mb-4">
+          <SectionTitle>Custos</SectionTitle>
+          <button
+            onClick={onToggleAdmin}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md border border-border hover:border-primary/30"
+          >
+            {isAdmin ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+            {isAdmin ? "Bloquear" : "Desbloquear"}
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-4">
-          <SimulatorInput label="Antifraude" value={+(inputs.custos.antifraude * 100).toFixed(3)} onChange={(v) => upd("custos")("antifraude")(v / 100)} suffix="%" step={0.01} />
-          <SimulatorInput label="Comissão" value={+(inputs.custos.comissao * 100).toFixed(2)} onChange={(v) => upd("custos")("comissao")(v / 100)} suffix="%" step={0.1} />
-          <SimulatorInput label="Servidor" value={+(inputs.custos.servidor * 100).toFixed(4)} onChange={(v) => upd("custos")("servidor")(v / 100)} suffix="%" step={0.001} />
-          <SimulatorInput label="Custo Impressão" value={inputs.custos.custo_impressao} onChange={(v) => upd("custos")("custo_impressao")(v)} prefix="R$" step={0.01} />
-          <SimulatorInput label="Custo/Máquina" value={inputs.custos.custo_maquina} onChange={(v) => upd("custos")("custo_maquina")(v)} prefix="R$" />
-          <SimulatorInput label="Nº Máquinas" value={inputs.custos.numero_maquinas} onChange={(v) => upd("custos")("numero_maquinas")(v)} min={0} />
+          <SimulatorInput label="Antifraude" value={+(inputs.custos.antifraude * 100).toFixed(3)} onChange={(v) => upd("custos")("antifraude")(v / 100)} suffix="%" step={0.01} disabled={!isAdmin} />
+          <SimulatorInput label="Comissão" value={+(inputs.custos.comissao * 100).toFixed(2)} onChange={(v) => upd("custos")("comissao")(v / 100)} suffix="%" step={0.1} disabled={!isAdmin} />
+          <SimulatorInput label="Servidor" value={+(inputs.custos.servidor * 100).toFixed(4)} onChange={(v) => upd("custos")("servidor")(v / 100)} suffix="%" step={0.001} disabled={!isAdmin} />
+          <SimulatorInput label="Custo Impressão" value={inputs.custos.custo_impressao} onChange={(v) => upd("custos")("custo_impressao")(v)} prefix="R$" step={0.01} disabled={!isAdmin} />
+          <SimulatorInput label="Custo/Máquina" value={inputs.custos.custo_maquina} onChange={(v) => upd("custos")("custo_maquina")(v)} prefix="R$" disabled={!isAdmin} />
+          <SimulatorInput label="Nº Máquinas" value={inputs.custos.numero_maquinas} onChange={(v) => upd("custos")("numero_maquinas")(v)} min={0} disabled={!isAdmin} />
         </div>
       </SectionCard>
 
@@ -99,7 +134,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs, errors }) =>
         {inputs.advance.ativo && (
           <div className="grid grid-cols-2 gap-4">
             <SimulatorInput label="Taxa Advance" value={+(inputs.advance.taxa * 100).toFixed(2)} onChange={(v) => upd("advance")("taxa")(v / 100)} suffix="%" step={0.1} />
-            <SimulatorInput label="Custo Advance" value={+(inputs.advance.custo * 100).toFixed(4)} onChange={(v) => upd("advance")("custo")(v / 100)} suffix="%" step={0.01} />
+            <SimulatorInput label="Custo Advance" value={+(inputs.advance.custo * 100).toFixed(4)} onChange={(v) => upd("advance")("custo")(v / 100)} suffix="%" step={0.01} disabled={!isAdmin} />
           </div>
         )}
       </SectionCard>
