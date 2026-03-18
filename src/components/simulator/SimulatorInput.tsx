@@ -11,11 +11,14 @@ interface SimulatorInputProps {
   max?: number;
   error?: string;
   disabled?: boolean;
+  allowEmpty?: boolean;
 }
 
 export const SimulatorInput: React.FC<SimulatorInputProps> = ({
-  label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled,
+  label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty,
 }) => {
+  const displayValue = allowEmpty && value === 0 ? "" : value;
+
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -29,12 +32,20 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
         )}
         <input
           type="number"
-          value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          value={displayValue}
+          onChange={(e) => {
+            const raw = e.target.value;
+            if (raw === "" && allowEmpty) {
+              onChange(0);
+            } else {
+              onChange(parseFloat(raw) || 0);
+            }
+          }}
           step={step}
           min={min}
           max={max}
           disabled={disabled}
+          placeholder={allowEmpty ? "0" : undefined}
           className={`w-full bg-input border rounded-md px-3 py-2 text-sm tabular-nums outline-none transition-all
             focus:ring-1 focus:ring-ring
             ${prefix ? "pl-8" : ""} ${suffix ? "pr-8" : ""}

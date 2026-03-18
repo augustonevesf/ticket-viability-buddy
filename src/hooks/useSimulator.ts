@@ -1,59 +1,46 @@
 import { useMemo } from "react";
 
+// ── Constants (non-editable) ──
+export const CONSTANTS = {
+  imposto: 0.0655,
+  antifraude: 0.003,
+  comissao: 0.05,
+  servidor: 0.0005,
+  custo_maquina: 40,
+  custo_impressao: 0.10,
+  adquirencia_online: { credito: 0.025, debito_pix: 0.015, picpay: 0.015 },
+  adquirencia_offline: { credito: 0.03, debito_pix: 0.0099 },
+  split_online: { credito: 0.70, debito_pix: 0.25, picpay: 0.05 },
+  split_offline: { credito: 0.70, debito_pix: 0.30 },
+};
+
 export interface SimulatorInputs {
   evento: {
-    publico: number;
+    tpv_total: number;
     ticket_medio: number;
-    duracao_meses: number;
-    lugar_marcado: boolean;
+    quantidade_ingressos: number;
   };
   distribuicao: {
     online_percent: number;
-    offline_percent: number;
   };
-  pagamentos_online: {
-    credito: number;
-    pix_debito: number;
-    picpay: number;
-  };
-  pagamentos_pdv: {
-    credito: number;
-    pix_debito: number;
-  };
-  taxas_online: {
-    taxa_administrativa: number;
-    taxa_processamento_credito: number;
-  };
-  taxas_pdv: {
-    taxa_unica_ativa: boolean;
-    taxa_unica: number;
-    taxa_credito: number;
-    taxa_pix_debito: number;
-  };
-  custos_produtor_pdv: {
-    impressao_ingresso: number;
-    impressao_cortesias: number;
-    cancelamento_impressos: number;
-  };
-  comercial: {
+  taxa: {
+    modelo: "repassada" | "absorvida";
+    taxa_base: number;
     rebate: number;
-    imposto: number;
+    taxa_minima_ativa: boolean;
+    valor_taxa_minima: number;
+    limite_ticket_medio: number;
   };
-  custos: {
-    custo_credito: number;
-    custo_pix_debito: number;
-    custo_picpay: number;
-    antifraude: number;
-    comissao: number;
-    servidor: number;
-    custo_maquina: number;
-    numero_maquinas: number;
+  operacao: {
+    quantidade_maquinas: number;
   };
   advance: {
     ativo: boolean;
-    share_credito: number;
-    taxa: number;
-    custo: number;
+    valor: number;
+    taxa_juros_mensal: number;
+    prazo_meses: number;
+    tipo: "parcelado" | "performado";
+    percentual_retencao: number;
   };
 }
 
@@ -61,121 +48,170 @@ export interface SimulatorResults {
   tpv: number;
   tpv_online: number;
   tpv_offline: number;
-  receita_administrativa: number;
-  receita_processamento: number;
-  receita_online: number;
-  receita_pdv: number;
-  receita_produtor_pdv: number;
+
+  // Adquirência breakdown
+  custo_adquirencia_online: number;
+  custo_adquirencia_offline: number;
+  custo_adquirencia_total: number;
+
+  // Taxa & Receita
+  taxa_liquida: number;
+  receita_take: number;
+  receita_minima: number;
   receita_bruta: number;
-  rebate_valor: number;
+
+  // Deductions
   impostos_valor: number;
   receita_liquida: number;
-  custo_adquirencia: number;
+
+  // Custos
   custo_antifraude: number;
   custo_comissao: number;
   custo_servidor: number;
   custo_maquinas: number;
-  custo_advance: number;
-  receita_advance: number;
+  custo_impressao: number;
   custos_totais: number;
-  margem: number;
-  margem_percentual: number;
-  margem_tpv: number;
-  take_rate: number;
-  status: "Prejuízo" | "Ruim" | "Média" | "Boa";
+
+  // Margem
+  margem_operacional: number;
+  receita_advance: number;
+  margem_final: number;
+  margem_sobre_tpv: number;
+
+  // Absorvida
+  taxa_minima_calculada: number;
+  taxa_sugerida: number;
+
+  // Classification
+  status: "Boa" | "Média" | "Ruim";
+  alerta: boolean;
 }
 
 export type DealStatus = SimulatorResults["status"];
 
 export const getDefaultInputs = (): SimulatorInputs => ({
-  evento: { publico: 1000, ticket_medio: 800, duracao_meses: 12, lugar_marcado: false },
-  distribuicao: { online_percent: 0.99, offline_percent: 0.01 },
-  pagamentos_online: { credito: 0.70, pix_debito: 0.25, picpay: 0.05 },
-  pagamentos_pdv: { credito: 0.70, pix_debito: 0.30 },
-  taxas_online: { taxa_administrativa: 0.10, taxa_processamento_credito: 0.00 },
-  taxas_pdv: { taxa_unica_ativa: false, taxa_unica: 0.10, taxa_credito: 0.025, taxa_pix_debito: 0.015 },
-  custos_produtor_pdv: { impressao_ingresso: 0.10, impressao_cortesias: 0.00, cancelamento_impressos: 0.00 },
-  comercial: { rebate: 0.02, imposto: 0.0655 },
-  custos: { custo_credito: 0.025, custo_pix_debito: 0.015, custo_picpay: 0.015, antifraude: 0.003, comissao: 0.05, servidor: 0.0005, custo_maquina: 40, numero_maquinas: 10 },
-  advance: { ativo: false, share_credito: 1.0, taxa: 0.00, custo: 0.0129 },
+  evento: { tpv_total: 0, ticket_medio: 0, quantidade_ingressos: 0 },
+  distribuicao: { online_percent: 0.99 },
+  taxa: {
+    modelo: "repassada",
+    taxa_base: 0.10,
+    rebate: 0.02,
+    taxa_minima_ativa: false,
+    valor_taxa_minima: 2.50,
+    limite_ticket_medio: 25,
+  },
+  operacao: { quantidade_maquinas: 10 },
+  advance: {
+    ativo: false,
+    valor: 0,
+    taxa_juros_mensal: 0.025,
+    prazo_meses: 1,
+    tipo: "parcelado",
+    percentual_retencao: 0,
+  },
 });
 
 export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
   return useMemo(() => {
-    const TPV = inputs.evento.publico * inputs.evento.ticket_medio;
+    const C = CONSTANTS;
+    const TPV = inputs.evento.tpv_total;
+    const offline_percent = 1 - inputs.distribuicao.online_percent;
     const tpv_online = TPV * inputs.distribuicao.online_percent;
-    const tpv_offline = TPV * inputs.distribuicao.offline_percent;
+    const tpv_offline = TPV * offline_percent;
 
-    // --- RECEITA ONLINE ---
-    const receita_administrativa = tpv_online * inputs.taxas_online.taxa_administrativa;
-    const receita_processamento = tpv_online * inputs.pagamentos_online.credito * inputs.taxas_online.taxa_processamento_credito;
-    const receita_online = receita_administrativa + receita_processamento;
+    // ── Adquirência ──
+    const custo_adquirencia_online =
+      tpv_online * C.split_online.credito * C.adquirencia_online.credito +
+      tpv_online * C.split_online.debito_pix * C.adquirencia_online.debito_pix +
+      tpv_online * C.split_online.picpay * C.adquirencia_online.picpay;
 
-    // --- RECEITA PDV ---
-    const ingressos_offline = inputs.evento.publico * inputs.distribuicao.offline_percent;
-    let receita_pdv = 0;
-    let receita_produtor_pdv = 0;
+    const custo_adquirencia_offline =
+      tpv_offline * C.split_offline.credito * C.adquirencia_offline.credito +
+      tpv_offline * C.split_offline.debito_pix * C.adquirencia_offline.debito_pix;
 
-    if (inputs.taxas_pdv.taxa_unica_ativa) {
-      receita_pdv = tpv_offline * inputs.taxas_pdv.taxa_unica;
-    } else {
-      receita_pdv = tpv_offline * (
-        inputs.pagamentos_pdv.credito * inputs.taxas_pdv.taxa_credito +
-        inputs.pagamentos_pdv.pix_debito * inputs.taxas_pdv.taxa_pix_debito
-      );
-      receita_produtor_pdv =
-        ingressos_offline * inputs.custos_produtor_pdv.impressao_ingresso +
-        inputs.custos_produtor_pdv.impressao_cortesias +
-        inputs.custos_produtor_pdv.cancelamento_impressos;
+    const custo_adquirencia_total = custo_adquirencia_online + custo_adquirencia_offline;
+
+    // ── Taxa líquida ──
+    const taxa_liquida = Math.max(0, inputs.taxa.taxa_base - inputs.taxa.rebate);
+
+    // ── Receita ──
+    const receita_take = TPV * taxa_liquida;
+
+    let receita_minima = 0;
+    if (
+      inputs.taxa.taxa_minima_ativa &&
+      inputs.evento.ticket_medio > 0 &&
+      inputs.evento.ticket_medio < inputs.taxa.limite_ticket_medio
+    ) {
+      receita_minima = inputs.evento.quantidade_ingressos * inputs.taxa.valor_taxa_minima;
     }
 
-    const receita_bruta = receita_online + receita_pdv + receita_produtor_pdv;
+    const receita_bruta = Math.max(receita_take, receita_minima);
 
-    // --- DEDUÇÕES ---
-    // Rebate: devolvemos ao produtor uma % da receita online arrecadada
-    const rebate_valor = receita_online * inputs.comercial.rebate;
-    const impostos_valor = receita_bruta * inputs.comercial.imposto;
-    const receita_liquida = receita_bruta - rebate_valor - impostos_valor;
+    // ── Impostos ──
+    const impostos_valor = receita_bruta * C.imposto;
+    const receita_liquida = receita_bruta - impostos_valor;
 
-    // --- CUSTOS ---
-    const custo_adquirencia = tpv_online * (
-      inputs.pagamentos_online.credito * inputs.custos.custo_credito +
-      inputs.pagamentos_online.pix_debito * inputs.custos.custo_pix_debito +
-      inputs.pagamentos_online.picpay * inputs.custos.custo_picpay
-    );
-    const custo_antifraude = tpv_online * inputs.custos.antifraude;
-    const custo_comissao = receita_liquida * inputs.custos.comissao;
-    const custo_servidor = TPV * inputs.custos.servidor;
-    const custo_maquinas = inputs.custos.numero_maquinas * inputs.custos.custo_maquina;
+    // ── Custos ──
+    const custo_antifraude = tpv_online * C.antifraude;
+    const custo_comissao = receita_liquida * C.comissao;
+    const custo_servidor = TPV * C.servidor;
+    const custo_maquinas = inputs.operacao.quantidade_maquinas * C.custo_maquina;
+    const custo_impressao = inputs.evento.quantidade_ingressos * C.custo_impressao;
 
-    let custo_advance = 0;
+    const custos_totais =
+      custo_adquirencia_total +
+      custo_antifraude +
+      custo_comissao +
+      custo_servidor +
+      custo_maquinas +
+      custo_impressao;
+
+    // ── Margem operacional ──
+    const margem_operacional = receita_liquida - custos_totais;
+
+    // ── Advance ──
     let receita_advance = 0;
-    if (inputs.advance.ativo) {
-      const tpv_credito = tpv_online * inputs.pagamentos_online.credito;
-      receita_advance = tpv_credito * inputs.advance.taxa;
-      custo_advance = tpv_credito * inputs.advance.custo;
+    if (inputs.advance.ativo && inputs.advance.valor > 0) {
+      const taxa_efetiva = Math.max(inputs.advance.taxa_juros_mensal, 0.025);
+      receita_advance = inputs.advance.valor * taxa_efetiva * inputs.advance.prazo_meses;
     }
 
-    const custos_totais = custo_adquirencia + custo_antifraude + custo_comissao + custo_servidor + custo_maquinas + custo_advance;
-    const margem = receita_liquida + receita_advance - custos_totais;
-    const margem_percentual = receita_liquida !== 0 ? margem / receita_liquida : 0;
-    const margem_tpv = TPV !== 0 ? margem / TPV : 0;
-    const take_rate = TPV !== 0 ? receita_bruta / TPV : 0;
+    // ── Margem final ──
+    const margem_final = margem_operacional + receita_advance;
+    const margem_sobre_tpv = TPV !== 0 ? (margem_final / TPV) * 100 : 0;
 
+    // ── Taxa absorvida ──
+    let taxa_minima_calculada = 0;
+    let taxa_sugerida = 0;
+    if (inputs.taxa.modelo === "absorvida" && TPV > 0) {
+      taxa_minima_calculada = custos_totais / TPV;
+      taxa_sugerida = taxa_minima_calculada + 0.02;
+      if (TPV > 500000) {
+        taxa_sugerida = Math.min(Math.max(taxa_sugerida, 0.07), 0.08);
+      }
+      // Never below cost
+      taxa_sugerida = Math.max(taxa_sugerida, taxa_minima_calculada);
+    }
+
+    // ── Classificação (baseada em margem sobre TPV %) ──
     let status: SimulatorResults["status"];
-    if (margem_percentual < 0) status = "Prejuízo";
-    else if (margem_percentual < 0.2) status = "Ruim";
-    else if (margem_percentual < 0.4) status = "Média";
-    else status = "Boa";
+    if (margem_sobre_tpv >= 7) status = "Boa";
+    else if (margem_sobre_tpv >= 4) status = "Média";
+    else status = "Ruim";
+
+    const alerta = margem_final <= 0 || margem_sobre_tpv < 2;
 
     return {
       tpv: TPV, tpv_online, tpv_offline,
-      receita_administrativa, receita_processamento, receita_online,
-      receita_pdv, receita_produtor_pdv, receita_bruta,
-      rebate_valor, impostos_valor, receita_liquida,
-      custo_adquirencia, custo_antifraude, custo_comissao, custo_servidor, custo_maquinas,
-      custo_advance, receita_advance, custos_totais,
-      margem, margem_percentual, margem_tpv, take_rate, status,
+      custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
+      taxa_liquida, receita_take, receita_minima, receita_bruta,
+      impostos_valor, receita_liquida,
+      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao,
+      custos_totais,
+      margem_operacional, receita_advance, margem_final, margem_sobre_tpv,
+      taxa_minima_calculada, taxa_sugerida,
+      status, alerta,
     };
   }, [inputs]);
 }
