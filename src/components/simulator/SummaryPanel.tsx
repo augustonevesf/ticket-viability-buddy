@@ -39,23 +39,33 @@ const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?
 
 interface Props {
   results: SimulatorResults;
+  clienteName?: string;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
+  const pdv = results.pdv;
 
   const handleExportPDF = async () => {
     const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results);
+    exportPDF(results, clienteName);
   };
 
   const handleExportCSV = () => {
-    import("@/utils/exportReport").then(({ exportCSV }) => exportCSV(results));
+    import("@/utils/exportReport").then(({ exportCSV }) => exportCSV(results, clienteName));
   };
 
   return (
     <div className="sticky top-6 space-y-4">
+      {/* Client name */}
+      {clienteName && (
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl px-4 py-3">
+          <p className="text-xs text-muted-foreground">Cliente</p>
+          <p className="text-sm font-semibold text-foreground">{clienteName}</p>
+        </div>
+      )}
+
       {/* Alert */}
       {results.alerta && (
         <div className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 rounded-2xl px-4 py-3 text-destructive text-sm">
@@ -108,9 +118,9 @@ export const SummaryPanel: React.FC<Props> = ({ results }) => {
         </div>
       </div>
 
-      {/* Breakdown Card */}
+      {/* Online Breakdown Card */}
       <div className="bg-card rounded-2xl p-5 shadow-card">
-        <h4 className="text-xs font-semibold text-muted-foreground tracking-wide mb-3">Demonstrativo</h4>
+        <h4 className="text-xs font-semibold text-muted-foreground tracking-wide mb-3">Demonstrativo Online</h4>
         <div className="divide-y divide-border">
           <div className="pb-3">
             <MetricRow label="TPV" value={formatCurrency(results.tpv)} bold />
@@ -141,16 +151,46 @@ export const SummaryPanel: React.FC<Props> = ({ results }) => {
           </div>
           <div className="pt-3">
             <div className="flex justify-between items-center py-1.5">
-              <span className="text-sm font-semibold text-foreground">Margem Final</span>
+              <span className="text-sm font-semibold text-foreground">Margem Online</span>
               <span className={`text-base font-bold tabular-nums ${cfg.text}`}>{formatCurrency(results.margem)}</span>
-            </div>
-            <div className="flex justify-between items-center py-1">
-              <span className="text-xs text-muted-foreground">Margem / TPV</span>
-              <span className={`text-sm font-semibold tabular-nums ${cfg.text}`}>{results.margem_sobre_tpv.toFixed(2)}%</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* PDV Breakdown Card */}
+      {pdv.tpv_total > 0 && (
+        <div className="bg-card rounded-2xl p-5 shadow-card border-l-4 border-primary">
+          <h4 className="text-xs font-semibold text-primary tracking-wide mb-3">Demonstrativo PDV</h4>
+          <div className="divide-y divide-border">
+            <div className="pb-3">
+              <MetricRow label="TPV Total PDV" value={formatCurrency(pdv.tpv_total)} bold />
+              <MetricRow label={`Crédito (${(pdv.pct_credito * 100).toFixed(0)}%)`} value={formatCurrency(pdv.tpv_total * pdv.pct_credito)} muted />
+              <MetricRow label={`Débito/Pix (${(pdv.pct_debito_pix * 100).toFixed(0)}%)`} value={formatCurrency(pdv.tpv_total * pdv.pct_debito_pix)} muted />
+            </div>
+            <div className="py-3">
+              <MetricRow label="Receita Crédito" value={formatCurrency(pdv.receita_credito)} muted />
+              <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} muted />
+              <MetricRow label="Receita Total Zig" value={formatCurrency(pdv.receita_total)} bold />
+            </div>
+            <div className="py-3">
+              <MetricRow label="(−) Impressão" value={formatCurrency(pdv.custo_impressao)} muted />
+              <MetricRow label="(−) Máquinas" value={formatCurrency(pdv.custo_maquinas)} muted />
+              <MetricRow label="Receita Líq. Operacional" value={formatCurrency(pdv.receita_liquida_operacional)} bold />
+            </div>
+            <div className="pt-3">
+              <MetricRow label="Mínimo Garantido" value={formatCurrency(pdv.mg_total)} muted />
+              <div className="flex justify-between items-center py-1.5">
+                <span className="text-sm font-semibold text-foreground">Resultado Final PDV</span>
+                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.resultado_final)}</span>
+              </div>
+              {pdv.resultado_final === pdv.mg_total && pdv.mg_total > 0 && (
+                <p className="text-xs text-warning mt-1">⚠ Aplicado MG (receita abaixo do mínimo)</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Export Buttons */}
       <div className="flex gap-3">

@@ -22,7 +22,7 @@ const Index = () => {
             <InputSections inputs={inputs} setInputs={setInputs} />
           </div>
           <div className="lg:col-span-5">
-            <SummaryPanel results={results} />
+            <SummaryPanel results={results} clienteName={inputs.cliente.nome || undefined} />
           </div>
         </div>
       </main>

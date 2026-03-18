@@ -7,7 +7,7 @@ export const CONSTANTS = {
   comissao: 0.05,
   servidor: 0.0005,
   custo_maquina: 40,
-  custo_impressao: 0.10,
+  custo_impressao_default: 0.10,
   adquirencia_online: { credito: 0.025, debito_pix: 0.015, picpay: 0.015 },
   adquirencia_offline: { credito: 0.03, debito_pix: 0.0099 },
   split_online: { credito: 0.70, debito_pix: 0.25, picpay: 0.05 },
@@ -15,6 +15,10 @@ export const CONSTANTS = {
 };
 
 export interface SimulatorInputs {
+  cliente: {
+    nome: string;
+    cnpj: string;
+  };
   evento: {
     tpv_total: number;
     ticket_medio: number;
@@ -32,6 +36,36 @@ export interface SimulatorInputs {
   operacao: {
     quantidade_maquinas: number;
   };
+  pdv: {
+    tpv_credito: number;
+    tpv_debito_pix: number;
+    quantidade_maquinas: number;
+    ingressos_esperados: number;
+    ticket_medio: number;
+    impressao_minima_por_maquina: number;
+    preco_impressao: number;
+    taxa_credito: number;
+    taxa_debito_pix: number;
+    mg_por_maquina: number;
+  };
+}
+
+export interface PdvResults {
+  tpv_total: number;
+  pct_credito: number;
+  pct_debito_pix: number;
+  tpv_estimado: number;
+  impressoes_esperadas: number;
+  impressoes_minimas: number;
+  impressoes_consideradas: number;
+  custo_impressao: number;
+  receita_credito: number;
+  receita_debito_pix: number;
+  receita_total: number;
+  custo_maquinas: number;
+  mg_total: number;
+  receita_liquida_operacional: number;
+  resultado_final: number;
 }
 
 export interface SimulatorResults {
@@ -63,11 +97,14 @@ export interface SimulatorResults {
 
   status: "Boa" | "Média" | "Ruim";
   alerta: boolean;
+
+  pdv: PdvResults;
 }
 
 export type DealStatus = SimulatorResults["status"];
 
 export const getDefaultInputs = (): SimulatorInputs => ({
+  cliente: { nome: "", cnpj: "" },
   evento: { tpv_total: 0, ticket_medio: 0, quantidade_ingressos: 0 },
   distribuicao: { online_percent: 0.99 },
   taxa: {
@@ -77,6 +114,18 @@ export const getDefaultInputs = (): SimulatorInputs => ({
     valor_taxa_minima: 2.50,
   },
   operacao: { quantidade_maquinas: 10 },
+  pdv: {
+    tpv_credito: 0,
+    tpv_debito_pix: 0,
+    quantidade_maquinas: 0,
+    ingressos_esperados: 0,
+    ticket_medio: 0,
+    impressao_minima_por_maquina: 0,
+    preco_impressao: 0,
+    taxa_credito: 0.10,
+    taxa_debito_pix: 0.10,
+    mg_por_maquina: 40,
+  },
 });
 
 export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
@@ -125,7 +174,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const custo_comissao = receita_liquida * C.comissao;
     const custo_servidor = TPV * C.servidor;
     const custo_maquinas = inputs.operacao.quantidade_maquinas * C.custo_maquina;
-    const custo_impressao = inputs.evento.quantidade_ingressos * C.custo_impressao;
+    const custo_impressao = inputs.evento.quantidade_ingressos * C.custo_impressao_default;
 
     const custos_totais =
       custo_adquirencia_total +
@@ -147,6 +196,54 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     const alerta = margem <= 0 || margem_sobre_tpv < 2;
 
+    // ── PDV ──
+    const pdvIn = inputs.pdv;
+    const pdv_tpv_total = pdvIn.tpv_credito + pdvIn.tpv_debito_pix;
+    const pdv_pct_credito = pdv_tpv_total > 0 ? pdvIn.tpv_credito / pdv_tpv_total : 0;
+    const pdv_pct_debito = pdv_tpv_total > 0 ? pdvIn.tpv_debito_pix / pdv_tpv_total : 0;
+
+    // TPV estimado (validação)
+    const pdv_tpv_estimado = pdvIn.ingressos_esperados * pdvIn.ticket_medio;
+
+    // Impressões
+    const impressoes_esperadas = pdvIn.ingressos_esperados;
+    const impressoes_minimas = pdvIn.quantidade_maquinas * pdvIn.impressao_minima_por_maquina;
+    const impressoes_consideradas = Math.max(impressoes_esperadas, impressoes_minimas);
+    const pdv_custo_impressao = impressoes_consideradas * pdvIn.preco_impressao;
+
+    // Receita segmentada
+    const pdv_receita_credito = pdvIn.tpv_credito * pdvIn.taxa_credito;
+    const pdv_receita_debito = pdvIn.tpv_debito_pix * pdvIn.taxa_debito_pix;
+    const pdv_receita_total = pdv_receita_credito + pdv_receita_debito;
+
+    // Custo máquinas PDV
+    const pdv_custo_maquinas = pdvIn.quantidade_maquinas * C.custo_maquina;
+
+    // MG
+    const pdv_mg_total = pdvIn.quantidade_maquinas * pdvIn.mg_por_maquina;
+
+    // Resultado
+    const pdv_receita_liquida_op = pdv_receita_total - pdv_custo_impressao - pdv_custo_maquinas;
+    const pdv_resultado_final = Math.max(pdv_receita_liquida_op, pdv_mg_total);
+
+    const pdv: PdvResults = {
+      tpv_total: pdv_tpv_total,
+      pct_credito: pdv_pct_credito,
+      pct_debito_pix: pdv_pct_debito,
+      tpv_estimado: pdv_tpv_estimado,
+      impressoes_esperadas,
+      impressoes_minimas,
+      impressoes_consideradas,
+      custo_impressao: pdv_custo_impressao,
+      receita_credito: pdv_receita_credito,
+      receita_debito_pix: pdv_receita_debito,
+      receita_total: pdv_receita_total,
+      custo_maquinas: pdv_custo_maquinas,
+      mg_total: pdv_mg_total,
+      receita_liquida_operacional: pdv_receita_liquida_op,
+      resultado_final: pdv_resultado_final,
+    };
+
     return {
       tpv: TPV, tpv_online, tpv_offline,
       custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
@@ -156,6 +253,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custos_totais,
       margem, margem_sobre_tpv,
       status, alerta,
+      pdv,
     };
   }, [inputs]);
 }

@@ -64,6 +64,26 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
   );
 };
 
+interface TextInputProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}
+
+export const SimulatorTextInput: React.FC<TextInputProps> = ({ label, value, onChange, placeholder }) => (
+  <div className="flex flex-col gap-1.5">
+    <label className="text-xs font-medium text-muted-foreground tracking-wide">{label}</label>
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full bg-input border border-border rounded-xl px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground placeholder:text-muted-foreground"
+    />
+  </div>
+);
+
 interface ToggleInputProps {
   label: string;
   checked: boolean;
