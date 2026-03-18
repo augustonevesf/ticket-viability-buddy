@@ -75,7 +75,7 @@ export function exportPDF(results: SimulatorResults, client: ClientInfo) {
   const sc = statusColor[results.status] || [0, 0, 0];
   doc.setFontSize(13);
   doc.setTextColor(sc[0], sc[1], sc[2]);
-  doc.text(`Status: ${results.status}  |  Margem: ${pct(results.margem_percentual)}  |  Take Rate: ${pct(results.take_rate)}`, 14, y + 30);
+  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Líquida: ${pct(results.taxa_liquida)}`, 14, y + 30);
 
   doc.setTextColor(0);
 
