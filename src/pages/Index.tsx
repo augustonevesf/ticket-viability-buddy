@@ -1,13 +1,10 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState } from "react";
 import { useSimulator, getDefaultInputs } from "@/hooks/useSimulator";
 import { InputSections } from "@/components/simulator/InputSections";
 import { SummaryPanel } from "@/components/simulator/SummaryPanel";
 
-const ADMIN_PIN = "1234";
-
 const Index = () => {
   const [inputs, setInputs] = useState(getDefaultInputs);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [clientInfo, setClientInfo] = useState({
     cnpj: "",
     executivo: "",
@@ -17,38 +14,12 @@ const Index = () => {
 
   const results = useSimulator(inputs);
 
-  const errors = useMemo(() => {
-    const e: Record<string, string> = {};
-    const paySum = inputs.pagamentos_online.credito + inputs.pagamentos_online.pix_debito + inputs.pagamentos_online.picpay;
-    if (Math.abs(paySum - 1) > 0.001) {
-      e.pagamentos_online = `Mix de pagamento soma ${(paySum * 100).toFixed(1)}% (deve ser 100%)`;
-    }
-    if (!inputs.taxas_pdv.taxa_unica_ativa) {
-      const pdvSum = inputs.pagamentos_pdv.credito + inputs.pagamentos_pdv.pix_debito;
-      if (Math.abs(pdvSum - 1) > 0.001) {
-        e.pagamentos_pdv = `Mix PDV soma ${(pdvSum * 100).toFixed(1)}% (deve ser 100%)`;
-      }
-    }
-    return e;
-  }, [inputs]);
-
-  const handleToggleAdmin = useCallback(() => {
-    if (isAdmin) {
-      setIsAdmin(false);
-      return;
-    }
-    const pin = window.prompt("Digite o PIN de administrador:");
-    if (pin === ADMIN_PIN) {
-      setIsAdmin(true);
-    }
-  }, [isAdmin]);
-
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border px-6 py-4">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Simulador de Viabilidade Comercial</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Ajuste as variáveis para calcular o Take Rate e a Margem sobre TPV em tempo real.
+          Ajuste as variáveis para calcular a margem e viabilidade em tempo real.
         </p>
       </header>
 
@@ -58,11 +29,8 @@ const Index = () => {
             <InputSections
               inputs={inputs}
               setInputs={setInputs}
-              errors={errors}
               clientInfo={clientInfo}
               setClientInfo={setClientInfo}
-              isAdmin={isAdmin}
-              onToggleAdmin={handleToggleAdmin}
             />
           </div>
           <div className="lg:col-span-5">

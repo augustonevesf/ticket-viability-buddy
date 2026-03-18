@@ -16,35 +16,34 @@ function buildRows(r: SimulatorResults): string[][] {
   const rows: string[][] = [
     ["TPV Total", fmt(r.tpv)],
     ["TPV Online", fmt(r.tpv_online)],
-    ["TPV Offline (PDV)", fmt(r.tpv_offline)],
+    ["TPV Offline", fmt(r.tpv_offline)],
     ["", ""],
-    ["Receita Administrativa", fmt(r.receita_administrativa)],
-    ["Receita Processamento", fmt(r.receita_processamento)],
-    ["Receita Online", fmt(r.receita_online)],
-    ["Receita PDV", fmt(r.receita_pdv)],
-    ["Custo Produtor PDV", fmt(r.receita_produtor_pdv)],
+    ["Taxa Líquida", pct(r.taxa_liquida)],
+    ["Receita Take", fmt(r.receita_take)],
+  ];
+  if (r.receita_minima > 0) rows.push(["Receita Mínima", fmt(r.receita_minima)]);
+  rows.push(
     ["Receita Bruta", fmt(r.receita_bruta)],
     ["", ""],
-    ["(−) Rebate", fmt(r.rebate_valor)],
     ["(−) Impostos", fmt(r.impostos_valor)],
     ["Receita Líquida", fmt(r.receita_liquida)],
     ["", ""],
-    ["(−) Adquirência", fmt(r.custo_adquirencia)],
+    ["(−) Adquirência Online", fmt(r.custo_adquirencia_online)],
+    ["(−) Adquirência Offline", fmt(r.custo_adquirencia_offline)],
     ["(−) Antifraude", fmt(r.custo_antifraude)],
     ["(−) Comissão", fmt(r.custo_comissao)],
     ["(−) Servidor", fmt(r.custo_servidor)],
     ["(−) Máquinas", fmt(r.custo_maquinas)],
-  ];
-  if (r.custo_advance > 0) rows.push(["(−) Advance", fmt(r.custo_advance)]);
-  if (r.receita_advance > 0) rows.push(["(+) Receita Advance", fmt(r.receita_advance)]);
-  rows.push(
+    ["(−) Impressão", fmt(r.custo_impressao)],
     ["Custos Totais", fmt(r.custos_totais)],
     ["", ""],
-    ["Margem Final", fmt(r.margem)],
-    ["Margem %", pct(r.margem_percentual)],
-    ["Margem / TPV", pct(r.margem_tpv)],
-    ["Take Rate", pct(r.take_rate)],
-    ["Status", r.status],
+    ["Margem Operacional", fmt(r.margem_operacional)],
+  );
+  if (r.receita_advance > 0) rows.push(["(+) Receita Advance", fmt(r.receita_advance)]);
+  rows.push(
+    ["Margem Final", fmt(r.margem_final)],
+    ["Margem / TPV", r.margem_sobre_tpv.toFixed(2) + "%"],
+    ["Classificação", r.status],
   );
   return rows;
 }
@@ -76,7 +75,7 @@ export function exportPDF(results: SimulatorResults, client: ClientInfo) {
   const sc = statusColor[results.status] || [0, 0, 0];
   doc.setFontSize(13);
   doc.setTextColor(sc[0], sc[1], sc[2]);
-  doc.text(`Status: ${results.status}  |  Margem: ${pct(results.margem_percentual)}  |  Take Rate: ${pct(results.take_rate)}`, 14, y + 30);
+  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Líquida: ${pct(results.taxa_liquida)}`, 14, y + 30);
 
   doc.setTextColor(0);
 
