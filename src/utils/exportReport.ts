@@ -7,6 +7,7 @@ const pct = (v: number) => (v * 100).toFixed(2) + "%";
 
 function buildRows(r: SimulatorResults): string[][] {
   const rows: string[][] = [
+    ["── ONLINE ──", ""],
     ["TPV Total", fmt(r.tpv)],
     ["TPV Online", fmt(r.tpv_online)],
     ["TPV Offline", fmt(r.tpv_offline)],
@@ -17,7 +18,6 @@ function buildRows(r: SimulatorResults): string[][] {
   if (r.receita_minima > 0) rows.push(["Receita Mínima", fmt(r.receita_minima)]);
   rows.push(
     ["Receita Bruta", fmt(r.receita_bruta)],
-    ["", ""],
     ["(−) Impostos", fmt(r.impostos_valor)],
     ["Receita Líquida", fmt(r.receita_liquida)],
     ["", ""],
@@ -29,15 +29,33 @@ function buildRows(r: SimulatorResults): string[][] {
     ["(−) Máquinas", fmt(r.custo_maquinas)],
     ["(−) Impressão", fmt(r.custo_impressao)],
     ["Custos Totais", fmt(r.custos_totais)],
-    ["", ""],
-    ["Margem Final", fmt(r.margem)],
+    ["Margem Online", fmt(r.margem)],
     ["Margem / TPV", r.margem_sobre_tpv.toFixed(2) + "%"],
     ["Classificação", r.status],
   );
+
+  // PDV
+  const p = r.pdv;
+  if (p.tpv_total > 0) {
+    rows.push(
+      ["", ""],
+      ["── PDV ──", ""],
+      ["TPV Total PDV", fmt(p.tpv_total)],
+      ["Receita Crédito", fmt(p.receita_credito)],
+      ["Receita Débito/Pix", fmt(p.receita_debito_pix)],
+      ["Receita Total Zig", fmt(p.receita_total)],
+      ["(−) Impressão PDV", fmt(p.custo_impressao)],
+      ["(−) Máquinas PDV", fmt(p.custo_maquinas)],
+      ["Receita Líq. Operacional", fmt(p.receita_liquida_operacional)],
+      ["Mínimo Garantido", fmt(p.mg_total)],
+      ["Resultado Final PDV", fmt(p.resultado_final)],
+    );
+  }
+
   return rows;
 }
 
-export function exportPDF(results: SimulatorResults) {
+export function exportPDF(results: SimulatorResults, clienteName?: string) {
   const doc = new jsPDF();
   const now = new Date().toLocaleDateString("pt-BR");
 
@@ -46,6 +64,12 @@ export function exportPDF(results: SimulatorResults) {
   doc.setFontSize(10);
   doc.setTextColor(120);
   doc.text(`Gerado em ${now}`, 14, 27);
+
+  if (clienteName) {
+    doc.setTextColor(0);
+    doc.setFontSize(12);
+    doc.text(`Cliente: ${clienteName}`, 14, 34);
+  }
 
   doc.setTextColor(0);
 
@@ -57,12 +81,13 @@ export function exportPDF(results: SimulatorResults) {
   const sc = statusColor[results.status] || [0, 0, 0];
   doc.setFontSize(13);
   doc.setTextColor(sc[0], sc[1], sc[2]);
-  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Líquida: ${pct(results.taxa_liquida)}`, 14, 38);
+  const statusY = clienteName ? 42 : 38;
+  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Líquida: ${pct(results.taxa_liquida)}`, 14, statusY);
 
   doc.setTextColor(0);
 
   autoTable(doc, {
-    startY: 46,
+    startY: statusY + 8,
     head: [["Indicador", "Valor"]],
     body: buildRows(results),
     theme: "striped",
@@ -70,8 +95,12 @@ export function exportPDF(results: SimulatorResults) {
     styles: { fontSize: 9 },
     didParseCell: (data) => {
       const label = String(data.cell.raw);
-      if (["Receita Bruta", "Receita Líquida", "Custos Totais", "Margem Final"].includes(label)) {
+      if (["Receita Bruta", "Receita Líquida", "Custos Totais", "Margem Online", "Receita Total Zig", "Resultado Final PDV"].includes(label)) {
         data.cell.styles.fontStyle = "bold";
+      }
+      if (label.startsWith("──")) {
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.fillColor = [229, 231, 235];
       }
     },
   });
@@ -79,17 +108,18 @@ export function exportPDF(results: SimulatorResults) {
   doc.save(`simulador_zig_${now.replace(/\//g, "-")}.pdf`);
 }
 
-export function exportCSV(results: SimulatorResults) {
+export function exportCSV(results: SimulatorResults, clienteName?: string) {
   const now = new Date().toLocaleDateString("pt-BR");
   const rows = buildRows(results);
 
   const lines = [
     "Simulador Zig — Viabilidade Comercial",
     `Data,${now}`,
+    clienteName ? `Cliente,${clienteName}` : "",
     "",
     "Indicador,Valor",
     ...rows.map(([a, b]) => `"${a}","${b}"`),
-  ];
+  ].filter(Boolean);
 
   const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
