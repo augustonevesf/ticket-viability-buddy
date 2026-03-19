@@ -1,67 +1,85 @@
 import { useMemo } from "react";
 
-// ── Constants (non-editable) ──
+// ── Constants ──
 export const CONSTANTS = {
   imposto: 0.0655,
-  antifraude: 0.003,
   comissao: 0.05,
-  servidor: 0.0005,
-  custo_maquina: 40,
-  custo_impressao_default: 0.10,
+  // Online cost percentages
+  online_custos: {
+    credito_antecipado: 0.0129,
+    advance_tomada: 0.0105,
+    advance_dinheiro: 0.0,
+    adquirencia: 0.022,
+    patrocinio: 0.0105,
+    antifraude: 0.003,
+    comissao: 0.05,
+    servidor: 0.0005,
+  },
+  // Offline cost percentages
+  offline_custos: {
+    adquirencia: 0.024,
+    impressao: 0.0,
+    custo_maquina: 40,
+  },
   adquirencia_online: { credito: 0.025, debito_pix: 0.015, picpay: 0.015 },
   adquirencia_offline: { credito: 0.03, debito_pix: 0.0099 },
   split_online: { credito: 0.70, debito_pix: 0.25, picpay: 0.05 },
   split_offline: { credito: 0.70, debito_pix: 0.30 },
+  custo_maquina: 40,
+  custo_impressao_default: 0.10,
 };
+
+export const COMMISSION_TIERS = [
+  { label: "Regua 1", range: "<= 80%", fator: 0.03, comissao: 90 },
+  { label: "Regua 2", range: "> 80% x <= 100%", fator: 0.04, comissao: 121 },
+  { label: "Regua 3", range: "> 100% x <= 120%", fator: 0.05, comissao: 151 },
+  { label: "Regua 4", range: "> 120%", fator: 0.06, comissao: 181 },
+];
 
 export interface SimulatorInputs {
   cliente: {
     nome: string;
     cnpj: string;
+    executivo: string;
   };
   evento: {
     tpv_total: number;
-    ticket_medio: number;
-    quantidade_ingressos: number;
+    publico_estimado: number;
+    ticket_medio_calculado: number;
   };
   distribuicao: {
     online_percent: number;
   };
   taxa: {
-    taxa_base: number;
-    rebate: number;
+    taxa_administrativa: number;
+    taxa_antecipacao: number;
+    taxa_processamento: number;
     taxa_minima_ativa: boolean;
     valor_taxa_minima: number;
   };
-  operacao: {
-    quantidade_maquinas: number;
-  };
   pdv: {
-    tpv_credito: number;
-    tpv_debito_pix: number;
+    tpv_pdv: number;
     quantidade_maquinas: number;
     ingressos_esperados: number;
-    ticket_medio: number;
-    impressao_minima_por_maquina: number;
-    preco_impressao: number;
+    taxa_segmentada: boolean;
+    taxa_unica: number;
     taxa_credito: number;
     taxa_debito_pix: number;
+    custo_impressao_ingresso: number;
+    custo_impressao_cortesia: number;
+    custo_cancelamento: number;
     mg_por_maquina: number;
   };
 }
 
 export interface PdvResults {
   tpv_total: number;
-  pct_credito: number;
-  pct_debito_pix: number;
-  tpv_estimado: number;
-  impressoes_esperadas: number;
-  impressoes_minimas: number;
-  impressoes_consideradas: number;
-  custo_impressao: number;
+  tpv_credito: number;
+  tpv_debito_pix: number;
   receita_credito: number;
   receita_debito_pix: number;
   receita_total: number;
+  custo_impressao: number;
   custo_maquinas: number;
   mg_total: number;
   receita_liquida_operacional: number;
@@ -95,6 +113,8 @@ export interface SimulatorResults {
   margem: number;
   margem_sobre_tpv: number;
 
+  ticket_medio: number;
+
   status: "Boa" | "Média" | "Ruim";
   alerta: boolean;
 
@@ -104,26 +124,27 @@ export interface SimulatorResults {
 export type DealStatus = SimulatorResults["status"];
 
 export const getDefaultInputs = (): SimulatorInputs => ({
-  cliente: { nome: "", cnpj: "" },
-  evento: { tpv_total: 0, ticket_medio: 0, quantidade_ingressos: 0 },
+  cliente: { nome: "", cnpj: "", executivo: "" },
+  evento: { tpv_total: 0, publico_estimado: 0, ticket_medio_calculado: 0 },
   distribuicao: { online_percent: 0.99 },
   taxa: {
-    taxa_base: 0.10,
-    rebate: 0.02,
+    taxa_administrativa: 0.10,
+    taxa_antecipacao: 0,
+    taxa_processamento: 0,
     taxa_minima_ativa: false,
     valor_taxa_minima: 2.50,
   },
-  operacao: { quantidade_maquinas: 10 },
   pdv: {
-    tpv_credito: 0,
-    tpv_debito_pix: 0,
+    tpv_pdv: 0,
     quantidade_maquinas: 0,
     ingressos_esperados: 0,
-    ticket_medio: 0,
-    impressao_minima_por_maquina: 0,
-    preco_impressao: 0,
+    taxa_segmentada: false,
+    taxa_unica: 0.10,
     taxa_credito: 0.10,
     taxa_debito_pix: 0.10,
+    custo_impressao_ingresso: 1.00,
+    custo_impressao_cortesia: 1.00,
+    custo_cancelamento: 0.50,
     mg_por_maquina: 40,
   },
 });
@@ -135,6 +156,11 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const offline_percent = 1 - inputs.distribuicao.online_percent;
     const tpv_online = TPV * inputs.distribuicao.online_percent;
     const tpv_offline = TPV * offline_percent;
+
+    // Ticket médio calculado
+    const ticket_medio = inputs.evento.publico_estimado > 0
+      ? TPV / inputs.evento.publico_estimado
+      : 0;
 
     // ── Adquirência ──
     const custo_adquirencia_online =
@@ -149,18 +175,14 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const custo_adquirencia_total = custo_adquirencia_online + custo_adquirencia_offline;
 
     // ── Taxa líquida ──
-    const taxa_liquida = Math.max(0, inputs.taxa.taxa_base - inputs.taxa.rebate);
+    const taxa_liquida = Math.max(0, inputs.taxa.taxa_administrativa - inputs.taxa.taxa_antecipacao - inputs.taxa.taxa_processamento);
 
     // ── Receita ──
     const receita_take = TPV * taxa_liquida;
 
     let receita_minima = 0;
-    if (
-      inputs.taxa.taxa_minima_ativa &&
-      inputs.evento.ticket_medio > 0 &&
-      inputs.evento.ticket_medio < 25
-    ) {
-      receita_minima = inputs.evento.quantidade_ingressos * inputs.taxa.valor_taxa_minima;
+    if (inputs.taxa.taxa_minima_ativa && ticket_medio > 0 && ticket_medio < 25) {
+      receita_minima = inputs.evento.publico_estimado * inputs.taxa.valor_taxa_minima;
     }
 
     const receita_bruta = Math.max(receita_take, receita_minima);
@@ -170,11 +192,11 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const receita_liquida = receita_bruta - impostos_valor;
 
     // ── Custos ──
-    const custo_antifraude = tpv_online * C.antifraude;
+    const custo_antifraude = tpv_online * C.online_custos.antifraude;
     const custo_comissao = receita_liquida * C.comissao;
-    const custo_servidor = TPV * C.servidor;
-    const custo_maquinas = inputs.operacao.quantidade_maquinas * C.custo_maquina;
-    const custo_impressao = inputs.evento.quantidade_ingressos * C.custo_impressao_default;
+    const custo_servidor = TPV * C.online_custos.servidor;
+    const custo_maquinas = 0; // removed online machines
+    const custo_impressao = inputs.evento.publico_estimado * C.custo_impressao_default;
 
     const custos_totais =
       custo_adquirencia_total +
@@ -188,7 +210,6 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const margem = receita_liquida - custos_totais;
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
-    // ── Classificação (6% / 4%) ──
     let status: SimulatorResults["status"];
     if (margem_sobre_tpv >= 6) status = "Boa";
     else if (margem_sobre_tpv >= 4) status = "Média";
@@ -198,46 +219,41 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     // ── PDV ──
     const pdvIn = inputs.pdv;
-    const pdv_tpv_total = pdvIn.tpv_credito + pdvIn.tpv_debito_pix;
-    const pdv_pct_credito = pdv_tpv_total > 0 ? pdvIn.tpv_credito / pdv_tpv_total : 0;
-    const pdv_pct_debito = pdv_tpv_total > 0 ? pdvIn.tpv_debito_pix / pdv_tpv_total : 0;
+    const pdv_tpv = pdvIn.tpv_pdv;
+    const pdv_tpv_credito = pdv_tpv * C.split_offline.credito;
+    const pdv_tpv_debito = pdv_tpv * C.split_offline.debito_pix;
 
-    // TPV estimado (validação)
-    const pdv_tpv_estimado = pdvIn.ingressos_esperados * pdvIn.ticket_medio;
-
-    // Impressões
-    const impressoes_esperadas = pdvIn.ingressos_esperados;
-    const impressoes_minimas = pdvIn.quantidade_maquinas * pdvIn.impressao_minima_por_maquina;
-    const impressoes_consideradas = Math.max(impressoes_esperadas, impressoes_minimas);
-    const pdv_custo_impressao = impressoes_consideradas * pdvIn.preco_impressao;
-
-    // Receita segmentada
-    const pdv_receita_credito = pdvIn.tpv_credito * pdvIn.taxa_credito;
-    const pdv_receita_debito = pdvIn.tpv_debito_pix * pdvIn.taxa_debito_pix;
+    // Revenue
+    let pdv_receita_credito: number;
+    let pdv_receita_debito: number;
+    if (pdvIn.taxa_segmentada) {
+      pdv_receita_credito = pdv_tpv_credito * pdvIn.taxa_credito;
+      pdv_receita_debito = pdv_tpv_debito * pdvIn.taxa_debito_pix;
+    } else {
+      pdv_receita_credito = pdv_tpv_credito * pdvIn.taxa_unica;
+      pdv_receita_debito = pdv_tpv_debito * pdvIn.taxa_unica;
+    }
     const pdv_receita_total = pdv_receita_credito + pdv_receita_debito;
 
-    // Custo máquinas PDV
+    // Costs
+    const pdv_custo_impressao = pdvIn.ingressos_esperados * pdvIn.custo_impressao_ingresso;
     const pdv_custo_maquinas = pdvIn.quantidade_maquinas * C.custo_maquina;
 
     // MG
     const pdv_mg_total = pdvIn.quantidade_maquinas * pdvIn.mg_por_maquina;
 
-    // Resultado
+    // Result
     const pdv_receita_liquida_op = pdv_receita_total - pdv_custo_impressao - pdv_custo_maquinas;
     const pdv_resultado_final = Math.max(pdv_receita_liquida_op, pdv_mg_total);
 
     const pdv: PdvResults = {
-      tpv_total: pdv_tpv_total,
-      pct_credito: pdv_pct_credito,
-      pct_debito_pix: pdv_pct_debito,
-      tpv_estimado: pdv_tpv_estimado,
-      impressoes_esperadas,
-      impressoes_minimas,
-      impressoes_consideradas,
-      custo_impressao: pdv_custo_impressao,
+      tpv_total: pdv_tpv,
+      tpv_credito: pdv_tpv_credito,
+      tpv_debito_pix: pdv_tpv_debito,
       receita_credito: pdv_receita_credito,
       receita_debito_pix: pdv_receita_debito,
       receita_total: pdv_receita_total,
+      custo_impressao: pdv_custo_impressao,
       custo_maquinas: pdv_custo_maquinas,
       mg_total: pdv_mg_total,
       receita_liquida_operacional: pdv_receita_liquida_op,
@@ -252,6 +268,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao,
       custos_totais,
       margem, margem_sobre_tpv,
+      ticket_medio,
       status, alerta,
       pdv,
     };

@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SimulatorResults, DealStatus } from "@/hooks/useSimulator";
-import { FileDown, FileSpreadsheet, AlertTriangle } from "lucide-react";
+import { FileDown, AlertTriangle } from "lucide-react";
 
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -40,33 +40,34 @@ const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?
 interface Props {
   results: SimulatorResults;
   clienteName?: string;
+  executivoName?: string;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName }) => {
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
 
   const handleExportPDF = async () => {
     const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results, clienteName);
-  };
-
-  const handleExportCSV = () => {
-    import("@/utils/exportReport").then(({ exportCSV }) => exportCSV(results, clienteName));
+    exportPDF(results, clienteName, executivoName);
   };
 
   return (
     <div className="sticky top-6 space-y-4">
-      {/* Client name */}
       {clienteName && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl px-4 py-3">
           <p className="text-xs text-muted-foreground">Cliente</p>
           <p className="text-sm font-semibold text-foreground">{clienteName}</p>
+          {executivoName && (
+            <>
+              <p className="text-xs text-muted-foreground mt-1">Executivo</p>
+              <p className="text-sm font-medium text-foreground">{executivoName}</p>
+            </>
+          )}
         </div>
       )}
 
-      {/* Alert */}
       {results.alerta && (
         <div className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 rounded-2xl px-4 py-3 text-destructive text-sm">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
@@ -109,16 +110,18 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
               {formatPercent(results.taxa_liquida)}
             </span>
           </div>
-          <div className="flex justify-between items-center py-1.5">
-            <span className="text-xs font-medium text-muted-foreground tracking-wide">Margem / TPV</span>
-            <span className="text-lg font-semibold tabular-nums text-foreground">
-              {results.margem_sobre_tpv.toFixed(2)}%
-            </span>
-          </div>
+          {results.ticket_medio > 0 && (
+            <div className="flex justify-between items-center py-1.5">
+              <span className="text-xs font-medium text-muted-foreground tracking-wide">Ticket Médio</span>
+              <span className="text-lg font-semibold tabular-nums text-foreground">
+                {formatCurrency(results.ticket_medio)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Online Breakdown Card */}
+      {/* Online Breakdown */}
       <div className="bg-card rounded-2xl p-5 shadow-card">
         <h4 className="text-xs font-semibold text-muted-foreground tracking-wide mb-3">Demonstrativo Online</h4>
         <div className="divide-y divide-border">
@@ -128,10 +131,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
             <MetricRow label="TPV Offline" value={formatCurrency(results.tpv_offline)} muted />
           </div>
           <div className="py-3">
-            <MetricRow label="Taxa Base → Líquida" value={formatPercent(results.taxa_liquida)} />
+            <MetricRow label="Taxa Líquida" value={formatPercent(results.taxa_liquida)} />
             <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
             {results.receita_minima > 0 && (
-              <MetricRow label="Receita Mínima" value={formatCurrency(results.receita_minima)} muted />
+              <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} muted />
             )}
             <MetricRow label="Receita Bruta" value={formatCurrency(results.receita_bruta)} bold />
           </div>
@@ -145,7 +148,6 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
             <MetricRow label="(−) Antifraude" value={formatCurrency(results.custo_antifraude)} muted />
             <MetricRow label="(−) Comissão" value={formatCurrency(results.custo_comissao)} muted />
             <MetricRow label="(−) Servidor" value={formatCurrency(results.custo_servidor)} muted />
-            <MetricRow label="(−) Máquinas" value={formatCurrency(results.custo_maquinas)} muted />
             <MetricRow label="(−) Impressão" value={formatCurrency(results.custo_impressao)} muted />
             <MetricRow label="Custos Totais" value={formatCurrency(results.custos_totais)} bold />
           </div>
@@ -158,15 +160,15 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
         </div>
       </div>
 
-      {/* PDV Breakdown Card */}
+      {/* PDV Breakdown */}
       {pdv.tpv_total > 0 && (
         <div className="bg-card rounded-2xl p-5 shadow-card border-l-4 border-primary">
           <h4 className="text-xs font-semibold text-primary tracking-wide mb-3">Demonstrativo PDV</h4>
           <div className="divide-y divide-border">
             <div className="pb-3">
               <MetricRow label="TPV Total PDV" value={formatCurrency(pdv.tpv_total)} bold />
-              <MetricRow label={`Crédito (${(pdv.pct_credito * 100).toFixed(0)}%)`} value={formatCurrency(pdv.tpv_total * pdv.pct_credito)} muted />
-              <MetricRow label={`Débito/Pix (${(pdv.pct_debito_pix * 100).toFixed(0)}%)`} value={formatCurrency(pdv.tpv_total * pdv.pct_debito_pix)} muted />
+              <MetricRow label="Crédito (70%)" value={formatCurrency(pdv.tpv_credito)} muted />
+              <MetricRow label="Débito/Pix (30%)" value={formatCurrency(pdv.tpv_debito_pix)} muted />
             </div>
             <div className="py-3">
               <MetricRow label="Receita Crédito" value={formatCurrency(pdv.receita_credito)} muted />
@@ -192,7 +194,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
         </div>
       )}
 
-      {/* Export Buttons */}
+      {/* Export */}
       <div className="flex gap-3">
         <button
           onClick={handleExportPDF}
@@ -200,13 +202,6 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName }) => {
         >
           <FileDown className="w-4 h-4" />
           Exportar PDF
-        </button>
-        <button
-          onClick={handleExportCSV}
-          className="flex-1 flex items-center justify-center gap-2 bg-card text-foreground rounded-xl px-4 py-3 text-sm font-medium hover:bg-muted transition-colors border border-border"
-        >
-          <FileSpreadsheet className="w-4 h-4" />
-          Exportar Excel
         </button>
       </div>
     </div>
