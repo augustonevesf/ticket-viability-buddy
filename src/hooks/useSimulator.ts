@@ -101,6 +101,7 @@ export interface SimulatorResults {
   custo_adquirencia_total: number;
 
   taxa_liquida: number;
+  rebate_valor: number;
   receita_take: number;
   receita_antecipacao: number;
   receita_processamento: number;
