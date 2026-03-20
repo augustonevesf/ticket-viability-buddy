@@ -38,6 +38,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
   const C = CONSTANTS;
   const offline_percent = 1 - inputs.distribuicao.online_percent;
+  const is100Online = inputs.distribuicao.online_percent >= 1;
   const ticket_medio = inputs.evento.publico_estimado > 0
     ? inputs.evento.tpv_total / inputs.evento.publico_estimado
     : 0;
