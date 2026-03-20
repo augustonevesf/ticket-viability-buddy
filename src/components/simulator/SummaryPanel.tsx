@@ -30,10 +30,10 @@ const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value,
   </AnimatePresence>
 );
 
-const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?: boolean }> = ({ label, value, muted, bold }) => (
+const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?: boolean; destructive?: boolean }> = ({ label, value, muted, bold, destructive }) => (
   <div className="flex justify-between items-center py-1.5">
-    <span className={`text-sm ${muted ? "text-muted-foreground" : bold ? "font-semibold text-foreground" : "text-foreground/80"}`}>{label}</span>
-    <span className={`text-sm tabular-nums ${muted ? "text-muted-foreground" : bold ? "font-bold text-foreground" : "font-medium text-foreground"}`}>{value}</span>
+    <span className={`text-sm ${destructive ? "text-destructive" : muted ? "text-muted-foreground" : bold ? "font-semibold text-foreground" : "text-foreground/80"}`}>{label}</span>
+    <span className={`text-sm tabular-nums ${destructive ? "text-destructive font-medium" : muted ? "text-muted-foreground" : bold ? "font-bold text-foreground" : "font-medium text-foreground"}`}>{value}</span>
   </div>
 );
 
@@ -135,8 +135,8 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           </div>
           {results.rebate_valor > 0 && (
             <div className="flex justify-between items-center py-1">
-              <span className="text-xs text-warning">Rebate concedido</span>
-              <span className="text-xs font-medium tabular-nums text-warning">{formatCurrency(results.rebate_valor)}</span>
+              <span className="text-xs text-destructive">Rebate concedido</span>
+              <span className="text-xs font-medium tabular-nums text-destructive">{formatCurrency(results.rebate_valor)}</span>
             </div>
           )}
           {results.ticket_medio > 0 && (
@@ -162,7 +162,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           <div className="py-3">
             <MetricRow label="Taxa Adm. Plataforma (após rebate)" value={formatPercent(results.taxa_liquida)} />
             {results.rebate_valor > 0 && (
-              <MetricRow label="(−) Rebate concedido" value={formatCurrency(results.rebate_valor)} muted />
+              <MetricRow label="(−) Rebate concedido" value={formatCurrency(results.rebate_valor)} destructive />
             )}
             <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
             {results.receita_antecipacao > 0 && (

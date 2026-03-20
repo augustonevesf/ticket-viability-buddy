@@ -10,7 +10,7 @@ interface Props {
 
 const SectionCard: React.FC<{ title: string; children: React.ReactNode; accent?: boolean }> = ({ title, children, accent }) => (
   <div className={`bg-card rounded-2xl p-5 shadow-card ${accent ? "border-l-4 border-primary" : ""}`}>
-    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">{title}</h3>
+    <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">{title}</h3>
     {children}
   </div>
 );
@@ -211,7 +211,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <SimulatorInput label="Rebate (cashback produtor)" value={+(inputs.taxa.rebate * 100).toFixed(2)} onChange={(v) => upd("taxa")("rebate")(v / 100)} suffix="%" step={0.1} min={0} max={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} />
         </div>
         {inputs.taxa.rebate > 0 && (
-          <p className="text-xs text-warning mt-2 font-medium">
+          <p className="text-xs text-destructive mt-2 font-medium">
             ⚠ Taxa líquida após rebate: {((inputs.taxa.taxa_administrativa - inputs.taxa.rebate) * 100).toFixed(2)}%
           </p>
         )}
