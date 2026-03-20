@@ -108,8 +108,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               onClick={() => upd("cliente")("tipo")("pontual")}
               className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 inputs.cliente.tipo === "pontual"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                  : "bg-muted text-muted-foreground scale-100"
               }`}
             >
               Evento Pontual
@@ -118,8 +118,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               onClick={() => upd("cliente")("tipo")("anual")}
               className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 inputs.cliente.tipo === "anual"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                  : "bg-muted text-muted-foreground scale-100"
               }`}
             >
               Agência Anual
@@ -264,8 +264,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 onClick={() => upd("pdv")("taxa_segmentada")(true)}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   inputs.pdv.taxa_segmentada
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                    ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                    : "bg-muted text-muted-foreground scale-100"
                 }`}
               >
                 Taxa Segmentada
@@ -274,8 +274,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 onClick={() => { upd("pdv")("taxa_segmentada")(false); setPdvDefaults(false); }}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   !inputs.pdv.taxa_segmentada
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                    ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                    : "bg-muted text-muted-foreground scale-100"
                 }`}
               >
                 Taxa Única
@@ -351,8 +351,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             onClick={() => upd("extras")("advance_ativo")(!inputs.extras.advance_ativo)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               inputs.extras.advance_ativo
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground"
+                ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                : "bg-muted text-muted-foreground scale-100"
             }`}
           >
             {inputs.extras.advance_ativo ? "Ativo" : "Ativar Advance"}
@@ -383,8 +383,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             onClick={() => upd("extras")("patrocinio_ativo")(!inputs.extras.patrocinio_ativo)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               inputs.extras.patrocinio_ativo
-                ? "bg-destructive text-destructive-foreground"
-                : "bg-muted text-muted-foreground"
+                ? "bg-destructive text-destructive-foreground scale-105 shadow-sm"
+                : "bg-muted text-muted-foreground scale-100"
             }`}
           >
             {inputs.extras.patrocinio_ativo ? "Ativo" : "Ativar Patrocínio"}
@@ -405,8 +405,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             onClick={() => upd("extras")("pulse_pago_ativo")(!inputs.extras.pulse_pago_ativo)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               inputs.extras.pulse_pago_ativo
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground"
+                ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                : "bg-muted text-muted-foreground scale-100"
             }`}
           >
             {inputs.extras.pulse_pago_ativo ? "Ativo" : "Ativar Zig Pulse"}
