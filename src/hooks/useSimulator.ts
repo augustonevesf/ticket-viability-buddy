@@ -101,6 +101,8 @@ export interface SimulatorResults {
 
   taxa_liquida: number;
   receita_take: number;
+  receita_antecipacao: number;
+  receita_processamento: number;
   receita_minima: number;
   receita_bruta: number;
 
