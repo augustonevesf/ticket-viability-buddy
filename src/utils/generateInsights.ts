@@ -62,7 +62,7 @@ export function generateInsights(inputs: SimulatorInputs, results: SimulatorResu
   }
 
   // 6. Margem ruim
-  if (results.status === "Ruim" && results.margem < 0) {
+  if (results.status === "Atenção" && results.margem < 0) {
     insights.push({
       icon: "🚨",
       title: "Operação negativa",
