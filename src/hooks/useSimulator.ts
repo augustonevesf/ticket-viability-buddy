@@ -75,6 +75,15 @@ export interface SimulatorInputs {
     custo_cancelamento: number;
     mg_por_maquina: number;
   };
+  extras: {
+    advance_ativo: boolean;
+    advance_valor: number;
+    advance_juros_am: number;
+    patrocinio_ativo: boolean;
+    patrocinio_valor: number;
+    pulse_pago_ativo: boolean;
+    pulse_pago_valor: number;
+  };
 }
 
 export interface PdvResults {
@@ -123,6 +132,10 @@ export interface SimulatorResults {
 
   ticket_medio: number;
 
+  advance_receita_juros: number;
+  patrocinio_valor: number;
+  pulse_pago_valor: number;
+
   status: "Boa" | "Média" | "Ruim";
   alerta: boolean;
 
@@ -155,6 +168,15 @@ export const getDefaultInputs = (): SimulatorInputs => ({
     custo_impressao_cortesia: 1.00,
     custo_cancelamento: 0.50,
     mg_por_maquina: 40,
+  },
+  extras: {
+    advance_ativo: false,
+    advance_valor: 0,
+    advance_juros_am: 2.5,
+    patrocinio_ativo: false,
+    patrocinio_valor: 0,
+    pulse_pago_ativo: false,
+    pulse_pago_valor: 0,
   },
 });
 
@@ -223,8 +245,14 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_maquinas +
       custo_impressao;
 
+    // ── Extras ──
+    const ext = inputs.extras;
+    const advance_receita_juros = ext.advance_ativo ? ext.advance_valor * (ext.advance_juros_am / 100) : 0;
+    const patrocinio_valor = ext.patrocinio_ativo ? ext.patrocinio_valor : 0;
+    const pulse_pago_valor = ext.pulse_pago_ativo ? ext.pulse_pago_valor : 0;
+
     // ── Margem ──
-    const margem = receita_liquida - custos_totais;
+    const margem = receita_liquida - custos_totais + advance_receita_juros - patrocinio_valor + pulse_pago_valor;
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
     let status: SimulatorResults["status"];
@@ -287,6 +315,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custos_totais,
       margem, margem_sobre_tpv,
       ticket_medio,
+      advance_receita_juros, patrocinio_valor, pulse_pago_valor,
       status, alerta,
       pdv,
     };
