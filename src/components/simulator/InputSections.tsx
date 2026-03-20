@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SimulatorInputs, CONSTANTS, COMMISSION_TIERS } from "@/hooks/useSimulator";
 import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
+import copacabanaPattern from "@/assets/copacabana-pattern.png";
 
 interface Props {
   inputs: SimulatorInputs;
