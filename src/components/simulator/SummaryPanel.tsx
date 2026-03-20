@@ -133,6 +133,9 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             <span className={`text-xs font-semibold px-3 py-1 rounded-full ${cfg.bg} ${cfg.text}`}>
               {cfg.label}
             </span>
+            <p className={`text-[10px] italic ${cfg.text} text-center max-w-[140px] leading-tight`}>
+              {cfg.frase}
+            </p>
             <div className="w-2.5 h-24 bg-muted rounded-full overflow-hidden relative">
               <motion.div
                 className={`absolute bottom-0 left-0 right-0 rounded-full ${
