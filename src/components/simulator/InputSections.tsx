@@ -336,35 +336,34 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 Taxa Única
               </button>
             </div>
-            <div className="mb-4">
-              <button
-                disabled={!inputs.pdv.taxa_segmentada}
-                onClick={() => {
-                  setPdvDefaults(true);
-                  setInputs((prev) => ({
-                    ...prev,
-                    pdv: {
-                      ...prev.pdv,
-                      taxa_segmentada: true,
-                      taxa_credito: PDV_DEFAULTS.taxa_credito,
-                      taxa_debito_pix: PDV_DEFAULTS.taxa_debito_pix,
-                      custo_impressao_ingresso: PDV_DEFAULTS.custo_impressao_ingresso,
-                      custo_impressao_cortesia: PDV_DEFAULTS.custo_impressao_cortesia,
-                      custo_cancelamento: PDV_DEFAULTS.custo_cancelamento,
-                    },
-                  }));
-                }}
-                className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                  !inputs.pdv.taxa_segmentada
-                    ? "bg-muted text-muted-foreground/40 cursor-not-allowed"
-                    : pdvDefaults
+            {inputs.pdv.taxa_segmentada && (
+              <div className="mb-4">
+                <button
+                  onClick={() => {
+                    setPdvDefaults(true);
+                    setInputs((prev) => ({
+                      ...prev,
+                      pdv: {
+                        ...prev.pdv,
+                        taxa_segmentada: true,
+                        taxa_credito: PDV_DEFAULTS.taxa_credito,
+                        taxa_debito_pix: PDV_DEFAULTS.taxa_debito_pix,
+                        custo_impressao_ingresso: PDV_DEFAULTS.custo_impressao_ingresso,
+                        custo_impressao_cortesia: PDV_DEFAULTS.custo_impressao_cortesia,
+                        custo_cancelamento: PDV_DEFAULTS.custo_cancelamento,
+                      },
+                    }));
+                  }}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                    pdvDefaults
                       ? "bg-emerald-500 text-white"
                       : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
-                }`}
-              >
-                Taxa Padrão
-              </button>
-            </div>
+                  }`}
+                >
+                  Taxa Padrão
+                </button>
+              </div>
+            )}
 
             {inputs.pdv.taxa_segmentada ? (
               <div className="grid grid-cols-2 gap-4">
