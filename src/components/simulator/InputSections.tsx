@@ -118,8 +118,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               onClick={() => upd("cliente")("tipo")("anual")}
               className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 inputs.cliente.tipo === "anual"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                  : "bg-muted text-muted-foreground scale-100"
               }`}
             >
               Agência Anual
