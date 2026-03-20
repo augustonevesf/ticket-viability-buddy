@@ -208,7 +208,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           </SectionCard>
 
           <SectionCard title="Taxas — Receita Zig (PDV)" accent>
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
               <button
                 onClick={() => upd("pdv")("taxa_segmentada")(true)}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
@@ -228,6 +228,25 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 }`}
               >
                 Taxa Única
+              </button>
+              <button
+                onClick={() => {
+                  setInputs((prev) => ({
+                    ...prev,
+                    pdv: {
+                      ...prev.pdv,
+                      taxa_segmentada: true,
+                      taxa_credito: 0.0341,
+                      taxa_debito_pix: 0.0199,
+                      custo_impressao_ingresso: 1.00,
+                      custo_impressao_cortesia: 1.00,
+                      custo_cancelamento: 0.50,
+                    },
+                  }));
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-accent text-accent-foreground hover:opacity-80"
+              >
+                Taxas Físicas Default
               </button>
             </div>
 
