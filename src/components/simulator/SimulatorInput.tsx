@@ -12,6 +12,7 @@ interface SimulatorInputProps {
   error?: string;
   disabled?: boolean;
   allowEmpty?: boolean;
+  variant?: "default" | "cost" | "green" | "edited";
 }
 
 function parseBR(raw: string): number {
