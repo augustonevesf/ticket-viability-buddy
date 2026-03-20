@@ -132,6 +132,10 @@ export interface SimulatorResults {
 
   ticket_medio: number;
 
+  advance_receita_juros: number;
+  patrocinio_valor: number;
+  pulse_pago_valor: number;
+
   status: "Boa" | "Média" | "Ruim";
   alerta: boolean;
 
