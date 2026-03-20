@@ -31,6 +31,13 @@ function buildRows(r: SimulatorResults): string[][] {
     ["(−) Servidor", fmt(r.custo_servidor)],
     ["(−) Impressão", fmt(r.custo_impressao)],
     ["Custos Totais", fmt(r.custos_totais)],
+  );
+
+  if (r.advance_receita_juros > 0) rows.push(["(+) Advance — Juros", fmt(r.advance_receita_juros)]);
+  if (r.pulse_pago_valor > 0) rows.push(["(+) Zig Pulse Pago", fmt(r.pulse_pago_valor)]);
+  if (r.patrocinio_valor > 0) rows.push(["(−) Patrocínio", fmt(r.patrocinio_valor)]);
+
+  rows.push(
     ["Margem Online", fmt(r.margem)],
     ["Margem / TPV", r.margem_sobre_tpv.toFixed(2) + "%"],
     ["Classificação", r.status],
