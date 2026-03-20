@@ -322,10 +322,11 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
       <div className="mt-2">
-        <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Custos Zig Oficiais</h2>
+        <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3">Custos Zig Oficiais</h2>
       </div>
 
-      <SectionCard title="Custos sobre Operação Online">
+      <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação Online</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
           <ConstRow label="Crédito antecipado" value="1,29%" />
           <ConstRow label="Advance (tomada)" value="1,05%" />
@@ -336,41 +337,43 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <ConstRow label="Comissão" value="5,00%" />
           <ConstRow label="Servidor" value="0,05%" />
         </div>
-      </SectionCard>
+      </div>
 
-      <SectionCard title="Custos sobre Operação Offline">
+      <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação Offline</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
           <ConstRow label="Custo de adquirência" value="2,40%" />
           <ConstRow label="Custo de impressão" value="0,00%" />
           <ConstRow label="Custo de máquinas" value="R$ 40,00" />
         </div>
-      </SectionCard>
+      </div>
 
       {/* Régua de Comissionamento */}
-      <SectionCard title="Régua de Comissionamento do Executivo">
+      <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Régua de Comissionamento do Executivo</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-2 text-xs font-semibold text-muted-foreground">Atingimento meta</th>
-                <th className="text-left py-2 text-xs font-semibold text-muted-foreground">Fator</th>
-                <th className="text-left py-2 text-xs font-semibold text-muted-foreground">Comissão</th>
+              <tr className="border-b border-border/50">
+                <th className="text-left py-2 text-xs font-semibold text-muted-foreground/70">Atingimento meta</th>
+                <th className="text-left py-2 text-xs font-semibold text-muted-foreground/70">Fator</th>
+                <th className="text-left py-2 text-xs font-semibold text-muted-foreground/70">Comissão</th>
               </tr>
             </thead>
             <tbody>
               {COMMISSION_TIERS.map((tier) => (
-                <tr key={tier.label} className="border-b border-border/50">
+                <tr key={tier.label} className="border-b border-border/30">
                   <td className="py-2 text-muted-foreground">
-                    <span className="font-medium text-foreground">{tier.label}</span> — {tier.range}
+                    <span className="font-medium text-muted-foreground">{tier.label}</span> — {tier.range}
                   </td>
-                  <td className="py-2 tabular-nums font-medium text-foreground">{(tier.fator * 100).toFixed(0)}%</td>
-                  <td className="py-2 tabular-nums font-medium text-foreground">R$ {tier.comissao}</td>
+                  <td className="py-2 tabular-nums font-medium text-muted-foreground">{(tier.fator * 100).toFixed(0)}%</td>
+                  <td className="py-2 tabular-nums font-medium text-muted-foreground">R$ {tier.comissao}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </SectionCard>
+      </div>
     </div>
   );
 };
