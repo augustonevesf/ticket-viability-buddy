@@ -226,8 +226,8 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
               <MetricRow label="Débito/Pix (30%)" value={formatCurrency(pdv.tpv_debito_pix)} muted />
             </div>
             <div className="py-3">
-              <MetricRow label="Receita Crédito" value={formatCurrency(pdv.receita_credito)} muted />
-              <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} muted />
+              <MetricRow label="Receita Crédito" value={formatCurrency(pdv.receita_credito)} success />
+              <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} success />
               <MetricRow label="Receita Total Zig" value={formatCurrency(pdv.receita_total)} bold />
             </div>
             <div className="py-3">
