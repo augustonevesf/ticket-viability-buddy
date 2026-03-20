@@ -342,7 +342,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custos_totais,
       margem, margem_sobre_tpv,
       ticket_medio,
-      advance_receita_juros, patrocinio_valor, pulse_pago_valor,
+      advance_receita_juros, patrocinio_valor, pulse_pago_valor, suporte_premium_elegivel, suporte_premium_receita,
       status, alerta,
       pdv,
     };
