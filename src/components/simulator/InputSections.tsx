@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SimulatorInputs, CONSTANTS, COMMISSION_TIERS } from "@/hooks/useSimulator";
+import { SimulatorInputs, CONSTANTS } from "@/hooks/useSimulator";
 import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
@@ -197,7 +197,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${
               inputs.taxa.regiao === "brasil"
                 ? "bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 border-green-600/30 scale-110 shadow-sm"
-                : "bg-muted text-muted-foreground/50 border-border scale-100"
+                : "bg-muted text-muted-foreground/40 border-border scale-90 opacity-50"
             }`}
           >
             🇧🇷 Brasil
@@ -212,7 +212,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.regiao === "rj"
                 ? "text-white border-stone-900 shadow-lg scale-110 ring-1 ring-stone-700"
-                : "text-muted-foreground/50 border-border scale-100"
+                : "text-muted-foreground/40 border-border scale-90 opacity-50"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
             style={{
@@ -405,14 +405,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         <h2 className="text-sm font-bold text-muted-foreground/50 uppercase tracking-widest mb-3">Módulos Extras</h2>
       </div>
 
-      {/* Mapa de Assentos */}
-      <SectionCard title="🪑 Mapa de Assentos">
-        <SimulatorToggle
-          label="Lugar Marcado (Seats I/O)"
-          checked={inputs.mapa_assentos}
-          onChange={(v) => updRoot("mapa_assentos")(v)}
-        />
-      </SectionCard>
 
       {/* Suporte Premium Tickets */}
       <SectionCard title="Suporte Premium Tickets">
@@ -686,6 +678,15 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         )}
       </SectionCard>
 
+      {/* Mapa de Assentos */}
+      <SectionCard title="🪑 Mapa de Assentos">
+        <SimulatorToggle
+          label="Lugar Marcado (Seats I/O)"
+          checked={inputs.mapa_assentos}
+          onChange={(v) => updRoot("mapa_assentos")(v)}
+        />
+      </SectionCard>
+
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
       <div className="mt-2">
@@ -721,31 +722,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </div>
 
       {/* Régua de Comissionamento */}
-      <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
-        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Régua de Comissionamento do Executivo</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border/50">
-                <th className="text-left py-2 text-xs font-semibold text-muted-foreground/70">Atingimento meta</th>
-                <th className="text-left py-2 text-xs font-semibold text-muted-foreground/70">Fator</th>
-                <th className="text-left py-2 text-xs font-semibold text-muted-foreground/70">Comissão</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMMISSION_TIERS.map((tier) => (
-                <tr key={tier.label} className="border-b border-border/30">
-                  <td className="py-2 text-muted-foreground">
-                    <span className="font-medium text-muted-foreground">{tier.label}</span> — {tier.range}
-                  </td>
-                  <td className="py-2 tabular-nums font-medium text-muted-foreground">{(tier.fator * 100).toFixed(0)}%</td>
-                  <td className="py-2 tabular-nums font-medium text-muted-foreground">R$ {tier.comissao}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 };
