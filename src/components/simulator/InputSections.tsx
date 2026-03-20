@@ -363,7 +363,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           </p>
         </SectionCard>
       </div>
-      </SectionCard>
 
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
