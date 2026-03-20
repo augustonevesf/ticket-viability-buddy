@@ -282,11 +282,11 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
             {inputs.pdv.taxa_segmentada && (
               <div className="mt-4 pt-4 border-t border-border">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Custos de Impressão</h4>
+                <h4 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-3">Custos de Impressão</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <SimulatorInput label="Impressão / Ingresso" value={inputs.pdv.custo_impressao_ingresso} onChange={(v) => upd("pdv")("custo_impressao_ingresso")(v)} prefix="R$" step={0.01} min={0} />
-                  <SimulatorInput label="Impressão / Cortesia" value={inputs.pdv.custo_impressao_cortesia} onChange={(v) => upd("pdv")("custo_impressao_cortesia")(v)} prefix="R$" step={0.01} min={0} />
-                  <SimulatorInput label="Cancelamento" value={inputs.pdv.custo_cancelamento} onChange={(v) => upd("pdv")("custo_cancelamento")(v)} prefix="R$" step={0.01} min={0} />
+                  <SimulatorInput label="Impressão / Ingresso" value={inputs.pdv.custo_impressao_ingresso} onChange={(v) => upd("pdv")("custo_impressao_ingresso")(v)} prefix="R$" step={0.01} min={0} variant={pdvDefaults ? pdvVariant("custo_impressao_ingresso") : "cost"} />
+                  <SimulatorInput label="Impressão / Cortesia" value={inputs.pdv.custo_impressao_cortesia} onChange={(v) => upd("pdv")("custo_impressao_cortesia")(v)} prefix="R$" step={0.01} min={0} variant={pdvDefaults ? pdvVariant("custo_impressao_cortesia") : "cost"} />
+                  <SimulatorInput label="Cancelamento" value={inputs.pdv.custo_cancelamento} onChange={(v) => upd("pdv")("custo_cancelamento")(v)} prefix="R$" step={0.01} min={0} variant={pdvDefaults ? pdvVariant("custo_cancelamento") : "cost"} />
                 </div>
               </div>
             )}
