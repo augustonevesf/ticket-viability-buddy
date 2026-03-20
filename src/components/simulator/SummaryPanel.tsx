@@ -61,7 +61,18 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
 
   const regiao = taxaAdministrativa !== undefined && taxaAdministrativa <= 0.10 ? "RJ (Lei 6.103/2011)" : "Brasil";
 
+  const camposObrigatorios = [
+    { campo: "Nome do Cliente", valido: !!inputs.cliente.nome.trim() },
+    { campo: "CNPJ ou CPF", valido: !!inputs.cliente.cnpj.trim() },
+    { campo: "Nome do Executivo", valido: !!inputs.cliente.executivo.trim() },
+    { campo: "Tipo de Contrato", valido: !!inputs.cliente.tipo },
+    { campo: "Tempo de Contrato", valido: inputs.cliente.tempo_contrato > 0 },
+  ];
+  const camposFaltando = camposObrigatorios.filter((c) => !c.valido);
+  const podeExportar = camposFaltando.length === 0;
+
   const handleExportPDF = async () => {
+    if (!podeExportar) return;
     const { exportPDF } = await import("@/utils/exportReport");
     exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, regiao);
   };
