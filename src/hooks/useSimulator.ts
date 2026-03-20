@@ -193,7 +193,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const receita_processamento = tpv_online * C.split_online.credito * inputs.taxa.taxa_processamento;
 
     let receita_minima = 0;
-    if (inputs.taxa.taxa_minima_ativa && ticket_medio > 0 && ticket_medio < 25) {
+    if (ticket_medio > 0 && ticket_medio < 25) {
       receita_minima = inputs.evento.publico_estimado * inputs.taxa.valor_taxa_minima;
     }
 
