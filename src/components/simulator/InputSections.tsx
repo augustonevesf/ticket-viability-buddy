@@ -149,12 +149,21 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </SectionCard>
 
       {/* BLOCO 2 — Informações Básicas */}
-      <SectionCard title="Informações Básicas Evento / Agência">
+      <SectionCard title={inputs.cliente.tipo === "anual" ? "Informações Básicas Agência" : "Informações Básicas Evento"}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SimulatorInput label="TPV Estimado" value={inputs.evento.tpv_total} onChange={(v) => upd("evento")("tpv_total")(v)} prefix="R$" min={0} allowEmpty />
-          <SimulatorInput label="Quantidade de Público Estimado" value={inputs.evento.publico_estimado} onChange={(v) => upd("evento")("publico_estimado")(v)} min={0} allowEmpty />
+          <SimulatorInput label="TPV Estimado Online" value={inputs.evento.tpv_total} onChange={(v) => upd("evento")("tpv_total")(v)} prefix="R$" min={0} allowEmpty />
+          <SimulatorInput label="TPV Estimado PDV" value={inputs.pdv.tpv_pdv} onChange={(v) => upd("pdv")("tpv_pdv")(v)} prefix="R$" min={0} allowEmpty />
         </div>
-        {inputs.evento.tpv_total > 0 && inputs.evento.publico_estimado > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <SimulatorInput
+            label={inputs.cliente.tipo === "anual" ? "Público Anual Estimado" : "Público Estimado Evento"}
+            value={inputs.evento.publico_estimado}
+            onChange={(v) => upd("evento")("publico_estimado")(v)}
+            min={0}
+            allowEmpty
+          />
+        </div>
+        {inputs.cliente.tipo === "pontual" && inputs.evento.tpv_total > 0 && inputs.evento.publico_estimado > 0 && (
           <div className="mt-4 pt-4 border-t border-border">
             <ReadOnly
               label="Ticket Médio (calculado)"
