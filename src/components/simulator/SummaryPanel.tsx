@@ -68,7 +68,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
 
-  const regiao = taxaAdministrativa !== undefined && taxaAdministrativa <= 0.10 ? "RJ (Lei 6.103/2011)" : "Brasil";
+  const regiao = inputs.taxa.regiao === "rj" ? "RJ (Lei 6.103/2011)" : "Brasil";
 
   const camposObrigatorios = [
     { campo: "Nome do Cliente", valido: !!inputs.cliente.nome.trim() },
