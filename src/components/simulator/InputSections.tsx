@@ -351,8 +351,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             onClick={() => upd("extras")("advance_ativo")(!inputs.extras.advance_ativo)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               inputs.extras.advance_ativo
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground"
+                ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                : "bg-muted text-muted-foreground scale-100"
             }`}
           >
             {inputs.extras.advance_ativo ? "Ativo" : "Ativar Advance"}
