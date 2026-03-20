@@ -65,6 +65,7 @@ export function exportPDF(
   tipoContrato?: "pontual" | "anual",
   tempoContrato?: number,
   exclusividade?: boolean,
+  regiao?: string,
 ) {
   const doc = new jsPDF();
   const now = new Date();
