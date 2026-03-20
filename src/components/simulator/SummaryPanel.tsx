@@ -130,6 +130,12 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
               {formatPercent(results.taxa_liquida)}
             </span>
           </div>
+          {results.rebate_valor > 0 && (
+            <div className="flex justify-between items-center py-1">
+              <span className="text-xs text-warning">Rebate concedido</span>
+              <span className="text-xs font-medium tabular-nums text-warning">{formatCurrency(results.rebate_valor)}</span>
+            </div>
+          )}
           {results.ticket_medio > 0 && (
             <div className="flex justify-between items-center py-1.5">
               <span className="text-xs font-medium text-muted-foreground tracking-wide">Ticket Médio</span>
