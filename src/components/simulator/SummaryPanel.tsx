@@ -44,6 +44,7 @@ const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?
 
 interface Props {
   results: SimulatorResults;
+  inputs: SimulatorInputs;
   clienteName?: string;
   executivoName?: string;
   tipoContrato?: "pontual" | "anual";
