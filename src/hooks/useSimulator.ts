@@ -136,7 +136,7 @@ export interface SimulatorResults {
   patrocinio_valor: number;
   pulse_pago_valor: number;
 
-  status: "Excelente" | "Saudável" | "Atenção";
+  status: "Excelente" | "Boa" | "Saudável" | "Atenção";
   alerta: boolean;
 
   pdv: PdvResults;
