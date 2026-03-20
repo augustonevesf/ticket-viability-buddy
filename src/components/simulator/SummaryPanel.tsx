@@ -10,11 +10,13 @@ const formatCurrency = (v: number) =>
 const formatPercent = (v: number) =>
   (v * 100).toFixed(2) + "%";
 
-const statusConfig: Record<DealStatus, { bg: string; text: string; label: string; frase: string }> = {
-  "Atenção": { bg: "bg-warning/10", text: "text-warning", label: "⚠️ Atenção", frase: "Não vai ser fácil, mas vai valer a pena 💪" },
-  "Saudável": { bg: "bg-blue-500/10", text: "text-blue-500", label: "👍 Saudável", frase: "A festa não para! Quem sabe faz ao vivo 🎤" },
-  "Boa": { bg: "bg-success/10", text: "text-success", label: "✅ Boa", frase: "Joga junto pra ganhar o jogo! 🏆" },
-  "Excelente": { bg: "bg-purple-500/10", text: "text-purple-500", label: "🚀 Excelente", frase: "Rumo ao IPO! 🚀" },
+const statusConfig: Record<DealStatus, { bg: string; text: string; label: string; frase: string; barColor: string }> = {
+  "Negativo": { bg: "bg-black/10", text: "text-black dark:text-white", label: "💀 Negativo", frase: "Operação inviável", barColor: "bg-black" },
+  "Ruim": { bg: "bg-[hsl(0,72%,51%)]/10", text: "text-[hsl(0,72%,51%)]", label: "🚨 Ruim", frase: "Prejuízo / crítico", barColor: "bg-[hsl(0,72%,51%)]" },
+  "Atenção": { bg: "bg-[hsl(48,97%,53%)]/10", text: "text-[hsl(48,97%,53%)]", label: "⚠️ Atenção", frase: "Não vai ser fácil, mas vai valer a pena 💛", barColor: "bg-[hsl(48,97%,53%)]" },
+  "Saudável": { bg: "bg-[hsl(217,91%,60%)]/10", text: "text-[hsl(217,91%,60%)]", label: "🎉 Saudável", frase: "A festa não para 🎉", barColor: "bg-[hsl(217,91%,60%)]" },
+  "Boa": { bg: "bg-[hsl(170,100%,22%)]/10", text: "text-[hsl(170,100%,22%)]", label: "💪 Boa", frase: "Joga junto pra ganhar o jogo 💪", barColor: "bg-[hsl(170,100%,22%)]" },
+  "Excelente": { bg: "bg-[hsl(110,100%,56%)]/10", text: "text-[hsl(110,100%,56%)]", label: "🚀 Excelente", frase: "Rumo ao IPO 🚀", barColor: "bg-[hsl(110,100%,56%)]" },
 };
 
 const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value, className }) => (
@@ -61,7 +63,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
   // Se tem produtos extras que aumentam margem, troca a frase
   const temProdutosExtras = inputs.taxa.taxa_processamento > 0 || inputs.taxa.taxa_antecipacao > 0;
   if (temProdutosExtras && (results.status === "Boa" || results.status === "Excelente")) {
-    cfg.frase = "Ouse sonhar, ouse inovar! 🌟";
+    cfg.frase = "Ouse sonhar, ouse inovar! 🏆";
   }
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
@@ -144,9 +146,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             </p>
             <div className="w-2.5 h-24 bg-muted rounded-full overflow-hidden relative">
               <motion.div
-                className={`absolute bottom-0 left-0 right-0 rounded-full ${
-                  results.margem_sobre_tpv < 3 ? "bg-warning" : results.margem_sobre_tpv < 5 ? "bg-blue-500" : results.margem_sobre_tpv < 7 ? "bg-success" : "bg-purple-500"
-                }`}
+                className={`absolute bottom-0 left-0 right-0 rounded-full ${cfg.barColor}`}
                 animate={{ height: `${barPct}%` }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               />

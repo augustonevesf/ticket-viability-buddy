@@ -142,7 +142,7 @@ export interface SimulatorResults {
   suporte_premium_elegivel: boolean;
   suporte_premium_receita: number;
 
-  status: "Excelente" | "Boa" | "Saudável" | "Atenção";
+  status: "Excelente" | "Boa" | "Saudável" | "Atenção" | "Ruim" | "Negativo";
   alerta: boolean;
 
   pdv: PdvResults;
@@ -282,12 +282,14 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
     let status: SimulatorResults["status"];
-    if (margem_sobre_tpv >= 7) status = "Excelente";
-    else if (margem_sobre_tpv >= 5) status = "Boa";
-    else if (margem_sobre_tpv >= 3) status = "Saudável";
-    else status = "Atenção";
+    if (margem < 0) status = "Negativo";
+    else if (margem_sobre_tpv < 1.5) status = "Ruim";
+    else if (margem_sobre_tpv < 3) status = "Atenção";
+    else if (margem_sobre_tpv < 5) status = "Saudável";
+    else if (margem_sobre_tpv < 7) status = "Boa";
+    else status = "Excelente";
 
-    const alerta = margem <= 0 || margem_sobre_tpv < 1;
+    const alerta = margem < 0 || margem_sobre_tpv < 1.5;
 
     // ── PDV (ignorado se 100% online) ──
     const is100Online = inputs.distribuicao.online_percent >= 1;
