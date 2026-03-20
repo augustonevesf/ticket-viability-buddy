@@ -22,10 +22,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">Simulador Zig</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Viabilidade comercial em tempo real
-          </p>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Viabilidade Comercial Tickets</h1>
         </div>
         <button
           onClick={() => setDark(!dark)}
