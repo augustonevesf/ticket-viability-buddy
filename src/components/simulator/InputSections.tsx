@@ -488,82 +488,117 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </SectionCard>
 
       {/* ═══════════════════ ADVANCE ═══════════════════ */}
-      <SectionCard title="💰 Advance">
-        <p className="text-xs text-muted-foreground mb-3">
-          Valor adiantado ao produtor que retorna integralmente à Zig com juros.
-        </p>
-        <SimulatorToggle
-          label="Ativar Advance"
-          checked={inputs.extras.advance_ativo}
-          onChange={(v) => upd("extras")("advance_ativo")(v as any)}
-        />
-        {inputs.extras.advance_ativo && (
-          <div className="mt-4 space-y-3">
-            <SimulatorInput
-              label="Valor emprestado"
-              value={inputs.extras.advance_valor}
-              onChange={(v) => upd("extras")("advance_valor")(v)}
-              prefix="R$"
-              min={0}
-              allowEmpty
-            />
-            <SimulatorInput
-              label="Taxa de juros (a.m.)"
-              value={inputs.extras.advance_juros_am}
-              onChange={(v) => upd("extras")("advance_juros_am")(v)}
-              suffix="%"
-              step={0.1}
-              min={0}
-              allowEmpty
-            />
-            {inputs.extras.advance_valor > 0 && (
-              <div className="bg-muted/60 rounded-xl p-3 space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Receita de juros</span>
-                  <span className="font-semibold text-foreground tabular-nums">
-                    {(inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Juros mínimo (R$ 2.500/mês)</span>
-                  <span className={`font-semibold tabular-nums ${inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100) >= 2500 ? "text-emerald-600" : "text-[hsl(0,72%,51%)]"}`}>
-                    {inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100) >= 2500 ? "✓ Acima do mínimo" : "✗ Abaixo do mínimo"}
-                  </span>
-                </div>
-              </div>
-            )}
+      {(() => {
+        const hasExclusividade = inputs.cliente.exclusividade;
+        const TPV = inputs.evento.tpv_total;
+        const advanceLimit = TPV * 0.30;
+        const advanceExcede = inputs.extras.advance_ativo && inputs.extras.advance_valor > advanceLimit && TPV > 0;
+
+        return (
+          <div className={!hasExclusividade ? "opacity-50 pointer-events-none select-none" : ""}>
+            <SectionCard title="💰 Advance">
+              <p className="text-xs text-muted-foreground mb-3">
+                Valor adiantado ao produtor que retorna integralmente à Zig com juros.
+                {!hasExclusividade && <span className="font-semibold text-[hsl(48,97%,53%)]"> 🔒 Requer exclusividade.</span>}
+              </p>
+              {hasExclusividade && (
+                <>
+                  <SimulatorToggle
+                    label="Ativar Advance"
+                    checked={inputs.extras.advance_ativo}
+                    onChange={(v) => upd("extras")("advance_ativo")(v as any)}
+                  />
+                  {inputs.extras.advance_ativo && (
+                    <div className="mt-4 space-y-3">
+                      <SimulatorInput
+                        label="Valor emprestado"
+                        value={inputs.extras.advance_valor}
+                        onChange={(v) => upd("extras")("advance_valor")(v)}
+                        prefix="R$"
+                        min={0}
+                        allowEmpty
+                      />
+                      {TPV > 0 && (
+                        <p className={`text-xs font-medium ${advanceExcede ? "text-[hsl(0,72%,51%)]" : "text-muted-foreground"}`}>
+                          {advanceExcede
+                            ? `⚠️ Risco: valor excede 30% do faturamento (limite sugerido: ${advanceLimit.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })})`
+                            : `Limite sugerido (30% do TPV): ${advanceLimit.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`}
+                        </p>
+                      )}
+                      <SimulatorInput
+                        label="Taxa de juros (a.m.)"
+                        value={inputs.extras.advance_juros_am}
+                        onChange={(v) => upd("extras")("advance_juros_am")(v)}
+                        suffix="%"
+                        step={0.1}
+                        min={0}
+                        allowEmpty
+                      />
+                      {inputs.extras.advance_valor > 0 && (
+                        <div className="bg-muted/60 rounded-xl p-3 space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">Receita de juros</span>
+                            <span className="font-semibold text-foreground tabular-nums">
+                              {(inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">Juros mínimo (R$ 2.500/mês)</span>
+                            <span className={`font-semibold tabular-nums ${inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100) >= 2500 ? "text-emerald-600" : "text-[hsl(0,72%,51%)]"}`}>
+                              {inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100) >= 2500 ? "✓ Acima do mínimo" : "✗ Abaixo do mínimo"}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </SectionCard>
           </div>
-        )}
-      </SectionCard>
+        );
+      })()}
 
       {/* ═══════════════════ PATROCÍNIO ═══════════════════ */}
-      <SectionCard title="🤝 Patrocínio">
-        <p className="text-xs text-muted-foreground mb-3">
-          Valor pago ao cliente como patrocínio — dedução direta da margem Zig. Precisa fazer sentido financeiro.
-        </p>
-        <SimulatorToggle
-          label="Ativar Patrocínio"
-          checked={inputs.extras.patrocinio_ativo}
-          onChange={(v) => upd("extras")("patrocinio_ativo")(v as any)}
-        />
-        {inputs.extras.patrocinio_ativo && (
-          <div className="mt-4 space-y-3">
-            <SimulatorInput
-              label="Valor do Patrocínio"
-              value={inputs.extras.patrocinio_valor}
-              onChange={(v) => upd("extras")("patrocinio_valor")(v)}
-              prefix="R$"
-              min={0}
-              allowEmpty
-            />
-            {inputs.extras.patrocinio_valor > 0 && (
-              <p className="text-xs text-[hsl(0,72%,51%)] font-medium">
-                ⚠️ Dedução de {inputs.extras.patrocinio_valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} na margem
+      {(() => {
+        const hasExclusividade = inputs.cliente.exclusividade;
+        return (
+          <div className={!hasExclusividade ? "opacity-50 pointer-events-none select-none" : ""}>
+            <SectionCard title="🤝 Patrocínio">
+              <p className="text-xs text-muted-foreground mb-3">
+                Valor pago ao cliente como patrocínio — dedução direta da margem Zig.
+                {!hasExclusividade && <span className="font-semibold text-[hsl(48,97%,53%)]"> 🔒 Requer exclusividade.</span>}
               </p>
-            )}
+              {hasExclusividade && (
+                <>
+                  <SimulatorToggle
+                    label="Ativar Patrocínio"
+                    checked={inputs.extras.patrocinio_ativo}
+                    onChange={(v) => upd("extras")("patrocinio_ativo")(v as any)}
+                  />
+                  {inputs.extras.patrocinio_ativo && (
+                    <div className="mt-4 space-y-3">
+                      <SimulatorInput
+                        label="Valor do Patrocínio"
+                        value={inputs.extras.patrocinio_valor}
+                        onChange={(v) => upd("extras")("patrocinio_valor")(v)}
+                        prefix="R$"
+                        min={0}
+                        allowEmpty
+                      />
+                      {inputs.extras.patrocinio_valor > 0 && (
+                        <p className="text-xs text-[hsl(0,72%,51%)] font-medium">
+                          ⚠️ Dedução de {inputs.extras.patrocinio_valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} na margem
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </SectionCard>
           </div>
-        )}
-      </SectionCard>
+        );
+      })()}
 
       {/* ═══════════════════ ZIG PULSE PAGO ═══════════════════ */}
       <SectionCard title="⚡ Zig Pulse Pago">
