@@ -55,6 +55,7 @@ export interface SimulatorInputs {
     online_percent: number;
   };
   taxa: {
+    regiao: "brasil" | "rj";
     taxa_administrativa: number;
     rebate: number;
     taxa_antecipacao: number;
