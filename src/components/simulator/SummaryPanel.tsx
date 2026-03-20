@@ -30,12 +30,16 @@ const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value,
   </AnimatePresence>
 );
 
-const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?: boolean; destructive?: boolean }> = ({ label, value, muted, bold, destructive }) => (
-  <div className="flex justify-between items-center py-1.5">
-    <span className={`text-sm ${destructive ? "text-destructive" : muted ? "text-muted-foreground" : bold ? "font-semibold text-foreground" : "text-foreground/80"}`}>{label}</span>
-    <span className={`text-sm tabular-nums ${destructive ? "text-destructive font-medium" : muted ? "text-muted-foreground" : bold ? "font-bold text-foreground" : "font-medium text-foreground"}`}>{value}</span>
-  </div>
-);
+const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?: boolean; destructive?: boolean; success?: boolean }> = ({ label, value, muted, bold, destructive, success }) => {
+  const labelClass = destructive ? "text-destructive" : success ? "text-success" : muted ? "text-muted-foreground" : bold ? "font-semibold text-foreground" : "text-foreground/80";
+  const valueClass = destructive ? "text-destructive font-medium" : success ? "text-success font-medium" : muted ? "text-muted-foreground" : bold ? "font-bold text-foreground" : "font-medium text-foreground";
+  return (
+    <div className="flex justify-between items-center py-1.5">
+      <span className={`text-sm ${labelClass}`}>{label}</span>
+      <span className={`text-sm tabular-nums ${valueClass}`}>{value}</span>
+    </div>
+  );
+};
 
 interface Props {
   results: SimulatorResults;
@@ -164,15 +168,15 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
             {results.rebate_valor > 0 && (
               <MetricRow label="(−) Rebate concedido" value={formatCurrency(results.rebate_valor)} destructive />
             )}
-            <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
+            <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} success />
             {results.receita_antecipacao > 0 && (
-              <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} muted />
+              <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} success />
             )}
             {results.receita_processamento > 0 && (
-              <MetricRow label="(+) Receita Processamento" value={formatCurrency(results.receita_processamento)} muted />
+              <MetricRow label="(+) Receita Processamento" value={formatCurrency(results.receita_processamento)} success />
             )}
             {results.receita_minima > 0 && (
-              <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} muted />
+              <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} success />
             )}
             <MetricRow label="Receita Bruta" value={formatCurrency(results.receita_bruta)} bold />
           </div>
@@ -192,13 +196,13 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0) && (
             <div className="py-3">
               {results.advance_receita_juros > 0 && (
-                <MetricRow label="(+) Advance — Juros" value={formatCurrency(results.advance_receita_juros)} />
+                <MetricRow label="(+) Advance — Juros" value={formatCurrency(results.advance_receita_juros)} success />
               )}
               {results.pulse_pago_valor > 0 && (
-                <MetricRow label="(+) Zig Pulse Pago" value={formatCurrency(results.pulse_pago_valor)} />
+                <MetricRow label="(+) Zig Pulse Pago" value={formatCurrency(results.pulse_pago_valor)} success />
               )}
               {results.patrocinio_valor > 0 && (
-                <MetricRow label="(−) Patrocínio" value={formatCurrency(results.patrocinio_valor)} />
+                <MetricRow label="(−) Patrocínio" value={formatCurrency(results.patrocinio_valor)} destructive />
               )}
             </div>
           )}
@@ -222,8 +226,8 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
               <MetricRow label="Débito/Pix (30%)" value={formatCurrency(pdv.tpv_debito_pix)} muted />
             </div>
             <div className="py-3">
-              <MetricRow label="Receita Crédito" value={formatCurrency(pdv.receita_credito)} muted />
-              <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} muted />
+              <MetricRow label="Receita Crédito" value={formatCurrency(pdv.receita_credito)} success />
+              <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} success />
               <MetricRow label="Receita Total Zig" value={formatCurrency(pdv.receita_total)} bold />
             </div>
             <div className="py-3">
