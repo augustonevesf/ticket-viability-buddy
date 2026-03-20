@@ -57,7 +57,14 @@ function buildRows(r: SimulatorResults): string[][] {
   return rows;
 }
 
-export function exportPDF(results: SimulatorResults, clienteName?: string, executivoName?: string) {
+export function exportPDF(
+  results: SimulatorResults,
+  clienteName?: string,
+  executivoName?: string,
+  tipoContrato?: "pontual" | "anual",
+  tempoContrato?: number,
+  exclusividade?: boolean,
+) {
   const doc = new jsPDF();
   const now = new Date();
   const dateStr = now.toLocaleDateString("pt-BR");
