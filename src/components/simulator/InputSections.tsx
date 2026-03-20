@@ -107,7 +107,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         <div className="mt-4 pt-4 border-t border-border">
           <div className="flex items-center gap-3 mb-4">
             <button
-              onClick={() => upd("cliente")("tipo")("pontual")}
+              onClick={() => { upd("cliente")("tipo")("pontual"); upd("cliente")("exclusividade")(false); }}
               className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 inputs.cliente.tipo === "pontual"
                   ? "bg-primary text-primary-foreground scale-105 shadow-sm"
@@ -138,13 +138,15 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             />
           </div>
 
-          <div className="mt-4">
-            <SimulatorToggle
-              label="Exclusividade"
-              checked={inputs.cliente.exclusividade}
-              onChange={(v) => upd("cliente")("exclusividade")(v)}
-            />
-          </div>
+          {inputs.cliente.tipo === "anual" && (
+            <div className="mt-4">
+              <SimulatorToggle
+                label="Exclusividade"
+                checked={inputs.cliente.exclusividade}
+                onChange={(v) => upd("cliente")("exclusividade")(v)}
+              />
+            </div>
+          )}
         </div>
       </SectionCard>
 
