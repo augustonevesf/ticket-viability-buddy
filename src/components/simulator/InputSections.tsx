@@ -149,12 +149,21 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </SectionCard>
 
       {/* BLOCO 2 — Informações Básicas */}
-      <SectionCard title="Informações Básicas Evento / Agência">
+      <SectionCard title={inputs.cliente.tipo === "anual" ? "Informações Básicas Agência" : "Informações Básicas Evento"}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SimulatorInput label="TPV Estimado" value={inputs.evento.tpv_total} onChange={(v) => upd("evento")("tpv_total")(v)} prefix="R$" min={0} allowEmpty />
-          <SimulatorInput label="Quantidade de Público Estimado" value={inputs.evento.publico_estimado} onChange={(v) => upd("evento")("publico_estimado")(v)} min={0} allowEmpty />
+          <SimulatorInput label="TPV Estimado Online" value={inputs.evento.tpv_total} onChange={(v) => upd("evento")("tpv_total")(v)} prefix="R$" min={0} allowEmpty />
+          <SimulatorInput label="TPV Estimado PDV" value={inputs.pdv.tpv_pdv} onChange={(v) => upd("pdv")("tpv_pdv")(v)} prefix="R$" min={0} allowEmpty />
         </div>
-        {inputs.evento.tpv_total > 0 && inputs.evento.publico_estimado > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <SimulatorInput
+            label={inputs.cliente.tipo === "anual" ? "Público Anual Estimado" : "Público Estimado Evento"}
+            value={inputs.evento.publico_estimado}
+            onChange={(v) => upd("evento")("publico_estimado")(v)}
+            min={0}
+            allowEmpty
+          />
+        </div>
+        {inputs.cliente.tipo === "pontual" && inputs.evento.tpv_total > 0 && inputs.evento.publico_estimado > 0 && (
           <div className="mt-4 pt-4 border-t border-border">
             <ReadOnly
               label="Ticket Médio (calculado)"
@@ -195,7 +204,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             }}
             className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.regiao === "rj"
-                ? "text-white border-stone-800 shadow-md scale-110"
+                ? "text-white border-stone-900 shadow-lg scale-110 ring-1 ring-stone-700"
                 : "text-muted-foreground/50 border-border opacity-40 scale-100"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
@@ -205,8 +214,9 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               backgroundRepeat: "repeat",
             }}
           >
-            <span className={`relative z-10 px-1.5 py-0.5 rounded ${inputs.taxa.regiao === "rj" ? "bg-black/70 text-white" : ""}`}>
-              RJ — Máx. 10%
+            <span className="absolute inset-0 bg-black/60 z-0" />
+            <span className={`relative z-10 px-1.5 py-0.5 rounded font-extrabold ${inputs.taxa.regiao === "rj" ? "bg-black/80 text-white" : ""}`}>
+              🔒 RJ — MÁX 10%
             </span>
           </button>
           {inputs.taxa.regiao === "rj" && (
@@ -258,8 +268,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           </div>
 
           <SectionCard title="Volume Financeiro (PDV)" accent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <SimulatorInput label="TPV Vendas Físicas" value={inputs.pdv.tpv_pdv} onChange={(v) => upd("pdv")("tpv_pdv")(v)} prefix="R$" min={0} allowEmpty />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
               <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
               <SimulatorInput label="Ingressos Emitidos (Esperados)" value={inputs.pdv.ingressos_esperados} onChange={(v) => upd("pdv")("ingressos_esperados")(v)} min={0} allowEmpty />
             </div>
