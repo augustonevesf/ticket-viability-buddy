@@ -261,8 +261,24 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const patrocinio_valor = ext.patrocinio_ativo ? ext.patrocinio_valor : 0;
     const pulse_pago_valor = ext.pulse_pago_ativo ? ext.pulse_pago_valor : 0;
 
+    // ── Suporte Premium ──
+    // Elegível: pontual >= 75k OU agência com >= 300k em contrato <= 3 meses
+    const isPontual = inputs.cliente.tipo === "pontual";
+    const suporte_premium_elegivel = isPontual
+      ? TPV >= 75000
+      : (TPV >= 300000 && inputs.cliente.tempo_contrato > 0 && inputs.cliente.tempo_contrato <= 3);
+    
+    let suporte_premium_receita = 0;
+    if (ext.suporte_premium_ativo && suporte_premium_elegivel) {
+      if (ext.suporte_premium_tipo === "percentual") {
+        suporte_premium_receita = receita_bruta * (ext.suporte_premium_percentual / 100);
+      } else {
+        suporte_premium_receita = ext.suporte_premium_setup;
+      }
+    }
+
     // ── Margem ──
-    const margem = receita_liquida - custos_totais + advance_receita_juros - patrocinio_valor + pulse_pago_valor;
+    const margem = receita_liquida - custos_totais + advance_receita_juros - patrocinio_valor + pulse_pago_valor + suporte_premium_receita;
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
     let status: SimulatorResults["status"];
