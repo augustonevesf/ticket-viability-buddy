@@ -196,13 +196,13 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0) && (
             <div className="py-3">
               {results.advance_receita_juros > 0 && (
-                <MetricRow label="(+) Advance — Juros" value={formatCurrency(results.advance_receita_juros)} />
+                <MetricRow label="(+) Advance — Juros" value={formatCurrency(results.advance_receita_juros)} success />
               )}
               {results.pulse_pago_valor > 0 && (
-                <MetricRow label="(+) Zig Pulse Pago" value={formatCurrency(results.pulse_pago_valor)} />
+                <MetricRow label="(+) Zig Pulse Pago" value={formatCurrency(results.pulse_pago_valor)} success />
               )}
               {results.patrocinio_valor > 0 && (
-                <MetricRow label="(−) Patrocínio" value={formatCurrency(results.patrocinio_valor)} />
+                <MetricRow label="(−) Patrocínio" value={formatCurrency(results.patrocinio_valor)} destructive />
               )}
             </div>
           )}
