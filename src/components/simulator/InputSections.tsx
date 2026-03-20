@@ -185,14 +185,25 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           </button>
           <button
             onClick={() => upd("taxa")("taxa_administrativa")(0.10)}
-            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all border ${
+            className={`relative px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.taxa_administrativa <= 0.10
-                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
-                : "bg-muted text-muted-foreground/50 border-border"
+                ? "text-stone-800 border-stone-400 shadow-sm"
+                : "text-muted-foreground/50 border-border opacity-50"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
+            style={inputs.taxa.taxa_administrativa <= 0.10 ? {
+              background: `repeating-linear-gradient(
+                135deg,
+                #f5f0e8 0px, #f5f0e8 6px,
+                #1a1a1a 6px, #1a1a1a 8px,
+                #f5f0e8 8px, #f5f0e8 14px,
+                #1a1a1a 14px, #1a1a1a 16px
+              )`,
+            } : undefined}
           >
-            RJ — Máx. 10%
+            <span className={`relative z-10 ${inputs.taxa.taxa_administrativa <= 0.10 ? "bg-white/80 px-1.5 py-0.5 rounded" : ""}`}>
+              RJ — Máx. 10%
+            </span>
           </button>
           <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
             RJ: Lei 6.103/2011 — conveniência limitada a 10% do valor de face (Lei 6321/2012).
