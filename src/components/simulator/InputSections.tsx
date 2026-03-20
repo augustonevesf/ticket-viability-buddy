@@ -68,19 +68,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* TOGGLE — Mapa de Assentos */}
-      <SectionCard title="Configuração de Evento">
-        <SimulatorToggle
-          label="🪑 Mapa de Assentos (Lugar Marcado)"
-          checked={inputs.mapa_assentos}
-          onChange={(v) => updRoot("mapa_assentos")(v)}
-        />
-        {inputs.mapa_assentos && (
-          <p className="text-xs text-muted-foreground mt-2">
-            ✅ Ativado — Custo de R$ 0,80 por lugar marcado (Seats I/O) será aplicado.
-          </p>
-        )}
-      </SectionCard>
 
       {/* BLOCO 1 — Cliente / Produtora */}
       <SectionCard title="Cliente / Produtora">
@@ -417,6 +404,15 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       <div className="mt-2">
         <h2 className="text-sm font-bold text-muted-foreground/50 uppercase tracking-widest mb-3">Módulos Extras</h2>
       </div>
+
+      {/* Mapa de Assentos */}
+      <SectionCard title="🪑 Mapa de Assentos">
+        <SimulatorToggle
+          label="Lugar Marcado (Seats I/O)"
+          checked={inputs.mapa_assentos}
+          onChange={(v) => updRoot("mapa_assentos")(v)}
+        />
+      </SectionCard>
 
       {/* Suporte Premium Tickets */}
       <SectionCard title="Suporte Premium Tickets">
