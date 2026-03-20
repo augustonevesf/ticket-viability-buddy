@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface SimulatorInputProps {
   label: string;
@@ -14,10 +14,84 @@ interface SimulatorInputProps {
   allowEmpty?: boolean;
 }
 
+// Converte string com vírgula ou ponto para numero float
+function parseBR(raw: string): number {
+  // Substitui täo para no numero formatado: R$ 1.234,56 -> 1234.56
+  // Aceita tanto virgula quanto ponto como separador decimal
+  let normalized = raw.trim();
+
+  // Se tem virgula E ponto, descobre qual é decimal pelo posicionamento
+  const hasComma = normalized.includes(",");
+  const hasDot = normalized.includes(".");
+
+  if (hasComma && hasDot) {
+    // Formato pt-BR: 1.234,56 -> 1234.56
+    // formato en-US: 1,234.56 -> 1234.56
+    const lastComma = normalized.lastIndexOf(",");
+    const lastDot = normalized.lastIndexOf(".");
+    if (lastComma > lastDot) {
+      // vírgula é decimal: 1.234,56
+      normalized = normalized.replaceAll(".", "").replace(",", ".");
+    } else {
+      // ponto é decimal: 1,234.56
+      normalized = normalized.replaceAll(",", "");
+    }
+  } else if (hasComma) {
+    // Só vi�ula: trata como decimal pt-BR => 1,23 -> 1.23
+    normalized = normalized.replace(",", ".");
+  }
+  // Só ponto: mantém como está (decimal en-US)
+
+  return parseFloat(normalized);
+}
+
 export const SimulatorInput: React.FC<SimulatorInputProps> = ({
   label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty,
 }) => {
-  const displayValue = allowEmpty && value === 0 ? "" : value;
+  // internal text state para permitir digitação livre
+  const [rawText, setRawText] = useState<string>(() => {
+    if (allowEmpty && value === 0) return "";
+    return String(value);
+  });
+
+  // Sincroniza rawText se o valor externo mudar programaticamente
+  // (ex: reset ou carregar dados)
+  useEffect(() => {
+    const parsed = parseBR(rawText);
+    const isEqual = !isNaN(parsed) && Math.abs(parsed - value) < 0.00001;
+    if (!isEqual) {
+      setRawText(allowEmpty && value === 0 ? "" : String(value));
+    }
+  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    setRawText(raw);
+
+    if (raw === "" || raw === "-") {
+      if (allowEmpty) onChange(0);
+      return;
+    }
+
+    const num = parseBR(raw);
+    if (!isNaN(num)) {
+      if (max !== undefined && num > max) onChange(max);
+      else if (min !== undefined && num < min) onChange(min);
+      else onChange(num);
+    }
+  };
+
+  const handleBlur = () => {
+    // Normaliza a exibição ao perder foco
+    if (rawText === "" || rawText === "-") {
+      setRawText(allowEmpty ? "" : "0");
+      return;
+    }
+    const num = parseBR(rawText);
+    if (!isNaN(num)) {
+      setRawText(String(num));
+    }
+  };
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -31,19 +105,11 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
           </span>
         )}
         <input
-          type="number"
-          value={displayValue}
-          onChange={(e) => {
-            const raw = e.target.value;
-            if (raw === "" && allowEmpty) {
-              onChange(0);
-            } else {
-              onChange(parseFloat(raw) || 0);
-            }
-          }}
-          step={step}
-          min={min}
-          max={max}
+          type="text"
+          inputMode="decimal"
+          value={rawText}
+          onChange={handleChange}
+          onBlur={handleBlur}
           disabled={disabled}
           placeholder={allowEmpty ? "0" : undefined}
           className={`w-full bg-input border rounded-xl px-3 py-2.5 text-sm tabular-nums outline-none transition-all
