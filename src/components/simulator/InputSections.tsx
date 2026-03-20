@@ -341,83 +341,28 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* ═══════════════════ EXTRAS ═══════════════════ */}
       <div className="mt-2">
-        <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Módulos Extras</h2>
+        <h2 className="text-sm font-bold text-muted-foreground/50 uppercase tracking-widest mb-3">Módulos Extras — Em breve</h2>
       </div>
 
-      {/* Advance */}
-      <SectionCard title="Advance">
-        <div className="flex items-center gap-3 mb-3">
-          <button
-            onClick={() => upd("extras")("advance_ativo")(!inputs.extras.advance_ativo)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              inputs.extras.advance_ativo
-                ? "bg-primary text-primary-foreground scale-105 shadow-sm"
-                : "bg-muted text-muted-foreground scale-100"
-            }`}
-          >
-            {inputs.extras.advance_ativo ? "Ativo" : "Ativar Advance"}
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground mb-3">
-          Valor adiantado ao produtor que retorna à Zig com juros. Receita = valor × juros mensais.
-        </p>
-        {inputs.extras.advance_ativo && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <SimulatorInput label="Valor do Advance" value={inputs.extras.advance_valor} onChange={(v) => upd("extras")("advance_valor")(v)} prefix="R$" min={0} allowEmpty />
-            <SimulatorInput label="Juros a.m." value={inputs.extras.advance_juros_am} onChange={(v) => upd("extras")("advance_juros_am")(v)} suffix="%" step={0.1} min={0} />
-          </div>
-        )}
-        {inputs.extras.advance_ativo && inputs.extras.advance_valor > 0 && (
-          <div className="mt-3 p-3 bg-success/10 rounded-xl">
-            <p className="text-xs font-medium text-success">
-              (+) Receita de juros: R$ {(inputs.extras.advance_valor * inputs.extras.advance_juros_am / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} /mês
-            </p>
-          </div>
-        )}
-      </SectionCard>
+      <div className="opacity-50 pointer-events-none select-none space-y-4">
+        <SectionCard title="Advance">
+          <p className="text-xs text-muted-foreground">
+            Valor adiantado ao produtor que retorna à Zig com juros. <span className="font-medium">Em edição.</span>
+          </p>
+        </SectionCard>
 
-      {/* Patrocínio */}
-      <SectionCard title="Patrocínio">
-        <div className="flex items-center gap-3 mb-3">
-          <button
-            onClick={() => upd("extras")("patrocinio_ativo")(!inputs.extras.patrocinio_ativo)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              inputs.extras.patrocinio_ativo
-                ? "bg-destructive text-destructive-foreground scale-105 shadow-sm"
-                : "bg-muted text-muted-foreground scale-100"
-            }`}
-          >
-            {inputs.extras.patrocinio_ativo ? "Ativo" : "Ativar Patrocínio"}
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground mb-3">
-          Valor concedido como patrocínio. É uma dedução direta da margem Zig.
-        </p>
-        {inputs.extras.patrocinio_ativo && (
-          <SimulatorInput label="Valor do Patrocínio" value={inputs.extras.patrocinio_valor} onChange={(v) => upd("extras")("patrocinio_valor")(v)} prefix="R$" min={0} allowEmpty />
-        )}
-      </SectionCard>
+        <SectionCard title="Patrocínio">
+          <p className="text-xs text-muted-foreground">
+            Valor concedido como patrocínio — dedução direta da margem Zig. <span className="font-medium">Em edição.</span>
+          </p>
+        </SectionCard>
 
-      {/* Zig Pulse Pago */}
-      <SectionCard title="Zig Pulse Pago">
-        <div className="flex items-center gap-3 mb-3">
-          <button
-            onClick={() => upd("extras")("pulse_pago_ativo")(!inputs.extras.pulse_pago_ativo)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              inputs.extras.pulse_pago_ativo
-                ? "bg-primary text-primary-foreground scale-105 shadow-sm"
-                : "bg-muted text-muted-foreground scale-100"
-            }`}
-          >
-            {inputs.extras.pulse_pago_ativo ? "Ativo" : "Ativar Zig Pulse"}
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground mb-3">
-          Receita adicional Zig pelo uso do Pulse Pago.
-        </p>
-        {inputs.extras.pulse_pago_ativo && (
-          <SimulatorInput label="Valor Zig Pulse Pago" value={inputs.extras.pulse_pago_valor} onChange={(v) => upd("extras")("pulse_pago_valor")(v)} prefix="R$" min={0} allowEmpty />
-        )}
+        <SectionCard title="Zig Pulse Pago">
+          <p className="text-xs text-muted-foreground">
+            Receita adicional Zig pelo uso do Pulse Pago. <span className="font-medium">Em edição.</span>
+          </p>
+        </SectionCard>
+      </div>
       </SectionCard>
 
 
