@@ -13,7 +13,7 @@ function buildRows(r: SimulatorResults): string[][] {
     ["TPV Offline", fmt(r.tpv_offline)],
     ["Ticket Médio", fmt(r.ticket_medio)],
     ["", ""],
-    ["Taxa Líquida", pct(r.taxa_liquida)],
+    ["Taxa Adm. Plataforma", pct(r.taxa_liquida)],
     ["Receita Take", fmt(r.receita_take)],
   ];
   if (r.receita_antecipacao > 0) rows.push(["(+) Receita Antecipação", fmt(r.receita_antecipacao)]);
