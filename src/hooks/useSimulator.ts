@@ -139,6 +139,8 @@ export interface SimulatorResults {
   advance_receita_juros: number;
   patrocinio_valor: number;
   pulse_pago_valor: number;
+  suporte_premium_elegivel: boolean;
+  suporte_premium_receita: number;
 
   status: "Excelente" | "Boa" | "Saudável" | "Atenção";
   alerta: boolean;
