@@ -168,15 +168,15 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
             {results.rebate_valor > 0 && (
               <MetricRow label="(−) Rebate concedido" value={formatCurrency(results.rebate_valor)} destructive />
             )}
-            <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
+            <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} success />
             {results.receita_antecipacao > 0 && (
-              <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} muted />
+              <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} success />
             )}
             {results.receita_processamento > 0 && (
-              <MetricRow label="(+) Receita Processamento" value={formatCurrency(results.receita_processamento)} muted />
+              <MetricRow label="(+) Receita Processamento" value={formatCurrency(results.receita_processamento)} success />
             )}
             {results.receita_minima > 0 && (
-              <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} muted />
+              <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} success />
             )}
             <MetricRow label="Receita Bruta" value={formatCurrency(results.receita_bruta)} bold />
           </div>
