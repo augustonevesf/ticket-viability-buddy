@@ -81,7 +81,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
   const handleExportPDF = async () => {
     if (!podeExportar) return;
     const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, regiao);
+    exportPDF(results, inputs, regiao);
   };
 
   return (
