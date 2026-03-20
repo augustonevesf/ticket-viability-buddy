@@ -83,6 +83,60 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             placeholder="Responsável"
           />
         </div>
+        {/* Tipo + Contrato + Exclusividade */}
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              onClick={() => upd("cliente")("tipo")("pontual")}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                inputs.cliente.tipo === "pontual"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              Evento Pontual
+            </button>
+            <button
+              onClick={() => upd("cliente")("tipo")("anual")}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                inputs.cliente.tipo === "anual"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              Agência Anual
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SimulatorInput
+              label="Tempo de Contrato (meses)"
+              value={inputs.cliente.tempo_contrato}
+              onChange={(v) => upd("cliente")("tempo_contrato")(v)}
+              min={0}
+              allowEmpty
+            />
+          </div>
+
+          <div className="mt-4">
+            <SimulatorToggle
+              label="Exclusividade"
+              checked={inputs.cliente.exclusividade}
+              onChange={(v) => upd("cliente")("exclusividade")(v)}
+            />
+            {inputs.cliente.exclusividade && (
+              <div className="mt-3">
+                <SimulatorInput
+                  label="Tempo de Exclusividade (meses)"
+                  value={inputs.cliente.tempo_exclusividade}
+                  onChange={(v) => upd("cliente")("tempo_exclusividade")(v)}
+                  min={0}
+                  allowEmpty
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </SectionCard>
 
       {/* BLOCO 2 — Informações Básicas */}
