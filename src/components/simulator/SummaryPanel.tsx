@@ -14,7 +14,7 @@ const statusConfig: Record<DealStatus, { bg: string; text: string; label: string
   "Atenção": { bg: "bg-warning/10", text: "text-warning", label: "⚠️ Atenção", frase: "Não vai ser fácil, mas vai valer a pena 💪" },
   "Saudável": { bg: "bg-blue-500/10", text: "text-blue-500", label: "👍 Saudável", frase: "A festa não para! Quem sabe faz ao vivo 🎤" },
   "Boa": { bg: "bg-success/10", text: "text-success", label: "✅ Boa", frase: "Joga junto pra ganhar o jogo! 🏆" },
-  "Excelente": { bg: "bg-purple-500/10", text: "text-purple-500", label: "🚀 Excelente", frase: "Entregamos resultado, ponto. Agora dobra a meta! 🎯" },
+  "Excelente": { bg: "bg-purple-500/10", text: "text-purple-500", label: "🚀 Excelente", frase: "Rumo ao IPO! 🚀" },
 };
 
 const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value, className }) => (
@@ -60,7 +60,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
 
   // Se tem produtos extras que aumentam margem, troca a frase
   const temProdutosExtras = inputs.taxa.taxa_processamento > 0 || inputs.taxa.taxa_antecipacao > 0;
-  if (temProdutosExtras) {
+  if (temProdutosExtras && (results.status === "Boa" || results.status === "Excelente")) {
     cfg.frase = "Ouse sonhar, ouse inovar! 🌟";
   }
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
