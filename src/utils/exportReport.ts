@@ -19,7 +19,7 @@ const statusColors: Record<string, [number, number, number]> = {
   "Atenção": WARNING_AMBER,
   "Saudável": [37, 99, 235],
   "Boa": [0, 111, 98],
-  "Excelente": [57, 255, 20],
+  "Excelente": [34, 139, 84],
 };
 
 function drawSectionHeader(doc: jsPDF, y: number, title: string, color: [number, number, number] = ZIG_BLUE): number {
