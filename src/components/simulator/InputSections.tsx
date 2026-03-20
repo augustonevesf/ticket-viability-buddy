@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { SimulatorInputs, CONSTANTS, COMMISSION_TIERS } from "@/hooks/useSimulator";
 import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import copacabanaPattern from "@/assets/copacabana-pattern.png";
 
 interface Props {
@@ -15,9 +17,9 @@ const SectionCard: React.FC<{ title: string; children: React.ReactNode; accent?:
   </div>
 );
 
-const ReadOnly: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+const ReadOnly: React.FC<{ label: React.ReactNode; value: string }> = ({ label, value }) => (
   <div className="flex flex-col gap-1.5">
-    <label className="text-xs font-medium text-muted-foreground tracking-wide">{label}</label>
+    <span className="text-xs font-medium text-muted-foreground tracking-wide">{label}</span>
     <div className="bg-muted rounded-xl px-3 py-2.5 text-sm tabular-nums text-muted-foreground">
       {value}
     </div>
@@ -263,8 +265,42 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             </div>
             {inputs.pdv.tpv_pdv > 0 && (
               <div className="mt-3 grid grid-cols-2 gap-4">
-                <ReadOnly label="Crédito (70%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.70).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
-                <ReadOnly label="Débito/Pix (30%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.30).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+                <ReadOnly
+                  label={
+                    <span className="inline-flex items-center gap-1">
+                      Crédito (70%)
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-muted-foreground/60 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[240px] text-xs">
+                            Premissa de mercado: ~70% das transações presenciais em eventos são via crédito.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  }
+                  value={`R$ ${(inputs.pdv.tpv_pdv * 0.70).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
+                />
+                <ReadOnly
+                  label={
+                    <span className="inline-flex items-center gap-1">
+                      Débito/Pix (30%)
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-muted-foreground/60 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[240px] text-xs">
+                            Premissa de mercado: ~30% das transações presenciais são via débito ou Pix.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  }
+                  value={`R$ ${(inputs.pdv.tpv_pdv * 0.30).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
+                />
               </div>
             )}
           </SectionCard>
