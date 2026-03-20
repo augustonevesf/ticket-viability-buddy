@@ -11,9 +11,9 @@ const formatPercent = (v: number) =>
   (v * 100).toFixed(2) + "%";
 
 const statusConfig: Record<DealStatus, { bg: string; text: string; label: string }> = {
-  "Ruim": { bg: "bg-destructive/10", text: "text-destructive", label: "Ruim" },
-  "Média": { bg: "bg-warning/10", text: "text-warning", label: "Média" },
-  "Boa": { bg: "bg-success/10", text: "text-success", label: "Boa" },
+  "Atenção": { bg: "bg-warning/10", text: "text-warning", label: "⚠️ Atenção" },
+  "Saudável": { bg: "bg-blue-500/10", text: "text-blue-500", label: "👍 Saudável" },
+  "Excelente": { bg: "bg-success/10", text: "text-success", label: "🚀 Excelente" },
 };
 
 const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value, className }) => (
