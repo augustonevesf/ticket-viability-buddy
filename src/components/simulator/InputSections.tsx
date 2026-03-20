@@ -205,7 +205,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.regiao === "rj"
                 ? "text-white border-stone-900 shadow-lg scale-110 ring-1 ring-stone-700"
-                : "text-muted-foreground/50 border-border opacity-40 scale-100"
+                : "text-muted-foreground/50 border-border scale-100"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
             style={{
@@ -214,9 +214,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               backgroundRepeat: "repeat",
             }}
           >
-            <span className="absolute inset-0 bg-black/60 z-0" />
-            <span className={`relative z-10 px-1.5 py-0.5 rounded font-extrabold ${inputs.taxa.regiao === "rj" ? "bg-black/80 text-white" : ""}`}>
-              🔒 RJ — MÁX 10%
+            <span className={`relative z-10 px-1.5 py-0.5 rounded font-extrabold ${inputs.taxa.regiao === "rj" ? "bg-black/80 text-white" : "bg-black/70 text-white"}`}>
+              🏖️ RJ — MÁX 10%
             </span>
           </button>
           {inputs.taxa.regiao === "rj" && (
