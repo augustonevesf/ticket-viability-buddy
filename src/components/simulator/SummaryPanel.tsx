@@ -199,6 +199,9 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             {results.receita_processamento > 0 && (
               <MetricRow label="(+) Processamento (crédito online)" value={formatCurrency(results.receita_processamento)} success />
             )}
+            {results.receita_parcelamento > 0 && (
+              <MetricRow label="(+) Parcelamento (1,9%)" value={formatCurrency(results.receita_parcelamento)} success />
+            )}
             {results.receita_minima > 0 && (
               <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} success />
             )}
