@@ -62,16 +62,24 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setRawText(raw);
     if (raw === "" || raw === "-") {
+      setRawText(raw);
       if (allowEmpty) onChange(0);
       return;
     }
     const num = parseBR(raw);
     if (!isNaN(num)) {
-      if (max !== undefined && num > max) onChange(max);
-      else if (min !== undefined && num < min) onChange(min);
-      else onChange(num);
+      let clamped = num;
+      if (max !== undefined && num > max) clamped = max;
+      else if (min !== undefined && num < min) clamped = min;
+      if (clamped !== num) {
+        setRawText(String(clamped));
+      } else {
+        setRawText(raw);
+      }
+      onChange(clamped);
+    } else {
+      setRawText(raw);
     }
   };
 
