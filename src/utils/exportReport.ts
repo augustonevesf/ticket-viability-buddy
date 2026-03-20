@@ -16,6 +16,8 @@ function buildRows(r: SimulatorResults): string[][] {
     ["Taxa Líquida", pct(r.taxa_liquida)],
     ["Receita Take", fmt(r.receita_take)],
   ];
+  if (r.receita_antecipacao > 0) rows.push(["(+) Receita Antecipação", fmt(r.receita_antecipacao)]);
+  if (r.receita_processamento > 0) rows.push(["(+) Receita Processamento", fmt(r.receita_processamento)]);
   if (r.receita_minima > 0) rows.push(["Receita Mínima (MG Ingresso)", fmt(r.receita_minima)]);
   rows.push(
     ["Receita Bruta", fmt(r.receita_bruta)],
@@ -56,7 +58,14 @@ function buildRows(r: SimulatorResults): string[][] {
   return rows;
 }
 
-export function exportPDF(results: SimulatorResults, clienteName?: string, executivoName?: string) {
+export function exportPDF(
+  results: SimulatorResults,
+  clienteName?: string,
+  executivoName?: string,
+  tipoContrato?: "pontual" | "anual",
+  tempoContrato?: number,
+  exclusividade?: boolean,
+) {
   const doc = new jsPDF();
   const now = new Date();
   const dateStr = now.toLocaleDateString("pt-BR");
@@ -84,6 +93,19 @@ export function exportPDF(results: SimulatorResults, clienteName?: string, execu
     doc.setTextColor(0);
     doc.setFontSize(11);
     doc.text(`Executivo: ${executivoName}`, 14, yPos);
+    yPos += 7;
+  }
+
+  // Contract info
+  const contractParts: string[] = [];
+  if (tipoContrato) contractParts.push(tipoContrato === "pontual" ? "Evento Pontual" : "Agência Anual");
+  if (tempoContrato && tempoContrato > 0) contractParts.push(`${tempoContrato} ${tempoContrato === 1 ? "mês" : "meses"}`);
+  if (exclusividade) contractParts.push("Exclusividade");
+
+  if (contractParts.length > 0) {
+    doc.setTextColor(80);
+    doc.setFontSize(10);
+    doc.text(contractParts.join("  |  "), 14, yPos);
     yPos += 7;
   }
 

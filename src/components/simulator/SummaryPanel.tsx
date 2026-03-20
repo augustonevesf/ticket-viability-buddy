@@ -41,16 +41,19 @@ interface Props {
   results: SimulatorResults;
   clienteName?: string;
   executivoName?: string;
+  tipoContrato?: "pontual" | "anual";
+  tempoContrato?: number;
+  exclusividade?: boolean;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade }) => {
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
 
   const handleExportPDF = async () => {
     const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results, clienteName, executivoName);
+    exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade);
   };
 
   return (
@@ -65,6 +68,23 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
               <p className="text-sm font-medium text-foreground">{executivoName}</p>
             </>
           )}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {tipoContrato && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                {tipoContrato === "pontual" ? "Evento Pontual" : "Agência Anual"}
+              </span>
+            )}
+            {tempoContrato !== undefined && tempoContrato > 0 && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                {tempoContrato} {tempoContrato === 1 ? "mês" : "meses"}
+              </span>
+            )}
+            {exclusividade && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                Exclusividade
+              </span>
+            )}
+          </div>
         </div>
       )}
 
@@ -133,6 +153,12 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           <div className="py-3">
             <MetricRow label="Taxa Líquida" value={formatPercent(results.taxa_liquida)} />
             <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
+            {results.receita_antecipacao > 0 && (
+              <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} muted />
+            )}
+            {results.receita_processamento > 0 && (
+              <MetricRow label="(+) Receita Processamento" value={formatCurrency(results.receita_processamento)} muted />
+            )}
             {results.receita_minima > 0 && (
               <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} muted />
             )}

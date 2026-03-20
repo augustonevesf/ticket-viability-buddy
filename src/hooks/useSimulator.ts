@@ -101,6 +101,8 @@ export interface SimulatorResults {
 
   taxa_liquida: number;
   receita_take: number;
+  receita_antecipacao: number;
+  receita_processamento: number;
   receita_minima: number;
   receita_bruta: number;
 
@@ -178,18 +180,24 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     const custo_adquirencia_total = custo_adquirencia_online + custo_adquirencia_offline;
 
-    // ── Taxa líquida ──
-    const taxa_liquida = Math.max(0, inputs.taxa.taxa_administrativa - inputs.taxa.taxa_antecipacao - inputs.taxa.taxa_processamento);
+    // ── Taxa líquida (apenas administrativa) ──
+    const taxa_liquida = inputs.taxa.taxa_administrativa;
 
     // ── Receita ──
     const receita_take = TPV * taxa_liquida;
+
+    // Antecipação: receita sobre TPV total
+    const receita_antecipacao = TPV * inputs.taxa.taxa_antecipacao;
+
+    // Processamento: receita sobre vendas em crédito online
+    const receita_processamento = tpv_online * C.split_online.credito * inputs.taxa.taxa_processamento;
 
     let receita_minima = 0;
     if (inputs.taxa.taxa_minima_ativa && ticket_medio > 0 && ticket_medio < 25) {
       receita_minima = inputs.evento.publico_estimado * inputs.taxa.valor_taxa_minima;
     }
 
-    const receita_bruta = Math.max(receita_take, receita_minima);
+    const receita_bruta = Math.max(receita_take, receita_minima) + receita_antecipacao + receita_processamento;
 
     // ── Impostos ──
     const impostos_valor = receita_bruta * C.imposto;
@@ -268,7 +276,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     return {
       tpv: TPV, tpv_online, tpv_offline,
       custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
-      taxa_liquida, receita_take, receita_minima, receita_bruta,
+      taxa_liquida, receita_take, receita_antecipacao, receita_processamento, receita_minima, receita_bruta,
       impostos_valor, receita_liquida,
       custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao,
       custos_totais,
