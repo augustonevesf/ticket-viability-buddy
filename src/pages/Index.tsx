@@ -51,6 +51,10 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      <footer className="py-4 text-center text-[10px] text-muted-foreground/50 select-none">
+        Criado por: Felipe Augusto Neves · Versão 1.0
+      </footer>
     </div>
   );
 };
