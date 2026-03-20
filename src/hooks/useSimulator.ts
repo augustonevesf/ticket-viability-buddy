@@ -75,6 +75,15 @@ export interface SimulatorInputs {
     custo_cancelamento: number;
     mg_por_maquina: number;
   };
+  extras: {
+    advance_ativo: boolean;
+    advance_valor: number;
+    advance_juros_am: number;
+    patrocinio_ativo: boolean;
+    patrocinio_valor: number;
+    pulse_pago_ativo: boolean;
+    pulse_pago_valor: number;
+  };
 }
 
 export interface PdvResults {
