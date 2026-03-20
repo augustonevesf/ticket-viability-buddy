@@ -208,7 +208,7 @@ export function exportPDF(
   doc.setFont("helvetica", "normal");
   yRight += 6;
   yRight = drawKeyValue(doc, yRight, "Online", pct(inputs.distribuicao.online_percent), col2X, col2ValX);
-  yRight = drawKeyValue(doc, yRight, "Offline", pct(1 - inputs.distribuicao.online_percent), col2X, col2ValX);
+  yRight = drawKeyValue(doc, yRight, "PDV", pct(1 - inputs.distribuicao.online_percent), col2X, col2ValX);
   if (results.pdv.tpv_total > 0) {
     yRight = drawKeyValue(doc, yRight, "TPV PDV", fmt(inputs.pdv.tpv_pdv), col2X, col2ValX);
     yRight = drawKeyValue(doc, yRight, "Máquinas PDV", String(inputs.pdv.quantidade_maquinas), col2X, col2ValX);
