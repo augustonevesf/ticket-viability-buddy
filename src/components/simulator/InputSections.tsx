@@ -124,17 +124,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               checked={inputs.cliente.exclusividade}
               onChange={(v) => upd("cliente")("exclusividade")(v)}
             />
-            {inputs.cliente.exclusividade && (
-              <div className="mt-3">
-                <SimulatorInput
-                  label="Tempo de Exclusividade (meses)"
-                  value={inputs.cliente.tempo_exclusividade}
-                  onChange={(v) => upd("cliente")("tempo_exclusividade")(v)}
-                  min={0}
-                  allowEmpty
-                />
-              </div>
-            )}
           </div>
         </div>
       </SectionCard>
