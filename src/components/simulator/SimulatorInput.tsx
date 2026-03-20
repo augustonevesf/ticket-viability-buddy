@@ -34,19 +34,29 @@ function parseBR(raw: string): number {
   return parseFloat(normalized);
 }
 
+function formatBRL(num: number): string {
+  return num.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 export const SimulatorInput: React.FC<SimulatorInputProps> = ({
   label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty,
 }) => {
+  const isCurrency = prefix === "R$";
+
   const [rawText, setRawText] = useState<string>(() => {
     if (allowEmpty && value === 0) return "";
-    return String(value);
+    return isCurrency ? formatBRL(value) : String(value);
   });
 
   useEffect(() => {
     const parsed = parseBR(rawText);
     const isEqual = !isNaN(parsed) && Math.abs(parsed - value) < 0.00001;
     if (!isEqual) {
-      setRawText(allowEmpty && value === 0 ? "" : String(value));
+      if (allowEmpty && value === 0) {
+        setRawText("");
+      } else {
+        setRawText(isCurrency ? formatBRL(value) : String(value));
+      }
     }
   }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -67,12 +77,12 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
 
   const handleBlur = () => {
     if (rawText === "" || rawText === "-") {
-      setRawText(allowEmpty ? "" : "0");
+      setRawText(allowEmpty ? "" : (isCurrency ? "0,00" : "0"));
       return;
     }
     const num = parseBR(rawText);
     if (!isNaN(num)) {
-      setRawText(String(num));
+      setRawText(isCurrency ? formatBRL(num) : String(num));
     }
   };
 
