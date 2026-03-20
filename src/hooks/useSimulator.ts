@@ -274,8 +274,8 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     // Elegível: pontual >= 75k OU agência com >= 300k em contrato <= 3 meses
     const isPontual = inputs.cliente.tipo === "pontual";
     const suporte_premium_elegivel = isPontual
-      ? TPV >= 75000
-      : (TPV >= 300000 && inputs.cliente.tempo_contrato > 0 && inputs.cliente.tempo_contrato <= 3);
+      ? TPV >= 100000
+      : TPV >= 300000;
     
     let suporte_premium_receita = 0;
     if (ext.suporte_premium_ativo && suporte_premium_elegivel) {

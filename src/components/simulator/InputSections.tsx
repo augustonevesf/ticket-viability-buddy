@@ -205,7 +205,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.regiao === "rj"
                 ? "text-white border-stone-900 shadow-lg scale-110 ring-1 ring-stone-700"
-                : "text-muted-foreground/50 border-border opacity-40 scale-100"
+                : "text-muted-foreground/50 border-border scale-100"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
             style={{
@@ -214,14 +214,13 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               backgroundRepeat: "repeat",
             }}
           >
-            <span className="absolute inset-0 bg-black/60 z-0" />
-            <span className={`relative z-10 px-1.5 py-0.5 rounded font-extrabold ${inputs.taxa.regiao === "rj" ? "bg-black/80 text-white" : ""}`}>
-              🔒 RJ — MÁX 10%
+            <span className={`relative z-10 px-1.5 py-0.5 rounded font-extrabold ${inputs.taxa.regiao === "rj" ? "bg-black/80 text-white" : "bg-black/70 text-white"}`}>
+              🏖️ RJ — MÁX 10%
             </span>
           </button>
           {inputs.taxa.regiao === "rj" && (
             <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
-              🔒 Taxa travada em 10% — Lei 6.103/2011. Negocie processamento ou antecipação para aumentar receita.
+              🏖️ Taxa travada em 10% — Lei 6.103/2011. Negocie processamento ou antecipação para aumentar receita.
             </span>
           )}
         </div>
@@ -269,7 +268,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
           <SectionCard title="Volume Financeiro (PDV)" accent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
               <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
               <SimulatorInput label="Ingressos Emitidos (Esperados)" value={inputs.pdv.ingressos_esperados} onChange={(v) => upd("pdv")("ingressos_esperados")(v)} min={0} allowEmpty />
             </div>
@@ -338,35 +336,34 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 Taxa Única
               </button>
             </div>
-            <div className="mb-4">
-              <button
-                disabled={!inputs.pdv.taxa_segmentada}
-                onClick={() => {
-                  setPdvDefaults(true);
-                  setInputs((prev) => ({
-                    ...prev,
-                    pdv: {
-                      ...prev.pdv,
-                      taxa_segmentada: true,
-                      taxa_credito: PDV_DEFAULTS.taxa_credito,
-                      taxa_debito_pix: PDV_DEFAULTS.taxa_debito_pix,
-                      custo_impressao_ingresso: PDV_DEFAULTS.custo_impressao_ingresso,
-                      custo_impressao_cortesia: PDV_DEFAULTS.custo_impressao_cortesia,
-                      custo_cancelamento: PDV_DEFAULTS.custo_cancelamento,
-                    },
-                  }));
-                }}
-                className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                  !inputs.pdv.taxa_segmentada
-                    ? "bg-muted text-muted-foreground/40 cursor-not-allowed"
-                    : pdvDefaults
+            {inputs.pdv.taxa_segmentada && (
+              <div className="mb-4">
+                <button
+                  onClick={() => {
+                    setPdvDefaults(true);
+                    setInputs((prev) => ({
+                      ...prev,
+                      pdv: {
+                        ...prev.pdv,
+                        taxa_segmentada: true,
+                        taxa_credito: PDV_DEFAULTS.taxa_credito,
+                        taxa_debito_pix: PDV_DEFAULTS.taxa_debito_pix,
+                        custo_impressao_ingresso: PDV_DEFAULTS.custo_impressao_ingresso,
+                        custo_impressao_cortesia: PDV_DEFAULTS.custo_impressao_cortesia,
+                        custo_cancelamento: PDV_DEFAULTS.custo_cancelamento,
+                      },
+                    }));
+                  }}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                    pdvDefaults
                       ? "bg-emerald-500 text-white"
                       : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
-                }`}
-              >
-                Taxa Padrão
-              </button>
-            </div>
+                  }`}
+                >
+                  Taxa Padrão
+                </button>
+              </div>
+            )}
 
             {inputs.pdv.taxa_segmentada ? (
               <div className="grid grid-cols-2 gap-4">
@@ -407,8 +404,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           const isPontual = inputs.cliente.tipo === "pontual";
           const TPV = inputs.evento.tpv_total;
           const elegivel = isPontual
-            ? TPV >= 75000
-            : (TPV >= 300000 && inputs.cliente.tempo_contrato > 0 && inputs.cliente.tempo_contrato <= 3);
+            ? TPV >= 100000
+            : TPV >= 300000;
 
           return (
             <div className="space-y-4">
@@ -422,8 +419,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                   {elegivel
                     ? "Cliente elegível para Suporte Premium"
                     : isPontual
-                      ? `Elegível a partir de R$ 75k de TPV (atual: R$ ${TPV.toLocaleString("pt-BR")})`
-                      : `Elegível com ≥ R$ 300k de TPV em até 3 meses`
+                      ? `Elegível a partir de R$ 100k de TPV (atual: R$ ${TPV.toLocaleString("pt-BR")})`
+                      : `Elegível com ≥ R$ 300k de TPV anual`
                   }
                 </span>
               </div>
