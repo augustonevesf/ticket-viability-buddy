@@ -56,6 +56,7 @@ export interface SimulatorInputs {
   };
   taxa: {
     taxa_administrativa: number;
+    rebate: number;
     taxa_antecipacao: number;
     taxa_processamento: number;
     taxa_minima_ativa: boolean;
