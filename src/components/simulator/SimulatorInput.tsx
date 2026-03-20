@@ -40,7 +40,7 @@ function formatBRL(num: number): string {
 }
 
 export const SimulatorInput: React.FC<SimulatorInputProps> = ({
-  label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty,
+  label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty, variant = "default",
 }) => {
   const isCurrency = prefix === "R$";
 
