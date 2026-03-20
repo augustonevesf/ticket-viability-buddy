@@ -290,7 +290,12 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} variant={pdvVariant("taxa_debito_pix")} />
               </div>
             ) : (
-              <SimulatorInput label="Taxa Única" value={+(inputs.pdv.taxa_unica * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_unica")(v / 100)} suffix="%" step={0.1} min={0} />
+              <div>
+                <SimulatorInput label="Taxa Única" value={+(inputs.pdv.taxa_unica * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_unica")(v / 100)} suffix="%" step={0.1} min={0} />
+                <p className="text-xs text-muted-foreground mt-2">
+                  A taxa única será cobrada ao fim do evento sobre o valor bruto faturado, incluindo dinheiro.
+                </p>
+              </div>
             )}
 
             {inputs.pdv.taxa_segmentada && (
