@@ -183,6 +183,10 @@ export const getDefaultInputs = (): SimulatorInputs => ({
     patrocinio_valor: 0,
     pulse_pago_ativo: false,
     pulse_pago_valor: 0,
+    suporte_premium_ativo: false,
+    suporte_premium_tipo: "percentual",
+    suporte_premium_percentual: 0,
+    suporte_premium_setup: 0,
   },
 });
 
