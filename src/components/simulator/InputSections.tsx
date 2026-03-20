@@ -166,7 +166,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       <SectionCard title="Distribuição de Vendas">
         <div className="grid grid-cols-2 gap-4">
           <SimulatorInput label="Online" value={+(inputs.distribuicao.online_percent * 100).toFixed(2)} onChange={(v) => upd("distribuicao")("online_percent")(Math.min(100, Math.max(0, v)) / 100)} suffix="%" step={0.1} min={0} max={100} />
-          <ReadOnly label="Offline (auto)" value={`${(offline_percent * 100).toFixed(2)}%`} />
+          <ReadOnly label="PDV (auto)" value={`${(offline_percent * 100).toFixed(2)}%`} />
         </div>
       </SectionCard>
 
