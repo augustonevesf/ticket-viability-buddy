@@ -245,8 +245,14 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_maquinas +
       custo_impressao;
 
+    // ── Extras ──
+    const ext = inputs.extras;
+    const advance_receita_juros = ext.advance_ativo ? ext.advance_valor * (ext.advance_juros_am / 100) : 0;
+    const patrocinio_valor = ext.patrocinio_ativo ? ext.patrocinio_valor : 0;
+    const pulse_pago_valor = ext.pulse_pago_ativo ? ext.pulse_pago_valor : 0;
+
     // ── Margem ──
-    const margem = receita_liquida - custos_totais;
+    const margem = receita_liquida - custos_totais + advance_receita_juros - patrocinio_valor + pulse_pago_valor;
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
     let status: SimulatorResults["status"];
