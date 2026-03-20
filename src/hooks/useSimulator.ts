@@ -183,8 +183,9 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     const custo_adquirencia_total = custo_adquirencia_online + custo_adquirencia_offline;
 
-    // ── Taxa líquida (apenas administrativa) ──
-    const taxa_liquida = inputs.taxa.taxa_administrativa;
+    // ── Taxa líquida (administrativa − rebate) ──
+    const taxa_liquida = inputs.taxa.taxa_administrativa - inputs.taxa.rebate;
+    const rebate_valor = tpv_online * inputs.taxa.rebate;
 
     // ── Receita ──
     const receita_take = TPV * taxa_liquida;
