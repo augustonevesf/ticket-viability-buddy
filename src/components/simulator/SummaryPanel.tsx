@@ -153,6 +153,12 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           <div className="py-3">
             <MetricRow label="Taxa Líquida" value={formatPercent(results.taxa_liquida)} />
             <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
+            {results.receita_antecipacao > 0 && (
+              <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} muted />
+            )}
+            {results.receita_processamento > 0 && (
+              <MetricRow label="(+) Receita Processamento" value={formatCurrency(results.receita_processamento)} muted />
+            )}
             {results.receita_minima > 0 && (
               <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} muted />
             )}

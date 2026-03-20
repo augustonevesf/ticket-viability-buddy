@@ -95,6 +95,19 @@ export function exportPDF(
     yPos += 7;
   }
 
+  // Contract info
+  const contractParts: string[] = [];
+  if (tipoContrato) contractParts.push(tipoContrato === "pontual" ? "Evento Pontual" : "Agência Anual");
+  if (tempoContrato && tempoContrato > 0) contractParts.push(`${tempoContrato} ${tempoContrato === 1 ? "mês" : "meses"}`);
+  if (exclusividade) contractParts.push("Exclusividade");
+
+  if (contractParts.length > 0) {
+    doc.setTextColor(80);
+    doc.setFontSize(10);
+    doc.text(contractParts.join("  |  "), 14, yPos);
+    yPos += 7;
+  }
+
   doc.setTextColor(0);
 
   const statusColor: Record<string, [number, number, number]> = {
