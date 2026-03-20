@@ -18,6 +18,7 @@ function buildRows(r: SimulatorResults): string[][] {
   ];
   if (r.receita_antecipacao > 0) rows.push(["(+) Receita Antecipação", fmt(r.receita_antecipacao)]);
   if (r.receita_processamento > 0) rows.push(["(+) Receita Processamento", fmt(r.receita_processamento)]);
+  if (r.receita_minima > 0) rows.push(["Receita Mínima (MG Ingresso)", fmt(r.receita_minima)]);
   rows.push(
     ["Receita Bruta", fmt(r.receita_bruta)],
     ["(−) Impostos", fmt(r.impostos_valor)],

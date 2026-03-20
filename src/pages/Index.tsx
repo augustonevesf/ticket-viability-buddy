@@ -43,6 +43,9 @@ const Index = () => {
               results={results}
               clienteName={inputs.cliente.nome || undefined}
               executivoName={inputs.cliente.executivo || undefined}
+              tipoContrato={inputs.cliente.tipo}
+              tempoContrato={inputs.cliente.tempo_contrato}
+              exclusividade={inputs.cliente.exclusividade}
             />
           </div>
         </div>
