@@ -492,7 +492,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </div>
 
       <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
-        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação Offline</h3>
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação PDV</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
           <ConstRow label="Custo de adquirência" value="2,40%" />
           <ConstRow label="Custo de impressão" value="0,00%" />

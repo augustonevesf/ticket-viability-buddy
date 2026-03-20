@@ -210,7 +210,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
           </div>
           <div className="py-3">
             <MetricRow label="(−) Adquirência Online" value={formatCurrency(results.custo_adquirencia_online)} muted />
-            <MetricRow label="(−) Adquirência Offline" value={formatCurrency(results.custo_adquirencia_offline)} muted />
+            <MetricRow label="(−) Adquirência PDV" value={formatCurrency(results.custo_adquirencia_offline)} muted />
             <MetricRow label="(−) Antifraude" value={formatCurrency(results.custo_antifraude)} muted />
             <MetricRow label="(−) Comissão" value={formatCurrency(results.custo_comissao)} muted />
             <MetricRow label="(−) Servidor" value={formatCurrency(results.custo_servidor)} muted />

@@ -156,6 +156,7 @@ export const getDefaultInputs = (): SimulatorInputs => ({
   evento: { tpv_total: 0, publico_estimado: 0, ticket_medio_calculado: 0 },
   distribuicao: { online_percent: 0.99 },
   taxa: {
+    regiao: "brasil",
     taxa_administrativa: 0.12,
     rebate: 0,
     taxa_antecipacao: 0,

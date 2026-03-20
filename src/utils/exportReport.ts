@@ -271,7 +271,7 @@ export function exportPDF(
     ["", ""],
     ["── CUSTOS ──", ""],
     ["(−) Adquirência Online", fmt(results.custo_adquirencia_online)],
-    ["(−) Adquirência Offline", fmt(results.custo_adquirencia_offline)],
+    ["(−) Adquirência PDV", fmt(results.custo_adquirencia_offline)],
     ["(−) Antifraude", fmt(results.custo_antifraude)],
     ["(−) Comissão (5%)", fmt(results.custo_comissao)],
     ["(−) Servidor", fmt(results.custo_servidor)],
