@@ -155,8 +155,16 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* BLOCO 4 — Negociação Ingresso */}
       <SectionCard title="Negociação Ingresso">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SimulatorInput label="Taxa Administrativa" value={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_administrativa")(v / 100)} suffix="%" step={0.1} min={0} />
+          <SimulatorInput label="Rebate (cashback produtor)" value={+(inputs.taxa.rebate * 100).toFixed(2)} onChange={(v) => upd("taxa")("rebate")(v / 100)} suffix="%" step={0.1} min={0} max={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} />
+        </div>
+        {inputs.taxa.rebate > 0 && (
+          <p className="text-xs text-warning mt-2 font-medium">
+            ⚠ Taxa líquida após rebate: {((inputs.taxa.taxa_administrativa - inputs.taxa.rebate) * 100).toFixed(2)}%
+          </p>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           <SimulatorInput label="Taxa de Antecipação" value={+(inputs.taxa.taxa_antecipacao * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_antecipacao")(v / 100)} suffix="%" step={0.1} min={0} />
           <SimulatorInput label="Taxa de Processamento" value={+(inputs.taxa.taxa_processamento * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_processamento")(v / 100)} suffix="%" step={0.1} min={0} />
         </div>

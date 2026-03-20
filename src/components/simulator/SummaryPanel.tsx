@@ -235,6 +235,22 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
           Exportar PDF
         </button>
       </div>
+
+      {/* Módulos em breve */}
+      <div className="flex gap-3">
+        <button
+          disabled
+          className="flex-1 flex items-center justify-center gap-2 bg-muted text-muted-foreground rounded-xl px-4 py-3 text-sm font-medium cursor-not-allowed opacity-60"
+        >
+          Advance (em breve)
+        </button>
+        <button
+          disabled
+          className="flex-1 flex items-center justify-center gap-2 bg-muted text-muted-foreground rounded-xl px-4 py-3 text-sm font-medium cursor-not-allowed opacity-60"
+        >
+          Patrocínio (em breve)
+        </button>
+      </div>
     </div>
   );
 };
