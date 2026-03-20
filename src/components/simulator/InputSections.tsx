@@ -50,10 +50,14 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
   const pdvVariant = (field: keyof typeof PDV_DEFAULTS): "green" | "edited" | "default" =>
     pdvDefaults ? (isDefault(field) ? "green" : "edited") : "default";
 
-  const upd = <K extends keyof SimulatorInputs>(section: K) =>
+  const upd = <K extends "cliente" | "evento" | "distribuicao" | "taxa" | "pdv" | "extras">(section: K) =>
     <F extends keyof SimulatorInputs[K]>(field: F) =>
       (val: SimulatorInputs[K][F]) =>
         setInputs((prev) => ({ ...prev, [section]: { ...prev[section], [field]: val } }));
+
+  const updRoot = <K extends keyof SimulatorInputs>(key: K) =>
+    (val: SimulatorInputs[K]) =>
+      setInputs((prev) => ({ ...prev, [key]: val }));
 
   const C = CONSTANTS;
   const offline_percent = 1 - inputs.distribuicao.online_percent;
