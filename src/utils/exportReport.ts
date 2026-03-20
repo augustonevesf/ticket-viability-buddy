@@ -99,6 +99,7 @@ export function exportPDF(
 
   // Contract info
   const contractParts: string[] = [];
+  if (regiao) contractParts.push(`Região: ${regiao}`);
   if (tipoContrato) contractParts.push(tipoContrato === "pontual" ? "Evento Pontual" : "Agência Anual");
   if (tempoContrato && tempoContrato > 0) contractParts.push(`${tempoContrato} ${tempoContrato === 1 ? "mês" : "meses"}`);
   if (exclusividade) contractParts.push("Exclusividade");
