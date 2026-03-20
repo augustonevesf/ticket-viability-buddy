@@ -404,8 +404,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           const isPontual = inputs.cliente.tipo === "pontual";
           const TPV = inputs.evento.tpv_total;
           const elegivel = isPontual
-            ? TPV >= 75000
-            : (TPV >= 300000 && inputs.cliente.tempo_contrato > 0 && inputs.cliente.tempo_contrato <= 3);
+            ? TPV >= 100000
+            : TPV >= 300000;
 
           return (
             <div className="space-y-4">
