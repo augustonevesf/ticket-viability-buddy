@@ -269,7 +269,6 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <SectionCard title="Volume Financeiro (PDV)" accent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
-              <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
               <SimulatorInput label="Ingressos Emitidos (Esperados)" value={inputs.pdv.ingressos_esperados} onChange={(v) => upd("pdv")("ingressos_esperados")(v)} min={0} allowEmpty />
             </div>
             {inputs.pdv.tpv_pdv > 0 && (
