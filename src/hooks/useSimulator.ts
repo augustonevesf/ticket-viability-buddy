@@ -363,9 +363,9 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     return {
       tpv: TPV, tpv_online, tpv_offline,
       custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
-      taxa_liquida, rebate_valor, receita_take, receita_antecipacao, receita_processamento, receita_minima, receita_bruta,
+      taxa_liquida, rebate_valor, receita_take, receita_antecipacao, receita_processamento, receita_parcelamento, receita_minima, receita_bruta,
       impostos_valor, receita_liquida,
-      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao,
+      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao, custo_lugar_marcado, custo_parcelamento,
       custos_totais,
       margem, margem_sobre_tpv,
       ticket_medio,
