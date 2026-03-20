@@ -41,6 +41,9 @@ interface Props {
   results: SimulatorResults;
   clienteName?: string;
   executivoName?: string;
+  tipoContrato?: "pontual" | "anual";
+  tempoContrato?: number;
+  exclusividade?: boolean;
 }
 
 export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName }) => {
