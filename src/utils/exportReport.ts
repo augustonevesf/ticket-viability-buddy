@@ -250,7 +250,7 @@ export function exportPDF(
     ["── RECEITAS ──", ""],
     ["TPV Total", fmt(results.tpv)],
     ["TPV Online", fmt(results.tpv_online)],
-    ["TPV Offline", fmt(results.tpv_offline)],
+    ["TPV PDV", fmt(results.tpv_offline)],
     ["Ticket Médio", fmt(results.ticket_medio)],
     ["", ""],
     ["Taxa Adm. Plataforma", pct(results.taxa_liquida)],
