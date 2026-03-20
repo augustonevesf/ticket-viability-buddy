@@ -270,15 +270,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
               <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} success />
               <MetricRow label="Receita Total Zig" value={formatCurrency(pdv.receita_total)} bold />
             </div>
-            <div className="py-3">
-              <MetricRow label="(−) Impressão" value={formatCurrency(pdv.custo_impressao)} muted />
-              <MetricRow label="(−) Máquinas" value={formatCurrency(pdv.custo_maquinas)} muted />
-              <MetricRow label="Receita Líq. Operacional" value={formatCurrency(pdv.receita_liquida_operacional)} bold />
-            </div>
             <div className="pt-3">
               <div className="flex justify-between items-center py-1.5">
-                <span className="text-sm font-semibold text-foreground">Resultado Final PDV</span>
-                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.receita_liquida_operacional)}</span>
+                <span className="text-sm font-semibold text-foreground">Resultado PDV</span>
+                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.receita_total)}</span>
               </div>
             </div>
           </div>
