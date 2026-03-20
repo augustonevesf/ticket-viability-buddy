@@ -197,6 +197,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const custo_servidor = TPV * C.online_custos.servidor;
     const custo_maquinas = 0; // removed online machines
     const custo_impressao = inputs.evento.publico_estimado * C.custo_impressao_default;
+        // Nota: custo_impressao usa valor padrão (R$ 0,10/ingresso online). Impressão PDV é calculada separadamente em pdv_custo_impressao.
 
     const custos_totais =
       custo_adquirencia_total +
