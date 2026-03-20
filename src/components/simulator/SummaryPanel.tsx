@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SimulatorResults, DealStatus } from "@/hooks/useSimulator";
-import { FileDown, AlertTriangle } from "lucide-react";
+import { SimulatorResults, SimulatorInputs, DealStatus } from "@/hooks/useSimulator";
+import { FileDown, AlertTriangle, Lightbulb, X } from "lucide-react";
+import { generateInsights, Insight } from "@/utils/generateInsights";
 
 const formatCurrency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
