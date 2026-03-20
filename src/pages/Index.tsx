@@ -6,6 +6,7 @@ import { SummaryPanel } from "@/components/simulator/SummaryPanel";
 import { Sun, Moon, ArrowLeft } from "lucide-react";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState(getDefaultInputs);
   const results = useSimulator(inputs);
   const [dark, setDark] = useState(() => {
