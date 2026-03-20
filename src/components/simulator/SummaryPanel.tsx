@@ -146,9 +146,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             </p>
             <div className="w-2.5 h-24 bg-muted rounded-full overflow-hidden relative">
               <motion.div
-                className={`absolute bottom-0 left-0 right-0 rounded-full ${
-                  results.margem_sobre_tpv < 3 ? "bg-warning" : results.margem_sobre_tpv < 5 ? "bg-blue-500" : results.margem_sobre_tpv < 7 ? "bg-success" : "bg-purple-500"
-                }`}
+                className={`absolute bottom-0 left-0 right-0 rounded-full ${cfg.barColor}`}
                 animate={{ height: `${barPct}%` }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               />
