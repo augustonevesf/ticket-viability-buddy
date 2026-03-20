@@ -31,6 +31,22 @@ const ConstRow: React.FC<{ label: string; value: string }> = ({ label, value }) 
 );
 
 export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
+  const PDV_DEFAULTS = {
+    taxa_credito: 0.0341,
+    taxa_debito_pix: 0.0199,
+    custo_impressao_ingresso: 1.00,
+    custo_impressao_cortesia: 1.00,
+    custo_cancelamento: 0.50,
+  };
+
+  const [pdvDefaults, setPdvDefaults] = useState(false);
+
+  const isDefault = (field: keyof typeof PDV_DEFAULTS) =>
+    pdvDefaults && Math.abs(inputs.pdv[field] - PDV_DEFAULTS[field]) < 0.0001;
+
+  const pdvVariant = (field: keyof typeof PDV_DEFAULTS): "green" | "edited" | "default" =>
+    pdvDefaults ? (isDefault(field) ? "green" : "edited") : "default";
+
   const upd = <K extends keyof SimulatorInputs>(section: K) =>
     <F extends keyof SimulatorInputs[K]>(field: F) =>
       (val: SimulatorInputs[K][F]) =>
