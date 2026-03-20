@@ -237,12 +237,15 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     // Processamento: receita sobre vendas em crédito online
     const receita_processamento = tpv_online * C.split_online.credito * inputs.taxa.taxa_processamento;
 
+    // Parcelamento: receita adicional 1,9% sobre crédito online
+    const receita_parcelamento = tpv_online * C.split_online.credito * C.parcelamento_receita;
+
     let receita_minima = 0;
     if (ticket_medio > 0 && ticket_medio < 25) {
       receita_minima = inputs.evento.publico_estimado * inputs.taxa.valor_taxa_minima;
     }
 
-    const receita_bruta = Math.max(receita_take, receita_minima) + receita_antecipacao + receita_processamento;
+    const receita_bruta = Math.max(receita_take, receita_minima) + receita_antecipacao + receita_processamento + receita_parcelamento;
 
     // ── Impostos ──
     const impostos_valor = receita_bruta * C.imposto;
@@ -252,9 +255,14 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const custo_antifraude = tpv_online * C.online_custos.antifraude;
     const custo_comissao = receita_liquida * C.comissao;
     const custo_servidor = TPV * C.online_custos.servidor;
-    const custo_maquinas = 0; // removed online machines
+    const custo_maquinas = 0;
     const custo_impressao = inputs.evento.publico_estimado * C.custo_impressao_default;
-        // Nota: custo_impressao usa valor padrão (R$ 0,10/ingresso online). Impressão PDV é calculada separadamente em pdv_custo_impressao.
+
+    // Lugar marcado (Seats I/O): R$ 0,80 por pessoa se mapa de assentos ativo
+    const custo_lugar_marcado = inputs.mapa_assentos ? inputs.evento.publico_estimado * C.lugar_marcado_seats_io : 0;
+
+    // Custo parcelamento adquirência: 1,75% a.m. sobre crédito online
+    const custo_parcelamento = tpv_online * C.split_online.credito * C.parcelamento_custo_adquirencia_am;
 
     const custos_totais =
       custo_adquirencia_total +
@@ -262,7 +270,9 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_comissao +
       custo_servidor +
       custo_maquinas +
-      custo_impressao;
+      custo_impressao +
+      custo_lugar_marcado +
+      custo_parcelamento;
 
     // ── Extras ──
     const ext = inputs.extras;
