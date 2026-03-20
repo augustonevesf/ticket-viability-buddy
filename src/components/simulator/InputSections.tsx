@@ -265,8 +265,42 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             </div>
             {inputs.pdv.tpv_pdv > 0 && (
               <div className="mt-3 grid grid-cols-2 gap-4">
-                <ReadOnly label="Crédito (70%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.70).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
-                <ReadOnly label="Débito/Pix (30%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.30).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+                <ReadOnly
+                  label={
+                    <span className="inline-flex items-center gap-1">
+                      Crédito (70%)
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-muted-foreground/60 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[240px] text-xs">
+                            Premissa de mercado: ~70% das transações presenciais em eventos são via crédito.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  }
+                  value={`R$ ${(inputs.pdv.tpv_pdv * 0.70).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
+                />
+                <ReadOnly
+                  label={
+                    <span className="inline-flex items-center gap-1">
+                      Débito/Pix (30%)
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-muted-foreground/60 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[240px] text-xs">
+                            Premissa de mercado: ~30% das transações presenciais são via débito ou Pix.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  }
+                  value={`R$ ${(inputs.pdv.tpv_pdv * 0.30).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
+                />
               </div>
             )}
           </SectionCard>
