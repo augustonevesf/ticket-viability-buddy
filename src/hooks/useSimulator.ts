@@ -83,6 +83,8 @@ export interface SimulatorInputs {
     patrocinio_ativo: boolean;
     patrocinio_valor: number;
     pulse_pago_ativo: boolean;
+    pulse_pago_tipo: "percentual" | "fixo";
+    pulse_pago_percentual: number;
     pulse_pago_valor: number;
     suporte_premium_ativo: boolean;
     suporte_premium_tipo: "percentual" | "setup";
