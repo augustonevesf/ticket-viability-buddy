@@ -678,6 +678,15 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         )}
       </SectionCard>
 
+      {/* Mapa de Assentos */}
+      <SectionCard title="🪑 Mapa de Assentos">
+        <SimulatorToggle
+          label="Lugar Marcado (Seats I/O)"
+          checked={inputs.mapa_assentos}
+          onChange={(v) => updRoot("mapa_assentos")(v)}
+        />
+      </SectionCard>
+
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
       <div className="mt-2">
