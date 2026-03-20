@@ -258,7 +258,6 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const custo_antifraude = tpv_online * C.online_custos.antifraude;
     const custo_comissao = receita_liquida * C.comissao;
     const custo_servidor = TPV * C.online_custos.servidor;
-    const custo_maquinas = 0;
     const custo_impressao = inputs.evento.publico_estimado * C.custo_impressao_default;
 
     // Lugar marcado (Seats I/O): R$ 0,80 por pessoa se mapa de assentos ativo
@@ -267,15 +266,22 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     // Custo parcelamento adquirência: 1,75% a.m. sobre crédito online
     const custo_parcelamento = tpv_online * C.split_online.credito * C.parcelamento_custo_adquirencia_am;
 
+    // PDV costs (computed early to include in general costs)
+    const is100Online = inputs.distribuicao.online_percent >= 1;
+    const pdvIn = inputs.pdv;
+    const pdv_custo_impressao = !is100Online && pdvIn.taxa_segmentada ? pdvIn.ingressos_esperados * pdvIn.custo_impressao_ingresso : 0;
+    const pdv_custo_maquinas = !is100Online ? pdvIn.quantidade_maquinas * C.custo_maquina : 0;
+
     const custos_totais =
       custo_adquirencia_total +
       custo_antifraude +
       custo_comissao +
       custo_servidor +
-      custo_maquinas +
       custo_impressao +
       custo_lugar_marcado +
-      custo_parcelamento;
+      custo_parcelamento +
+      pdv_custo_impressao +
+      pdv_custo_maquinas;
 
     // ── Extras ──
     const ext = inputs.extras;
@@ -317,8 +323,6 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const alerta = margem < 0 || margem_sobre_tpv < 1.5;
 
     // ── PDV (ignorado se 100% online) ──
-    const is100Online = inputs.distribuicao.online_percent >= 1;
-    const pdvIn = inputs.pdv;
     const pdv_tpv = is100Online ? 0 : pdvIn.tpv_pdv;
     const pdv_tpv_credito = pdv_tpv * C.split_offline.credito;
     const pdv_tpv_debito = pdv_tpv * C.split_offline.debito_pix;
@@ -335,16 +339,8 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     }
     const pdv_receita_total = pdv_receita_credito + pdv_receita_debito;
 
-    // Costs
-    const pdv_custo_impressao = pdvIn.taxa_segmentada ? pdvIn.ingressos_esperados * pdvIn.custo_impressao_ingresso : 0;
-    const pdv_custo_maquinas = pdvIn.quantidade_maquinas * C.custo_maquina;
-
     // MG
     const pdv_mg_total = pdvIn.quantidade_maquinas * pdvIn.mg_por_maquina;
-
-    // Result
-    const pdv_receita_liquida_op = pdv_receita_total - pdv_custo_impressao - pdv_custo_maquinas;
-    const pdv_resultado_final = Math.max(pdv_receita_liquida_op, pdv_mg_total);
 
     const pdv: PdvResults = {
       tpv_total: pdv_tpv,
@@ -356,8 +352,8 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_impressao: pdv_custo_impressao,
       custo_maquinas: pdv_custo_maquinas,
       mg_total: pdv_mg_total,
-      receita_liquida_operacional: pdv_receita_liquida_op,
-      resultado_final: pdv_resultado_final,
+      receita_liquida_operacional: pdv_receita_total,
+      resultado_final: pdv_receita_total,
     };
 
     return {
@@ -365,7 +361,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
       taxa_liquida, rebate_valor, receita_take, receita_antecipacao, receita_processamento, receita_parcelamento, receita_minima, receita_bruta,
       impostos_valor, receita_liquida,
-      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao, custo_lugar_marcado, custo_parcelamento,
+      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas: pdv_custo_maquinas, custo_impressao, custo_lugar_marcado, custo_parcelamento,
       custos_totais,
       margem, margem_sobre_tpv,
       ticket_medio,

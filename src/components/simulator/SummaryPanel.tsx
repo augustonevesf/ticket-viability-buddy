@@ -222,6 +222,12 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
               <MetricRow label="(−) Lugar Marcado (Seats I/O)" value={formatCurrency(results.custo_lugar_marcado)} muted />
             )}
             <MetricRow label="(−) Parcelamento (adq. 1,75%)" value={formatCurrency(results.custo_parcelamento)} muted />
+            {results.custo_maquinas > 0 && (
+              <MetricRow label="(−) Máquinas PDV" value={formatCurrency(results.custo_maquinas)} muted />
+            )}
+            {pdv.custo_impressao > 0 && (
+              <MetricRow label="(−) Impressão PDV" value={formatCurrency(pdv.custo_impressao)} muted />
+            )}
             <MetricRow label="Custos Totais" value={formatCurrency(results.custos_totais)} bold />
           </div>
           {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0 || results.suporte_premium_receita > 0) && (
@@ -264,15 +270,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
               <MetricRow label="Receita Débito/Pix" value={formatCurrency(pdv.receita_debito_pix)} success />
               <MetricRow label="Receita Total Zig" value={formatCurrency(pdv.receita_total)} bold />
             </div>
-            <div className="py-3">
-              <MetricRow label="(−) Impressão" value={formatCurrency(pdv.custo_impressao)} muted />
-              <MetricRow label="(−) Máquinas" value={formatCurrency(pdv.custo_maquinas)} muted />
-              <MetricRow label="Receita Líq. Operacional" value={formatCurrency(pdv.receita_liquida_operacional)} bold />
-            </div>
             <div className="pt-3">
               <div className="flex justify-between items-center py-1.5">
-                <span className="text-sm font-semibold text-foreground">Resultado Final PDV</span>
-                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.receita_liquida_operacional)}</span>
+                <span className="text-sm font-semibold text-foreground">Resultado PDV</span>
+                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.receita_total)}</span>
               </div>
             </div>
           </div>
