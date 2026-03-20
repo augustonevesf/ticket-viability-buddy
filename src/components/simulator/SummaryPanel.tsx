@@ -343,7 +343,6 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
           Campos obrigatórios: {camposFaltando.map(c => c.campo).join(", ")}
         </p>
       )}
-      </div>
 
     </div>
   );
