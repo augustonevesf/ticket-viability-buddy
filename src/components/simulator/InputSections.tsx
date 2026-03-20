@@ -419,8 +419,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                   {elegivel
                     ? "Cliente elegível para Suporte Premium"
                     : isPontual
-                      ? `Elegível a partir de R$ 75k de TPV (atual: R$ ${TPV.toLocaleString("pt-BR")})`
-                      : `Elegível com ≥ R$ 300k de TPV em até 3 meses`
+                      ? `Elegível a partir de R$ 100k de TPV (atual: R$ ${TPV.toLocaleString("pt-BR")})`
+                      : `Elegível com ≥ R$ 300k de TPV anual`
                   }
                 </span>
               </div>
