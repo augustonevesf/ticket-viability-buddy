@@ -189,6 +189,19 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
             <MetricRow label="(−) Impressão" value={formatCurrency(results.custo_impressao)} muted />
             <MetricRow label="Custos Totais" value={formatCurrency(results.custos_totais)} bold />
           </div>
+          {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0) && (
+            <div className="py-3">
+              {results.advance_receita_juros > 0 && (
+                <MetricRow label="(+) Advance — Juros" value={formatCurrency(results.advance_receita_juros)} />
+              )}
+              {results.pulse_pago_valor > 0 && (
+                <MetricRow label="(+) Zig Pulse Pago" value={formatCurrency(results.pulse_pago_valor)} />
+              )}
+              {results.patrocinio_valor > 0 && (
+                <MetricRow label="(−) Patrocínio" value={formatCurrency(results.patrocinio_valor)} />
+              )}
+            </div>
+          )}
           <div className="pt-3">
             <div className="flex justify-between items-center py-1.5">
               <span className="text-sm font-semibold text-foreground">Margem Online</span>
