@@ -68,7 +68,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
 
-  const regiao = taxaAdministrativa !== undefined && taxaAdministrativa <= 0.10 ? "RJ (Lei 6.103/2011)" : "Brasil";
+  const regiao = inputs.taxa.regiao === "rj" ? "RJ (Lei 6.103/2011)" : "Brasil";
 
   const camposObrigatorios = [
     { campo: "Nome do Cliente", valido: !!inputs.cliente.nome.trim() },
@@ -185,7 +185,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
           <div className="pb-3">
             <MetricRow label="TPV" value={formatCurrency(results.tpv)} bold />
             <MetricRow label="TPV Online" value={formatCurrency(results.tpv_online)} muted />
-            <MetricRow label="TPV Offline" value={formatCurrency(results.tpv_offline)} muted />
+            <MetricRow label="TPV PDV" value={formatCurrency(results.tpv_offline)} muted />
           </div>
           <div className="py-3">
             <MetricRow label="Taxa Adm. Plataforma (após rebate)" value={formatPercent(results.taxa_liquida)} />
@@ -210,7 +210,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
           </div>
           <div className="py-3">
             <MetricRow label="(−) Adquirência Online" value={formatCurrency(results.custo_adquirencia_online)} muted />
-            <MetricRow label="(−) Adquirência Offline" value={formatCurrency(results.custo_adquirencia_offline)} muted />
+            <MetricRow label="(−) Adquirência PDV" value={formatCurrency(results.custo_adquirencia_offline)} muted />
             <MetricRow label="(−) Antifraude" value={formatCurrency(results.custo_antifraude)} muted />
             <MetricRow label="(−) Comissão" value={formatCurrency(results.custo_comissao)} muted />
             <MetricRow label="(−) Servidor" value={formatCurrency(results.custo_servidor)} muted />

@@ -111,6 +111,21 @@ export function generateInsights(inputs: SimulatorInputs, results: SimulatorResu
     });
   }
 
+  // 11. RJ selecionado — sugerir processamento e antecipação
+  if (inputs.taxa.regiao === "rj") {
+    const sugestoes: string[] = [];
+    if (inputs.taxa.taxa_processamento === 0) sugestoes.push("taxa de processamento");
+    if (inputs.taxa.taxa_antecipacao === 0) sugestoes.push("antecipação");
+    if (sugestoes.length > 0) {
+      insights.push({
+        icon: "🏖️",
+        title: "RJ: taxa limitada a 10%",
+        description: `Com a taxa administrativa travada em 10%, negocie ${sugestoes.join(" e ")} para compensar e aumentar a receita.`,
+        impact: "alto",
+      });
+    }
+  }
+
   // Sort by impact
   const order = { alto: 0, medio: 1, baixo: 2 };
   insights.sort((a, b) => order[a.impact] - order[b.impact]);

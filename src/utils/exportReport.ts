@@ -14,10 +14,12 @@ const DANGER_RED: [number, number, number] = [220, 38, 38];
 const PURPLE: [number, number, number] = [124, 58, 237];
 
 const statusColors: Record<string, [number, number, number]> = {
-  "Atenção": DANGER_RED,
-  "Saudável": WARNING_AMBER,
-  "Boa": SUCCESS_GREEN,
-  "Excelente": PURPLE,
+  "Negativo": [0, 0, 0],
+  "Ruim": DANGER_RED,
+  "Atenção": WARNING_AMBER,
+  "Saudável": [37, 99, 235],
+  "Boa": [0, 111, 98],
+  "Excelente": [57, 255, 20],
 };
 
 function drawSectionHeader(doc: jsPDF, y: number, title: string, color: [number, number, number] = ZIG_BLUE): number {
@@ -208,7 +210,7 @@ export function exportPDF(
   doc.setFont("helvetica", "normal");
   yRight += 6;
   yRight = drawKeyValue(doc, yRight, "Online", pct(inputs.distribuicao.online_percent), col2X, col2ValX);
-  yRight = drawKeyValue(doc, yRight, "Offline", pct(1 - inputs.distribuicao.online_percent), col2X, col2ValX);
+  yRight = drawKeyValue(doc, yRight, "PDV", pct(1 - inputs.distribuicao.online_percent), col2X, col2ValX);
   if (results.pdv.tpv_total > 0) {
     yRight = drawKeyValue(doc, yRight, "TPV PDV", fmt(inputs.pdv.tpv_pdv), col2X, col2ValX);
     yRight = drawKeyValue(doc, yRight, "Máquinas PDV", String(inputs.pdv.quantidade_maquinas), col2X, col2ValX);
@@ -250,7 +252,7 @@ export function exportPDF(
     ["── RECEITAS ──", ""],
     ["TPV Total", fmt(results.tpv)],
     ["TPV Online", fmt(results.tpv_online)],
-    ["TPV Offline", fmt(results.tpv_offline)],
+    ["TPV PDV", fmt(results.tpv_offline)],
     ["Ticket Médio", fmt(results.ticket_medio)],
     ["", ""],
     ["Taxa Adm. Plataforma", pct(results.taxa_liquida)],
@@ -271,7 +273,7 @@ export function exportPDF(
     ["", ""],
     ["── CUSTOS ──", ""],
     ["(−) Adquirência Online", fmt(results.custo_adquirencia_online)],
-    ["(−) Adquirência Offline", fmt(results.custo_adquirencia_offline)],
+    ["(−) Adquirência PDV", fmt(results.custo_adquirencia_offline)],
     ["(−) Antifraude", fmt(results.custo_antifraude)],
     ["(−) Comissão (5%)", fmt(results.custo_comissao)],
     ["(−) Servidor", fmt(results.custo_servidor)],

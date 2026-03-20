@@ -166,7 +166,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       <SectionCard title="Distribuição de Vendas">
         <div className="grid grid-cols-2 gap-4">
           <SimulatorInput label="Online" value={+(inputs.distribuicao.online_percent * 100).toFixed(2)} onChange={(v) => upd("distribuicao")("online_percent")(Math.min(100, Math.max(0, v)) / 100)} suffix="%" step={0.1} min={0} max={100} />
-          <ReadOnly label="Offline (auto)" value={`${(offline_percent * 100).toFixed(2)}%`} />
+          <ReadOnly label="PDV (auto)" value={`${(offline_percent * 100).toFixed(2)}%`} />
         </div>
       </SectionCard>
 
@@ -175,9 +175,9 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           <span className="text-xs font-medium text-muted-foreground">Região:</span>
           <button
-            onClick={() => upd("taxa")("taxa_administrativa")(0.12)}
+            onClick={() => upd("taxa")("regiao")("brasil" as any)}
             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${
-              inputs.taxa.taxa_administrativa > 0.10
+              inputs.taxa.regiao === "brasil"
                 ? "bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 border-green-600/30 scale-110 shadow-sm"
                 : "bg-muted text-muted-foreground/50 border-border scale-100"
             }`}
@@ -185,9 +185,14 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             🇧🇷 Brasil
           </button>
           <button
-            onClick={() => upd("taxa")("taxa_administrativa")(0.10)}
+            onClick={() => {
+              upd("taxa")("regiao")("rj" as any);
+              if (inputs.taxa.taxa_administrativa > 0.10) {
+                upd("taxa")("taxa_administrativa")(0.10);
+              }
+            }}
             className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
-              inputs.taxa.taxa_administrativa <= 0.10
+              inputs.taxa.regiao === "rj"
                 ? "text-white border-stone-800 shadow-md scale-110"
                 : "text-muted-foreground/50 border-border opacity-40 scale-100"
             }`}
@@ -198,16 +203,18 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               backgroundRepeat: "repeat",
             }}
           >
-            <span className={`relative z-10 px-1.5 py-0.5 rounded ${inputs.taxa.taxa_administrativa <= 0.10 ? "bg-black/70 text-white" : ""}`}>
+            <span className={`relative z-10 px-1.5 py-0.5 rounded ${inputs.taxa.regiao === "rj" ? "bg-black/70 text-white" : ""}`}>
               RJ — Máx. 10%
             </span>
           </button>
-          <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
-            RJ: Lei 6.103/2011 — conveniência limitada a 10% do valor de face (Lei 6321/2012).
-          </span>
+          {inputs.taxa.regiao === "rj" && (
+            <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
+              🔒 Taxa travada em 10% — Lei 6.103/2011. Negocie processamento ou antecipação para aumentar receita.
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SimulatorInput label="Taxa Administrativa" value={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_administrativa")(v / 100)} suffix="%" step={0.1} min={0} />
+          <SimulatorInput label="Taxa Administrativa" value={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_administrativa")(inputs.taxa.regiao === "rj" ? Math.min(v, 10) / 100 : v / 100)} suffix="%" step={0.1} min={0} max={inputs.taxa.regiao === "rj" ? 10 : undefined} />
           <SimulatorInput label="Rebate (cashback produtor)" value={+(inputs.taxa.rebate * 100).toFixed(2)} onChange={(v) => upd("taxa")("rebate")(v / 100)} suffix="%" step={0.1} min={0} max={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} />
         </div>
         {inputs.taxa.rebate > 0 && (
@@ -485,7 +492,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </div>
 
       <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
-        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação Offline</h3>
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação PDV</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
           <ConstRow label="Custo de adquirência" value="2,40%" />
           <ConstRow label="Custo de impressão" value="0,00%" />
