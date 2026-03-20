@@ -181,14 +181,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
               <MetricRow label="Receita Líq. Operacional" value={formatCurrency(pdv.receita_liquida_operacional)} bold />
             </div>
             <div className="pt-3">
-              <MetricRow label="Mínimo Garantido" value={formatCurrency(pdv.mg_total)} muted />
               <div className="flex justify-between items-center py-1.5">
                 <span className="text-sm font-semibold text-foreground">Resultado Final PDV</span>
-                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.resultado_final)}</span>
+                <span className="text-base font-bold tabular-nums text-primary">{formatCurrency(pdv.receita_liquida_operacional)}</span>
               </div>
-              {pdv.resultado_final === pdv.mg_total && pdv.mg_total > 0 && (
-                <p className="text-xs text-warning mt-1">⚠ Aplicado MG (receita abaixo do mínimo)</p>
-              )}
             </div>
           </div>
         </div>
