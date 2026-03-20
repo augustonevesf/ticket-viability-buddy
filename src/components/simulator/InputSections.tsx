@@ -383,8 +383,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             onClick={() => upd("extras")("patrocinio_ativo")(!inputs.extras.patrocinio_ativo)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               inputs.extras.patrocinio_ativo
-                ? "bg-destructive text-destructive-foreground"
-                : "bg-muted text-muted-foreground"
+                ? "bg-destructive text-destructive-foreground scale-105 shadow-sm"
+                : "bg-muted text-muted-foreground scale-100"
             }`}
           >
             {inputs.extras.patrocinio_ativo ? "Ativo" : "Ativar Patrocínio"}
