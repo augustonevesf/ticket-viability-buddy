@@ -38,6 +38,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
   const C = CONSTANTS;
   const offline_percent = 1 - inputs.distribuicao.online_percent;
+  const is100Online = inputs.distribuicao.online_percent >= 1;
   const ticket_medio = inputs.evento.publico_estimado > 0
     ? inputs.evento.tpv_total / inputs.evento.publico_estimado
     : 0;
@@ -174,70 +175,76 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
       </SectionCard>
 
       {/* ═══════════════════ VENDAS FÍSICAS — PDV ═══════════════════ */}
-      <div className="mt-2">
-        <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Vendas Físicas — PDV</h2>
-      </div>
-
-      {/* Volume PDV */}
-      <SectionCard title="Volume Financeiro (PDV)" accent>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <SimulatorInput label="TPV Vendas Físicas" value={inputs.pdv.tpv_pdv} onChange={(v) => upd("pdv")("tpv_pdv")(v)} prefix="R$" min={0} allowEmpty />
-          <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
-          <SimulatorInput label="Ingressos Emitidos (Esperados)" value={inputs.pdv.ingressos_esperados} onChange={(v) => upd("pdv")("ingressos_esperados")(v)} min={0} allowEmpty />
+      {is100Online ? (
+        <div className="mt-2 bg-muted/50 rounded-2xl p-5 text-center">
+          <p className="text-sm text-muted-foreground">Vendas físicas desabilitadas — distribuição 100% online.</p>
         </div>
-        {inputs.pdv.tpv_pdv > 0 && (
-          <div className="mt-3 grid grid-cols-2 gap-4">
-            <ReadOnly label="Crédito (70%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.70).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
-            <ReadOnly label="Débito/Pix (30%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.30).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+      ) : (
+        <>
+          <div className="mt-2">
+            <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Vendas Físicas — PDV</h2>
           </div>
-        )}
-      </SectionCard>
 
-      {/* Taxas PDV */}
-      <SectionCard title="Taxas — Receita Zig (PDV)" accent>
-        <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => upd("pdv")("taxa_segmentada")(true)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              inputs.pdv.taxa_segmentada
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            Taxa Segmentada
-          </button>
-          <button
-            onClick={() => upd("pdv")("taxa_segmentada")(false)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              !inputs.pdv.taxa_segmentada
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            Taxa Única
-          </button>
-        </div>
-
-        {inputs.pdv.taxa_segmentada ? (
-          <div className="grid grid-cols-2 gap-4">
-            <SimulatorInput label="Taxa Crédito" value={+(inputs.pdv.taxa_credito * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_credito")(v / 100)} suffix="%" step={0.1} min={0} />
-            <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} />
-          </div>
-        ) : (
-          <SimulatorInput label="Taxa Única" value={+(inputs.pdv.taxa_unica * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_unica")(v / 100)} suffix="%" step={0.1} min={0} />
-        )}
-
-        {inputs.pdv.taxa_segmentada && (
-          <div className="mt-4 pt-4 border-t border-border">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Custos de Impressão</h4>
+          <SectionCard title="Volume Financeiro (PDV)" accent>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <SimulatorInput label="Impressão / Ingresso" value={inputs.pdv.custo_impressao_ingresso} onChange={(v) => upd("pdv")("custo_impressao_ingresso")(v)} prefix="R$" step={0.01} min={0} />
-              <SimulatorInput label="Impressão / Cortesia" value={inputs.pdv.custo_impressao_cortesia} onChange={(v) => upd("pdv")("custo_impressao_cortesia")(v)} prefix="R$" step={0.01} min={0} />
-              <SimulatorInput label="Cancelamento" value={inputs.pdv.custo_cancelamento} onChange={(v) => upd("pdv")("custo_cancelamento")(v)} prefix="R$" step={0.01} min={0} />
+              <SimulatorInput label="TPV Vendas Físicas" value={inputs.pdv.tpv_pdv} onChange={(v) => upd("pdv")("tpv_pdv")(v)} prefix="R$" min={0} allowEmpty />
+              <SimulatorInput label="Qtd. Máquinas Físicas" value={inputs.pdv.quantidade_maquinas} onChange={(v) => upd("pdv")("quantidade_maquinas")(v)} min={0} allowEmpty />
+              <SimulatorInput label="Ingressos Emitidos (Esperados)" value={inputs.pdv.ingressos_esperados} onChange={(v) => upd("pdv")("ingressos_esperados")(v)} min={0} allowEmpty />
             </div>
-          </div>
-        )}
-      </SectionCard>
+            {inputs.pdv.tpv_pdv > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-4">
+                <ReadOnly label="Crédito (70%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.70).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+                <ReadOnly label="Débito/Pix (30%)" value={`R$ ${(inputs.pdv.tpv_pdv * 0.30).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
+              </div>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Taxas — Receita Zig (PDV)" accent>
+            <div className="flex items-center gap-3 mb-4">
+              <button
+                onClick={() => upd("pdv")("taxa_segmentada")(true)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  inputs.pdv.taxa_segmentada
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                Taxa Segmentada
+              </button>
+              <button
+                onClick={() => upd("pdv")("taxa_segmentada")(false)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  !inputs.pdv.taxa_segmentada
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                Taxa Única
+              </button>
+            </div>
+
+            {inputs.pdv.taxa_segmentada ? (
+              <div className="grid grid-cols-2 gap-4">
+                <SimulatorInput label="Taxa Crédito" value={+(inputs.pdv.taxa_credito * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_credito")(v / 100)} suffix="%" step={0.1} min={0} />
+                <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} />
+              </div>
+            ) : (
+              <SimulatorInput label="Taxa Única" value={+(inputs.pdv.taxa_unica * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_unica")(v / 100)} suffix="%" step={0.1} min={0} />
+            )}
+
+            {inputs.pdv.taxa_segmentada && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Custos de Impressão</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <SimulatorInput label="Impressão / Ingresso" value={inputs.pdv.custo_impressao_ingresso} onChange={(v) => upd("pdv")("custo_impressao_ingresso")(v)} prefix="R$" step={0.01} min={0} />
+                  <SimulatorInput label="Impressão / Cortesia" value={inputs.pdv.custo_impressao_cortesia} onChange={(v) => upd("pdv")("custo_impressao_cortesia")(v)} prefix="R$" step={0.01} min={0} />
+                  <SimulatorInput label="Cancelamento" value={inputs.pdv.custo_cancelamento} onChange={(v) => upd("pdv")("custo_cancelamento")(v)} prefix="R$" step={0.01} min={0} />
+                </div>
+              </div>
+            )}
+          </SectionCard>
+        </>
+      )}
 
 
 

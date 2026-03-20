@@ -230,9 +230,10 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     const alerta = margem <= 0 || margem_sobre_tpv < 2;
 
-    // ── PDV ──
+    // ── PDV (ignorado se 100% online) ──
+    const is100Online = inputs.distribuicao.online_percent >= 1;
     const pdvIn = inputs.pdv;
-    const pdv_tpv = pdvIn.tpv_pdv;
+    const pdv_tpv = is100Online ? 0 : pdvIn.tpv_pdv;
     const pdv_tpv_credito = pdv_tpv * C.split_offline.credito;
     const pdv_tpv_debito = pdv_tpv * C.split_offline.debito_pix;
 
