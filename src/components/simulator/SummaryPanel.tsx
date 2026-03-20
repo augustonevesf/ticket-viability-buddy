@@ -10,11 +10,11 @@ const formatCurrency = (v: number) =>
 const formatPercent = (v: number) =>
   (v * 100).toFixed(2) + "%";
 
-const statusConfig: Record<DealStatus, { bg: string; text: string; label: string }> = {
-  "Atenção": { bg: "bg-warning/10", text: "text-warning", label: "⚠️ Atenção" },
-  "Saudável": { bg: "bg-blue-500/10", text: "text-blue-500", label: "👍 Saudável" },
-  "Boa": { bg: "bg-success/10", text: "text-success", label: "✅ Boa" },
-  "Excelente": { bg: "bg-purple-500/10", text: "text-purple-500", label: "🚀 Excelente" },
+const statusConfig: Record<DealStatus, { bg: string; text: string; label: string; frase: string }> = {
+  "Atenção": { bg: "bg-warning/10", text: "text-warning", label: "⚠️ Atenção", frase: "Não vai ser fácil, mas vai valer a pena 💪" },
+  "Saudável": { bg: "bg-blue-500/10", text: "text-blue-500", label: "👍 Saudável", frase: "A festa não para! Quem sabe faz ao vivo 🎤" },
+  "Boa": { bg: "bg-success/10", text: "text-success", label: "✅ Boa", frase: "Joga junto pra ganhar o jogo! 🏆" },
+  "Excelente": { bg: "bg-purple-500/10", text: "text-purple-500", label: "🚀 Excelente", frase: "Entregamos resultado, ponto. Agora dobra a meta! 🎯" },
 };
 
 const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value, className }) => (
@@ -133,10 +133,13 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             <span className={`text-xs font-semibold px-3 py-1 rounded-full ${cfg.bg} ${cfg.text}`}>
               {cfg.label}
             </span>
+            <p className={`text-[10px] italic ${cfg.text} text-center max-w-[140px] leading-tight`}>
+              {cfg.frase}
+            </p>
             <div className="w-2.5 h-24 bg-muted rounded-full overflow-hidden relative">
               <motion.div
                 className={`absolute bottom-0 left-0 right-0 rounded-full ${
-                  results.margem_sobre_tpv < 4 ? "bg-destructive" : results.margem_sobre_tpv < 6 ? "bg-warning" : "bg-success"
+                  results.margem_sobre_tpv < 3 ? "bg-warning" : results.margem_sobre_tpv < 5 ? "bg-blue-500" : results.margem_sobre_tpv < 7 ? "bg-success" : "bg-purple-500"
                 }`}
                 animate={{ height: `${barPct}%` }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
