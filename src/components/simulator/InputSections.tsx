@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { SimulatorInputs, CONSTANTS, COMMISSION_TIERS } from "@/hooks/useSimulator";
 import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import copacabanaPattern from "@/assets/copacabana-pattern.png";
 
 interface Props {
