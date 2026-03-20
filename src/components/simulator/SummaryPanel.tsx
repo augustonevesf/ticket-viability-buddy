@@ -326,11 +326,23 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
         </button>
         <button
           onClick={handleExportPDF}
-          className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl px-4 py-3 text-sm font-medium hover:opacity-90 transition-opacity active:scale-[0.97]"
+          disabled={!podeExportar}
+          className={`flex-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all active:scale-[0.97] ${
+            podeExportar
+              ? "bg-primary text-primary-foreground hover:opacity-90"
+              : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+          }`}
+          title={!podeExportar ? `Preencha: ${camposFaltando.map(c => c.campo).join(", ")}` : ""}
         >
           <FileDown className="w-4 h-4" />
           Exportar PDF
         </button>
+      </div>
+      {!podeExportar && (
+        <p className="text-xs text-destructive mt-1">
+          Campos obrigatórios: {camposFaltando.map(c => c.campo).join(", ")}
+        </p>
+      )}
       </div>
 
     </div>
