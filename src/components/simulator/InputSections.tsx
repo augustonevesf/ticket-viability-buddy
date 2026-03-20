@@ -183,13 +183,8 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         </div>
       </SectionCard>
 
-      {/* MG PDV */}
-      <SectionCard title="Mínimo Garantido (MG)" accent>
-        <div className="grid grid-cols-2 gap-4">
-          <SimulatorInput label="MG por Máquina" value={inputs.pdv.mg_por_maquina} onChange={(v) => upd("pdv")("mg_por_maquina")(v)} prefix="R$" min={0} allowEmpty />
-          <ReadOnly label="MG Total" value={`R$ ${(inputs.pdv.quantidade_maquinas * inputs.pdv.mg_por_maquina).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`} />
-        </div>
-      </SectionCard>
+
+
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
       <div className="mt-2">
