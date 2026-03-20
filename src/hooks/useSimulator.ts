@@ -38,6 +38,7 @@ export const COMMISSION_TIERS = [
 ];
 
 export interface SimulatorInputs {
+  mapa_assentos: boolean;
   cliente: {
     nome: string;
     cnpj: string;
