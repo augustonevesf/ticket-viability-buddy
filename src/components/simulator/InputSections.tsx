@@ -345,8 +345,104 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* ═══════════════════ EXTRAS ═══════════════════ */}
       <div className="mt-2">
-        <h2 className="text-sm font-bold text-muted-foreground/50 uppercase tracking-widest mb-3">Módulos Extras — Em breve</h2>
+        <h2 className="text-sm font-bold text-muted-foreground/50 uppercase tracking-widest mb-3">Módulos Extras</h2>
       </div>
+
+      {/* Suporte Premium Tickets */}
+      <SectionCard title="Suporte Premium Tickets">
+        {(() => {
+          const isPontual = inputs.cliente.tipo === "pontual";
+          const TPV = inputs.evento.tpv_total;
+          const elegivel = isPontual
+            ? TPV >= 75000
+            : (TPV >= 300000 && inputs.cliente.tempo_contrato > 0 && inputs.cliente.tempo_contrato <= 3);
+
+          return (
+            <div className="space-y-4">
+              <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${
+                elegivel
+                  ? "bg-success/10 text-success border border-success/20"
+                  : "bg-muted text-muted-foreground border border-border"
+              }`}>
+                <span>{elegivel ? "✅" : "🔒"}</span>
+                <span>
+                  {elegivel
+                    ? "Cliente elegível para Suporte Premium"
+                    : isPontual
+                      ? `Elegível a partir de R$ 75k de TPV (atual: R$ ${TPV.toLocaleString("pt-BR")})`
+                      : `Elegível com ≥ R$ 300k de TPV em até 3 meses`
+                  }
+                </span>
+              </div>
+
+              {elegivel && (
+                <>
+                  <SimulatorToggle
+                    label="Ativar Suporte Premium"
+                    checked={inputs.extras.suporte_premium_ativo}
+                    onChange={(v) => upd("extras")("suporte_premium_ativo")(v)}
+                  />
+
+                  {inputs.extras.suporte_premium_ativo && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => upd("extras")("suporte_premium_tipo")("percentual" as any)}
+                          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                            inputs.extras.suporte_premium_tipo === "percentual"
+                              ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                              : "bg-muted text-muted-foreground scale-100"
+                          }`}
+                        >
+                          % sobre Faturamento Bruto
+                        </button>
+                        <button
+                          onClick={() => upd("extras")("suporte_premium_tipo")("setup" as any)}
+                          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                            inputs.extras.suporte_premium_tipo === "setup"
+                              ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                              : "bg-muted text-muted-foreground scale-100"
+                          }`}
+                        >
+                          Valor Fixo (Setup)
+                        </button>
+                      </div>
+
+                      {inputs.extras.suporte_premium_tipo === "percentual" ? (
+                        <SimulatorInput
+                          label="% sobre Faturamento Bruto"
+                          value={inputs.extras.suporte_premium_percentual}
+                          onChange={(v) => upd("extras")("suporte_premium_percentual")(v)}
+                          suffix="%"
+                          step={0.1}
+                          min={0}
+                          allowEmpty
+                        />
+                      ) : (
+                        <SimulatorInput
+                          label="Valor Fixo do Suporte"
+                          value={inputs.extras.suporte_premium_setup}
+                          onChange={(v) => upd("extras")("suporte_premium_setup")(v)}
+                          prefix="R$"
+                          min={0}
+                          allowEmpty
+                        />
+                      )}
+
+                      {((inputs.extras.suporte_premium_tipo === "percentual" && inputs.extras.suporte_premium_percentual > 0) ||
+                        (inputs.extras.suporte_premium_tipo === "setup" && inputs.extras.suporte_premium_setup > 0)) && (
+                        <p className="text-xs text-success font-medium">
+                          💰 Receita adicional estimada com Suporte Premium
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          );
+        })()}
+      </SectionCard>
 
       <div className="opacity-50 pointer-events-none select-none space-y-4">
         <SectionCard title="Advance">

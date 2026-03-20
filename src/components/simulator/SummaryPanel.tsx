@@ -217,13 +217,16 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             <MetricRow label="(−) Impressão" value={formatCurrency(results.custo_impressao)} muted />
             <MetricRow label="Custos Totais" value={formatCurrency(results.custos_totais)} bold />
           </div>
-          {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0) && (
+          {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0 || results.suporte_premium_receita > 0) && (
             <div className="py-3">
               {results.advance_receita_juros > 0 && (
                 <MetricRow label="(+) Advance — Juros" value={formatCurrency(results.advance_receita_juros)} success />
               )}
               {results.pulse_pago_valor > 0 && (
                 <MetricRow label="(+) Zig Pulse Pago" value={formatCurrency(results.pulse_pago_valor)} success />
+              )}
+              {results.suporte_premium_receita > 0 && (
+                <MetricRow label="(+) Suporte Premium Tickets" value={formatCurrency(results.suporte_premium_receita)} success />
               )}
               {results.patrocinio_valor > 0 && (
                 <MetricRow label="(−) Patrocínio" value={formatCurrency(results.patrocinio_valor)} destructive />
