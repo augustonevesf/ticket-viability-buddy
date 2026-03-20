@@ -219,7 +219,11 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <SimulatorInput label="Taxa de Antecipação" value={+(inputs.taxa.taxa_antecipacao * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_antecipacao")(v / 100)} suffix="%" step={0.1} min={0} />
           <SimulatorInput label="Taxa de Processamento" value={+(inputs.taxa.taxa_processamento * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_processamento")(v / 100)} suffix="%" step={0.1} min={0} />
         </div>
-
+        {inputs.taxa.taxa_processamento > 0 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            ℹ️ Processamento incide apenas sobre compras em <span className="font-semibold text-foreground">crédito à vista e parcelado online</span>. Não considera crédito PDV.
+          </p>
+        )}
         <div className="mt-4 pt-4 border-t border-border">
           <SimulatorInput label="Valor Taxa Mínima" value={inputs.taxa.valor_taxa_minima} onChange={(v) => upd("taxa")("valor_taxa_minima")(v)} prefix="R$" step={0.1} min={0} />
           <p className="text-xs text-muted-foreground mt-2">
