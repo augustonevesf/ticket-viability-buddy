@@ -54,9 +54,27 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             placeholder="Nome obrigatório"
           />
           <SimulatorTextInput
-            label="CNPJ"
+            label="CNPJ ou CPF"
             value={inputs.cliente.cnpj}
-            onChange={(v) => upd("cliente")("cnpj")(v)}
+            onChange={(v) => {
+              const digits = v.replace(/\D/g, "").slice(0, 14);
+              let formatted = digits;
+              if (digits.length <= 11) {
+                // CPF: 000.000.000-00
+                formatted = digits
+                  .replace(/(\d{3})(\d)/, "$1.$2")
+                  .replace(/(\d{3})(\d)/, "$1.$2")
+                  .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+              } else {
+                // CNPJ: 00.000.000/0000-00
+                formatted = digits
+                  .replace(/(\d{2})(\d)/, "$1.$2")
+                  .replace(/(\d{3})(\d)/, "$1.$2")
+                  .replace(/(\d{3})(\d)/, "$1/$2")
+                  .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+              }
+              upd("cliente")("cnpj")(formatted);
+            }}
           />
           <SimulatorTextInput
             label="Nome do Executivo"
