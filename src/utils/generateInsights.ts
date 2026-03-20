@@ -72,7 +72,7 @@ export function generateInsights(inputs: SimulatorInputs, results: SimulatorResu
   }
 
   // 7. Margem média — pode melhorar
-  if (results.status === "Média") {
+  if (results.status === "Saudável") {
     insights.push({
       icon: "🎯",
       title: "Margem apertada",
