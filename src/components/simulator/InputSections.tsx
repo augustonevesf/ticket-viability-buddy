@@ -197,7 +197,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${
               inputs.taxa.regiao === "brasil"
                 ? "bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 border-green-600/30 scale-110 shadow-sm"
-                : "bg-muted text-muted-foreground/50 border-border scale-100"
+                : "bg-muted text-muted-foreground/40 border-border scale-90 opacity-50"
             }`}
           >
             🇧🇷 Brasil
@@ -212,7 +212,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.regiao === "rj"
                 ? "text-white border-stone-900 shadow-lg scale-110 ring-1 ring-stone-700"
-                : "text-muted-foreground/50 border-border scale-100"
+                : "text-muted-foreground/40 border-border scale-90 opacity-50"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
             style={{
