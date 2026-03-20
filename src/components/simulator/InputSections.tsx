@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SimulatorInputs, CONSTANTS, COMMISSION_TIERS } from "@/hooks/useSimulator";
 import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
 
