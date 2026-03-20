@@ -137,6 +137,7 @@ export const getDefaultInputs = (): SimulatorInputs => ({
   distribuicao: { online_percent: 0.99 },
   taxa: {
     taxa_administrativa: 0.10,
+    rebate: 0,
     taxa_antecipacao: 0,
     taxa_processamento: 0,
     taxa_minima_ativa: false,
