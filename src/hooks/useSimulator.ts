@@ -83,6 +83,8 @@ export interface SimulatorInputs {
     patrocinio_ativo: boolean;
     patrocinio_valor: number;
     pulse_pago_ativo: boolean;
+    pulse_pago_tipo: "percentual" | "fixo";
+    pulse_pago_percentual: number;
     pulse_pago_valor: number;
     suporte_premium_ativo: boolean;
     suporte_premium_tipo: "percentual" | "setup";
@@ -184,6 +186,8 @@ export const getDefaultInputs = (): SimulatorInputs => ({
     patrocinio_ativo: false,
     patrocinio_valor: 0,
     pulse_pago_ativo: false,
+    pulse_pago_tipo: "percentual",
+    pulse_pago_percentual: 0,
     pulse_pago_valor: 0,
     suporte_premium_ativo: false,
     suporte_premium_tipo: "percentual",
@@ -259,9 +263,12 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     // ── Extras ──
     const ext = inputs.extras;
-    const advance_receita_juros = ext.advance_ativo ? ext.advance_valor * (ext.advance_juros_am / 100) : 0;
+    const advance_juros_calculado = ext.advance_ativo ? ext.advance_valor * (ext.advance_juros_am / 100) : 0;
+    const advance_receita_juros = ext.advance_ativo && ext.advance_valor > 0 ? Math.max(advance_juros_calculado, 2500) : 0;
     const patrocinio_valor = ext.patrocinio_ativo ? ext.patrocinio_valor : 0;
-    const pulse_pago_valor = ext.pulse_pago_ativo ? ext.pulse_pago_valor : 0;
+    const pulse_pago_valor = ext.pulse_pago_ativo
+      ? (ext.pulse_pago_tipo === "fixo" ? ext.pulse_pago_valor : receita_bruta * (ext.pulse_pago_percentual / 100))
+      : 0;
 
     // ── Suporte Premium ──
     // Elegível: pontual >= 75k OU agência com >= 300k em contrato <= 3 meses
