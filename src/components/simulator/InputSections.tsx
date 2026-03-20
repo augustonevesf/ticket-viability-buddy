@@ -171,6 +171,19 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* BLOCO 4 — Negociação Ingresso */}
       <SectionCard title="Negociação Ingresso">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-xs font-medium text-muted-foreground">Região:</span>
+          <button
+            onClick={() => upd("taxa")("taxa_administrativa")(0.10)}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 border border-amber-500/20"
+            title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
+          >
+            RJ — Máx. 10%
+          </button>
+          <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
+            Lei 6.103/2011: conveniência limitada a 10% do valor de face (Lei 6321/2012).
+          </span>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SimulatorInput label="Taxa Administrativa" value={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} onChange={(v) => upd("taxa")("taxa_administrativa")(v / 100)} suffix="%" step={0.1} min={0} />
           <SimulatorInput label="Rebate (cashback produtor)" value={+(inputs.taxa.rebate * 100).toFixed(2)} onChange={(v) => upd("taxa")("rebate")(v / 100)} suffix="%" step={0.1} min={0} max={+(inputs.taxa.taxa_administrativa * 100).toFixed(2)} />
