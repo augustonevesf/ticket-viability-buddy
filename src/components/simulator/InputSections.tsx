@@ -138,13 +138,15 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             />
           </div>
 
-          <div className="mt-4">
-            <SimulatorToggle
-              label="Exclusividade"
-              checked={inputs.cliente.exclusividade}
-              onChange={(v) => upd("cliente")("exclusividade")(v)}
-            />
-          </div>
+          {inputs.cliente.tipo === "anual" && (
+            <div className="mt-4">
+              <SimulatorToggle
+                label="Exclusividade"
+                checked={inputs.cliente.exclusividade}
+                onChange={(v) => upd("cliente")("exclusividade")(v)}
+              />
+            </div>
+          )}
         </div>
       </SectionCard>
 
