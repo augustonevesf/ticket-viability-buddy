@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SimulatorInputs, CONSTANTS, COMMISSION_TIERS } from "@/hooks/useSimulator";
 import { SimulatorInput, SimulatorToggle, SimulatorTextInput } from "./SimulatorInput";
 
@@ -31,6 +31,22 @@ const ConstRow: React.FC<{ label: string; value: string }> = ({ label, value }) 
 );
 
 export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
+  const PDV_DEFAULTS = {
+    taxa_credito: 0.0341,
+    taxa_debito_pix: 0.0199,
+    custo_impressao_ingresso: 1.00,
+    custo_impressao_cortesia: 1.00,
+    custo_cancelamento: 0.50,
+  };
+
+  const [pdvDefaults, setPdvDefaults] = useState(false);
+
+  const isDefault = (field: keyof typeof PDV_DEFAULTS) =>
+    pdvDefaults && Math.abs(inputs.pdv[field] - PDV_DEFAULTS[field]) < 0.0001;
+
+  const pdvVariant = (field: keyof typeof PDV_DEFAULTS): "green" | "edited" | "default" =>
+    pdvDefaults ? (isDefault(field) ? "green" : "edited") : "default";
+
   const upd = <K extends keyof SimulatorInputs>(section: K) =>
     <F extends keyof SimulatorInputs[K]>(field: F) =>
       (val: SimulatorInputs[K][F]) =>
@@ -231,29 +247,34 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               </button>
               <button
                 onClick={() => {
+                  setPdvDefaults(true);
                   setInputs((prev) => ({
                     ...prev,
                     pdv: {
                       ...prev.pdv,
                       taxa_segmentada: true,
-                      taxa_credito: 0.0341,
-                      taxa_debito_pix: 0.0199,
-                      custo_impressao_ingresso: 1.00,
-                      custo_impressao_cortesia: 1.00,
-                      custo_cancelamento: 0.50,
+                      taxa_credito: PDV_DEFAULTS.taxa_credito,
+                      taxa_debito_pix: PDV_DEFAULTS.taxa_debito_pix,
+                      custo_impressao_ingresso: PDV_DEFAULTS.custo_impressao_ingresso,
+                      custo_impressao_cortesia: PDV_DEFAULTS.custo_impressao_cortesia,
+                      custo_cancelamento: PDV_DEFAULTS.custo_cancelamento,
                     },
                   }));
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-accent text-accent-foreground hover:opacity-80"
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pdvDefaults
+                    ? "bg-emerald-500 text-white"
+                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                }`}
               >
-                Taxas Físicas Default
+                Taxa Padrão
               </button>
             </div>
 
             {inputs.pdv.taxa_segmentada ? (
               <div className="grid grid-cols-2 gap-4">
-                <SimulatorInput label="Taxa Crédito" value={+(inputs.pdv.taxa_credito * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_credito")(v / 100)} suffix="%" step={0.1} min={0} />
-                <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} />
+                <SimulatorInput label="Taxa Crédito" value={+(inputs.pdv.taxa_credito * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_credito")(v / 100)} suffix="%" step={0.1} min={0} variant={pdvVariant("taxa_credito")} />
+                <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} variant={pdvVariant("taxa_debito_pix")} />
               </div>
             ) : (
               <SimulatorInput label="Taxa Única" value={+(inputs.pdv.taxa_unica * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_unica")(v / 100)} suffix="%" step={0.1} min={0} />
@@ -261,11 +282,11 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
             {inputs.pdv.taxa_segmentada && (
               <div className="mt-4 pt-4 border-t border-border">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Custos de Impressão</h4>
+                <h4 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-3">Custos de Impressão</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <SimulatorInput label="Impressão / Ingresso" value={inputs.pdv.custo_impressao_ingresso} onChange={(v) => upd("pdv")("custo_impressao_ingresso")(v)} prefix="R$" step={0.01} min={0} />
-                  <SimulatorInput label="Impressão / Cortesia" value={inputs.pdv.custo_impressao_cortesia} onChange={(v) => upd("pdv")("custo_impressao_cortesia")(v)} prefix="R$" step={0.01} min={0} />
-                  <SimulatorInput label="Cancelamento" value={inputs.pdv.custo_cancelamento} onChange={(v) => upd("pdv")("custo_cancelamento")(v)} prefix="R$" step={0.01} min={0} />
+                  <SimulatorInput label="Impressão / Ingresso" value={inputs.pdv.custo_impressao_ingresso} onChange={(v) => upd("pdv")("custo_impressao_ingresso")(v)} prefix="R$" step={0.01} min={0} variant={pdvDefaults ? pdvVariant("custo_impressao_ingresso") : "cost"} />
+                  <SimulatorInput label="Impressão / Cortesia" value={inputs.pdv.custo_impressao_cortesia} onChange={(v) => upd("pdv")("custo_impressao_cortesia")(v)} prefix="R$" step={0.01} min={0} variant={pdvDefaults ? pdvVariant("custo_impressao_cortesia") : "cost"} />
+                  <SimulatorInput label="Cancelamento" value={inputs.pdv.custo_cancelamento} onChange={(v) => upd("pdv")("custo_cancelamento")(v)} prefix="R$" step={0.01} min={0} variant={pdvDefaults ? pdvVariant("custo_cancelamento") : "cost"} />
                 </div>
               </div>
             )}

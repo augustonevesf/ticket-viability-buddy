@@ -12,6 +12,7 @@ interface SimulatorInputProps {
   error?: string;
   disabled?: boolean;
   allowEmpty?: boolean;
+  variant?: "default" | "cost" | "green" | "edited";
 }
 
 function parseBR(raw: string): number {
@@ -39,7 +40,7 @@ function formatBRL(num: number): string {
 }
 
 export const SimulatorInput: React.FC<SimulatorInputProps> = ({
-  label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty,
+  label, value, onChange, suffix, prefix, step = 1, min, max, error, disabled, allowEmpty, variant = "default",
 }) => {
   const isCurrency = prefix === "R$";
 
@@ -94,9 +95,22 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
     }
   };
 
+  const variantStyles = {
+    default: "bg-input border-border",
+    cost: "bg-muted/60 border-border/60",
+    green: "bg-emerald-500/10 border-emerald-500/40",
+    edited: "bg-muted/40 border-muted-foreground/30",
+  };
+
+  const labelColor = variant === "green"
+    ? "text-emerald-600 dark:text-emerald-400"
+    : variant === "cost"
+      ? "text-muted-foreground/70"
+      : "text-muted-foreground";
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-medium text-muted-foreground tracking-wide">{label}</label>
+      <label className={`text-xs font-medium tracking-wide ${labelColor}`}>{label}</label>
       <div className="relative">
         {prefix && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">{prefix}</span>
@@ -109,11 +123,12 @@ export const SimulatorInput: React.FC<SimulatorInputProps> = ({
           onBlur={handleBlur}
           disabled={disabled}
           placeholder={allowEmpty ? "0" : undefined}
-          className={`w-full bg-input border rounded-xl px-3 py-2.5 text-sm tabular-nums outline-none transition-all
+          className={`w-full border rounded-xl px-3 py-2.5 text-sm tabular-nums outline-none transition-all
             focus:ring-2 focus:ring-primary/20 focus:border-primary
             ${prefix ? "pl-9" : ""} ${suffix ? "pr-9" : ""}
-            ${error ? "border-destructive" : "border-border"}
+            ${error ? "border-destructive" : ""}
             ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+            ${variantStyles[variant]}
             text-foreground placeholder:text-muted-foreground`}
         />
         {suffix && (
