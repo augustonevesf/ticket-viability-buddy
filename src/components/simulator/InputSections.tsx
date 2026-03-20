@@ -161,21 +161,14 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         </div>
 
         <div className="mt-4 pt-4 border-t border-border">
-          <div className="flex items-center gap-4 mb-3">
-            <SimulatorToggle label="Taxa Mínima de Ingresso" checked={inputs.taxa.taxa_minima_ativa} onChange={(v) => upd("taxa")("taxa_minima_ativa")(v)} />
-          </div>
-          {inputs.taxa.taxa_minima_ativa && (
-            <div>
-              <SimulatorInput label="Valor Taxa Mínima" value={inputs.taxa.valor_taxa_minima} onChange={(v) => upd("taxa")("valor_taxa_minima")(v)} prefix="R$" step={0.1} min={0} />
-              <p className="text-xs text-muted-foreground mt-2">
-                Aplicada quando ticket médio {"<"} R$ 25,00 — funciona como mínimo garantido.
-              </p>
-              {ticket_medio > 0 && ticket_medio < 25 && (
-                <p className="text-xs text-warning mt-1 font-medium">
-                  ⚠ Ticket médio atual: R$ {ticket_medio.toFixed(2)} — taxa mínima será aplicada
-                </p>
-              )}
-            </div>
+          <SimulatorInput label="Valor Taxa Mínima" value={inputs.taxa.valor_taxa_minima} onChange={(v) => upd("taxa")("valor_taxa_minima")(v)} prefix="R$" step={0.1} min={0} />
+          <p className="text-xs text-muted-foreground mt-2">
+            Aplicada automaticamente quando ticket médio {"<"} R$ 25,00.
+          </p>
+          {ticket_medio > 0 && ticket_medio < 25 && (
+            <p className="text-xs text-warning mt-1 font-medium">
+              ⚠ Ticket médio atual: R$ {ticket_medio.toFixed(2)} — taxa mínima será aplicada
+            </p>
           )}
         </div>
       </SectionCard>
