@@ -121,7 +121,7 @@ export function exportPDF(
   const sc = statusColor[results.status] || [0, 0, 0];
   doc.setFontSize(13);
   doc.setTextColor(sc[0], sc[1], sc[2]);
-  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Líquida: ${pct(results.taxa_liquida)}`, 14, yPos);
+  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Adm. Plataforma: ${pct(results.taxa_liquida)}`, 14, yPos);
   yPos += 4;
 
   doc.setTextColor(0);
