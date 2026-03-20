@@ -30,12 +30,16 @@ const AnimatedValue: React.FC<{ value: string; className?: string }> = ({ value,
   </AnimatePresence>
 );
 
-const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?: boolean; destructive?: boolean }> = ({ label, value, muted, bold, destructive }) => (
-  <div className="flex justify-between items-center py-1.5">
-    <span className={`text-sm ${destructive ? "text-destructive" : muted ? "text-muted-foreground" : bold ? "font-semibold text-foreground" : "text-foreground/80"}`}>{label}</span>
-    <span className={`text-sm tabular-nums ${destructive ? "text-destructive font-medium" : muted ? "text-muted-foreground" : bold ? "font-bold text-foreground" : "font-medium text-foreground"}`}>{value}</span>
-  </div>
-);
+const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?: boolean; destructive?: boolean; success?: boolean }> = ({ label, value, muted, bold, destructive, success }) => {
+  const labelClass = destructive ? "text-destructive" : success ? "text-success" : muted ? "text-muted-foreground" : bold ? "font-semibold text-foreground" : "text-foreground/80";
+  const valueClass = destructive ? "text-destructive font-medium" : success ? "text-success font-medium" : muted ? "text-muted-foreground" : bold ? "font-bold text-foreground" : "font-medium text-foreground";
+  return (
+    <div className="flex justify-between items-center py-1.5">
+      <span className={`text-sm ${labelClass}`}>{label}</span>
+      <span className={`text-sm tabular-nums ${valueClass}`}>{value}</span>
+    </div>
+  );
+};
 
 interface Props {
   results: SimulatorResults;
