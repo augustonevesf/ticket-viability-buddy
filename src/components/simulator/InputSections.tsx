@@ -418,6 +418,15 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         <h2 className="text-sm font-bold text-muted-foreground/50 uppercase tracking-widest mb-3">Módulos Extras</h2>
       </div>
 
+      {/* Mapa de Assentos */}
+      <SectionCard title="🪑 Mapa de Assentos">
+        <SimulatorToggle
+          label="Lugar Marcado (Seats I/O)"
+          checked={inputs.mapa_assentos}
+          onChange={(v) => updRoot("mapa_assentos")(v)}
+        />
+      </SectionCard>
+
       {/* Suporte Premium Tickets */}
       <SectionCard title="Suporte Premium Tickets">
         {(() => {
