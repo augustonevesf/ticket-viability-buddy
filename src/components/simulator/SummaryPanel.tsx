@@ -255,6 +255,3 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
     </div>
   );
 };
-    </div>
-  );
-};
