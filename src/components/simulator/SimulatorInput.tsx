@@ -168,16 +168,18 @@ interface ToggleInputProps {
 
 export const SimulatorToggle: React.FC<ToggleInputProps> = ({ label, checked, onChange }) => {
   return (
-    <label className="flex items-center gap-3 cursor-pointer select-none">
+    <div
+      className="flex items-center gap-3 cursor-pointer select-none"
+      onClick={() => onChange(!checked)}
+    >
       <div
-        className={`relative w-[51px] h-[31px] rounded-full transition-colors duration-200 ${checked ? "bg-primary" : "bg-border"}`}
-        onClick={() => onChange(!checked)}
+        className={`relative w-[51px] h-[31px] rounded-full transition-colors duration-200 flex-shrink-0 ${checked ? "bg-primary" : "bg-border"}`}
       >
         <div
           className={`absolute top-[2px] w-[27px] h-[27px] rounded-full bg-card shadow-sm transition-transform duration-200 ${checked ? "translate-x-[22px]" : "translate-x-[2px]"}`}
         />
       </div>
       <span className="text-sm text-foreground">{label}</span>
-    </label>
+    </div>
   );
 };
