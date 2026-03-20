@@ -218,6 +218,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             <MetricRow label="(−) Comissão" value={formatCurrency(results.custo_comissao)} muted />
             <MetricRow label="(−) Servidor" value={formatCurrency(results.custo_servidor)} muted />
             <MetricRow label="(−) Impressão" value={formatCurrency(results.custo_impressao)} muted />
+            {results.custo_lugar_marcado > 0 && (
+              <MetricRow label="(−) Lugar Marcado (Seats I/O)" value={formatCurrency(results.custo_lugar_marcado)} muted />
+            )}
+            <MetricRow label="(−) Parcelamento (adq. 1,75%)" value={formatCurrency(results.custo_parcelamento)} muted />
             <MetricRow label="Custos Totais" value={formatCurrency(results.custos_totais)} bold />
           </div>
           {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0 || results.suporte_premium_receita > 0) && (
