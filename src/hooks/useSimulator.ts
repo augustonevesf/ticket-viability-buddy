@@ -237,7 +237,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const pdv_receita_total = pdv_receita_credito + pdv_receita_debito;
 
     // Costs
-    const pdv_custo_impressao = pdvIn.ingressos_esperados * pdvIn.custo_impressao_ingresso;
+    const pdv_custo_impressao = pdvIn.taxa_segmentada ? pdvIn.ingressos_esperados * pdvIn.custo_impressao_ingresso : 0;
     const pdv_custo_maquinas = pdvIn.quantidade_maquinas * C.custo_maquina;
 
     // MG
