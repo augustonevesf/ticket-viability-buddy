@@ -247,29 +247,34 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               </button>
               <button
                 onClick={() => {
+                  setPdvDefaults(true);
                   setInputs((prev) => ({
                     ...prev,
                     pdv: {
                       ...prev.pdv,
                       taxa_segmentada: true,
-                      taxa_credito: 0.0341,
-                      taxa_debito_pix: 0.0199,
-                      custo_impressao_ingresso: 1.00,
-                      custo_impressao_cortesia: 1.00,
-                      custo_cancelamento: 0.50,
+                      taxa_credito: PDV_DEFAULTS.taxa_credito,
+                      taxa_debito_pix: PDV_DEFAULTS.taxa_debito_pix,
+                      custo_impressao_ingresso: PDV_DEFAULTS.custo_impressao_ingresso,
+                      custo_impressao_cortesia: PDV_DEFAULTS.custo_impressao_cortesia,
+                      custo_cancelamento: PDV_DEFAULTS.custo_cancelamento,
                     },
                   }));
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-accent text-accent-foreground hover:opacity-80"
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pdvDefaults
+                    ? "bg-emerald-500 text-white"
+                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                }`}
               >
-                Taxas Físicas Default
+                Taxa Padrão
               </button>
             </div>
 
             {inputs.pdv.taxa_segmentada ? (
               <div className="grid grid-cols-2 gap-4">
-                <SimulatorInput label="Taxa Crédito" value={+(inputs.pdv.taxa_credito * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_credito")(v / 100)} suffix="%" step={0.1} min={0} />
-                <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} />
+                <SimulatorInput label="Taxa Crédito" value={+(inputs.pdv.taxa_credito * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_credito")(v / 100)} suffix="%" step={0.1} min={0} variant={pdvVariant("taxa_credito")} />
+                <SimulatorInput label="Taxa Débito / Pix" value={+(inputs.pdv.taxa_debito_pix * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_debito_pix")(v / 100)} suffix="%" step={0.1} min={0} variant={pdvVariant("taxa_debito_pix")} />
               </div>
             ) : (
               <SimulatorInput label="Taxa Única" value={+(inputs.pdv.taxa_unica * 100).toFixed(2)} onChange={(v) => upd("pdv")("taxa_unica")(v / 100)} suffix="%" step={0.1} min={0} />
