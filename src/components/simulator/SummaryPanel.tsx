@@ -44,16 +44,19 @@ interface Props {
   tipoContrato?: "pontual" | "anual";
   tempoContrato?: number;
   exclusividade?: boolean;
+  taxaAdministrativa?: number;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, taxaAdministrativa }) => {
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
 
+  const regiao = taxaAdministrativa !== undefined && taxaAdministrativa <= 0.10 ? "RJ (Lei 6.103/2011)" : "Brasil";
+
   const handleExportPDF = async () => {
     const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade);
+    exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, regiao);
   };
 
   return (
