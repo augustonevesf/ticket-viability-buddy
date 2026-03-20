@@ -136,7 +136,7 @@ export interface SimulatorResults {
   patrocinio_valor: number;
   pulse_pago_valor: number;
 
-  status: "Excelente" | "Saudável" | "Atenção";
+  status: "Excelente" | "Boa" | "Saudável" | "Atenção";
   alerta: boolean;
 
   pdv: PdvResults;
@@ -256,7 +256,8 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
     let status: SimulatorResults["status"];
-    if (margem_sobre_tpv >= 5) status = "Excelente";
+    if (margem_sobre_tpv >= 7) status = "Excelente";
+    else if (margem_sobre_tpv >= 5) status = "Boa";
     else if (margem_sobre_tpv >= 3) status = "Saudável";
     else status = "Atenção";
 
