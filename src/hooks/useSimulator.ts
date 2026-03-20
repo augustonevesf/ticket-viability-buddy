@@ -4,7 +4,6 @@ import { useMemo } from "react";
 export const CONSTANTS = {
   imposto: 0.0655,
   comissao: 0.05,
-  // Online cost percentages
   online_custos: {
     credito_antecipado: 0.0129,
     advance_tomada: 0.0105,
@@ -15,7 +14,6 @@ export const CONSTANTS = {
     comissao: 0.05,
     servidor: 0.0005,
   },
-  // Offline cost percentages
   offline_custos: {
     adquirencia: 0.024,
     impressao: 0.0,
@@ -27,6 +25,9 @@ export const CONSTANTS = {
   split_offline: { credito: 0.70, debito_pix: 0.30 },
   custo_maquina: 40,
   custo_impressao_default: 0.10,
+  lugar_marcado_seats_io: 0.80,
+  parcelamento_receita: 0.019,
+  parcelamento_custo_adquirencia_am: 0.0175,
 };
 
 export const COMMISSION_TIERS = [
