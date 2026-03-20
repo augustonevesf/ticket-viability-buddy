@@ -4,7 +4,6 @@ import { useMemo } from "react";
 export const CONSTANTS = {
   imposto: 0.0655,
   comissao: 0.05,
-  // Online cost percentages
   online_custos: {
     credito_antecipado: 0.0129,
     advance_tomada: 0.0105,
@@ -15,7 +14,6 @@ export const CONSTANTS = {
     comissao: 0.05,
     servidor: 0.0005,
   },
-  // Offline cost percentages
   offline_custos: {
     adquirencia: 0.024,
     impressao: 0.0,
@@ -27,6 +25,9 @@ export const CONSTANTS = {
   split_offline: { credito: 0.70, debito_pix: 0.30 },
   custo_maquina: 40,
   custo_impressao_default: 0.10,
+  lugar_marcado_seats_io: 0.80,
+  parcelamento_receita: 0.019,
+  parcelamento_custo_adquirencia_am: 0.0175,
 };
 
 export const COMMISSION_TIERS = [
@@ -37,6 +38,7 @@ export const COMMISSION_TIERS = [
 ];
 
 export interface SimulatorInputs {
+  mapa_assentos: boolean;
   cliente: {
     nome: string;
     cnpj: string;
@@ -121,6 +123,7 @@ export interface SimulatorResults {
   receita_take: number;
   receita_antecipacao: number;
   receita_processamento: number;
+  receita_parcelamento: number;
   receita_minima: number;
   receita_bruta: number;
 
@@ -132,6 +135,8 @@ export interface SimulatorResults {
   custo_servidor: number;
   custo_maquinas: number;
   custo_impressao: number;
+  custo_lugar_marcado: number;
+  custo_parcelamento: number;
   custos_totais: number;
 
   margem: number;
@@ -154,6 +159,7 @@ export interface SimulatorResults {
 export type DealStatus = SimulatorResults["status"];
 
 export const getDefaultInputs = (): SimulatorInputs => ({
+  mapa_assentos: false,
   cliente: { nome: "", cnpj: "", executivo: "", tipo: "pontual", tempo_contrato: 0, exclusividade: false, tempo_exclusividade: 0 },
   evento: { tpv_total: 0, publico_estimado: 0, ticket_medio_calculado: 0 },
   distribuicao: { online_percent: 0.99 },
@@ -234,12 +240,15 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     // Processamento: receita sobre vendas em crédito online
     const receita_processamento = tpv_online * C.split_online.credito * inputs.taxa.taxa_processamento;
 
+    // Parcelamento: receita adicional 1,9% sobre crédito online
+    const receita_parcelamento = tpv_online * C.split_online.credito * C.parcelamento_receita;
+
     let receita_minima = 0;
     if (ticket_medio > 0 && ticket_medio < 25) {
       receita_minima = inputs.evento.publico_estimado * inputs.taxa.valor_taxa_minima;
     }
 
-    const receita_bruta = Math.max(receita_take, receita_minima) + receita_antecipacao + receita_processamento;
+    const receita_bruta = Math.max(receita_take, receita_minima) + receita_antecipacao + receita_processamento + receita_parcelamento;
 
     // ── Impostos ──
     const impostos_valor = receita_bruta * C.imposto;
@@ -249,9 +258,14 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const custo_antifraude = tpv_online * C.online_custos.antifraude;
     const custo_comissao = receita_liquida * C.comissao;
     const custo_servidor = TPV * C.online_custos.servidor;
-    const custo_maquinas = 0; // removed online machines
+    const custo_maquinas = 0;
     const custo_impressao = inputs.evento.publico_estimado * C.custo_impressao_default;
-        // Nota: custo_impressao usa valor padrão (R$ 0,10/ingresso online). Impressão PDV é calculada separadamente em pdv_custo_impressao.
+
+    // Lugar marcado (Seats I/O): R$ 0,80 por pessoa se mapa de assentos ativo
+    const custo_lugar_marcado = inputs.mapa_assentos ? inputs.evento.publico_estimado * C.lugar_marcado_seats_io : 0;
+
+    // Custo parcelamento adquirência: 1,75% a.m. sobre crédito online
+    const custo_parcelamento = tpv_online * C.split_online.credito * C.parcelamento_custo_adquirencia_am;
 
     const custos_totais =
       custo_adquirencia_total +
@@ -259,7 +273,9 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
       custo_comissao +
       custo_servidor +
       custo_maquinas +
-      custo_impressao;
+      custo_impressao +
+      custo_lugar_marcado +
+      custo_parcelamento;
 
     // ── Extras ──
     const ext = inputs.extras;
@@ -347,9 +363,9 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     return {
       tpv: TPV, tpv_online, tpv_offline,
       custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
-      taxa_liquida, rebate_valor, receita_take, receita_antecipacao, receita_processamento, receita_minima, receita_bruta,
+      taxa_liquida, rebate_valor, receita_take, receita_antecipacao, receita_processamento, receita_parcelamento, receita_minima, receita_bruta,
       impostos_valor, receita_liquida,
-      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao,
+      custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao, custo_lugar_marcado, custo_parcelamento,
       custos_totais,
       margem, margem_sobre_tpv,
       ticket_medio,

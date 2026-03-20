@@ -199,6 +199,9 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             {results.receita_processamento > 0 && (
               <MetricRow label="(+) Processamento (crédito online)" value={formatCurrency(results.receita_processamento)} success />
             )}
+            {results.receita_parcelamento > 0 && (
+              <MetricRow label="(+) Parcelamento (1,9%)" value={formatCurrency(results.receita_parcelamento)} success />
+            )}
             {results.receita_minima > 0 && (
               <MetricRow label="Receita Mínima (MG Ingresso)" value={formatCurrency(results.receita_minima)} success />
             )}
@@ -215,6 +218,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
             <MetricRow label="(−) Comissão" value={formatCurrency(results.custo_comissao)} muted />
             <MetricRow label="(−) Servidor" value={formatCurrency(results.custo_servidor)} muted />
             <MetricRow label="(−) Impressão" value={formatCurrency(results.custo_impressao)} muted />
+            {results.custo_lugar_marcado > 0 && (
+              <MetricRow label="(−) Lugar Marcado (Seats I/O)" value={formatCurrency(results.custo_lugar_marcado)} muted />
+            )}
+            <MetricRow label="(−) Parcelamento (adq. 1,75%)" value={formatCurrency(results.custo_parcelamento)} muted />
             <MetricRow label="Custos Totais" value={formatCurrency(results.custos_totais)} bold />
           </div>
           {(results.advance_receita_juros > 0 || results.patrocinio_valor > 0 || results.pulse_pago_valor > 0 || results.suporte_premium_receita > 0) && (

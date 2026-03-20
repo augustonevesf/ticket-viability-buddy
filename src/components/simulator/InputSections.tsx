@@ -50,10 +50,14 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
   const pdvVariant = (field: keyof typeof PDV_DEFAULTS): "green" | "edited" | "default" =>
     pdvDefaults ? (isDefault(field) ? "green" : "edited") : "default";
 
-  const upd = <K extends keyof SimulatorInputs>(section: K) =>
+  const upd = <K extends "cliente" | "evento" | "distribuicao" | "taxa" | "pdv" | "extras">(section: K) =>
     <F extends keyof SimulatorInputs[K]>(field: F) =>
       (val: SimulatorInputs[K][F]) =>
         setInputs((prev) => ({ ...prev, [section]: { ...prev[section], [field]: val } }));
+
+  const updRoot = <K extends keyof SimulatorInputs>(key: K) =>
+    (val: SimulatorInputs[K]) =>
+      setInputs((prev) => ({ ...prev, [key]: val }));
 
   const C = CONSTANTS;
   const offline_percent = 1 - inputs.distribuicao.online_percent;
@@ -64,6 +68,20 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* TOGGLE — Mapa de Assentos */}
+      <SectionCard title="Configuração de Evento">
+        <SimulatorToggle
+          label="🪑 Mapa de Assentos (Lugar Marcado)"
+          checked={inputs.mapa_assentos}
+          onChange={(v) => updRoot("mapa_assentos")(v)}
+        />
+        {inputs.mapa_assentos && (
+          <p className="text-xs text-muted-foreground mt-2">
+            ✅ Ativado — Custo de R$ 0,80 por lugar marcado (Seats I/O) será aplicado.
+          </p>
+        )}
+      </SectionCard>
+
       {/* BLOCO 1 — Cliente / Produtora */}
       <SectionCard title="Cliente / Produtora">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -689,6 +707,11 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <ConstRow label="Antifraude" value="0,30%" />
           <ConstRow label="Comissão" value="5,00%" />
           <ConstRow label="Servidor" value="0,05%" />
+          <ConstRow label="Parcelamento (receita)" value="1,90%" />
+          <ConstRow label="Parcelamento (custo adq.)" value="1,75% a.m." />
+          {inputs.mapa_assentos && (
+            <ConstRow label="Lugar Marcado (Seats I/O)" value="R$ 0,80/un" />
+          )}
         </div>
       </div>
 
