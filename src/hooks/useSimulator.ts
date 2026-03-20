@@ -263,9 +263,12 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     // ── Extras ──
     const ext = inputs.extras;
-    const advance_receita_juros = ext.advance_ativo ? ext.advance_valor * (ext.advance_juros_am / 100) : 0;
+    const advance_juros_calculado = ext.advance_ativo ? ext.advance_valor * (ext.advance_juros_am / 100) : 0;
+    const advance_receita_juros = ext.advance_ativo && ext.advance_valor > 0 ? Math.max(advance_juros_calculado, 2500) : 0;
     const patrocinio_valor = ext.patrocinio_ativo ? ext.patrocinio_valor : 0;
-    const pulse_pago_valor = ext.pulse_pago_ativo ? ext.pulse_pago_valor : 0;
+    const pulse_pago_valor = ext.pulse_pago_ativo
+      ? (ext.pulse_pago_tipo === "fixo" ? ext.pulse_pago_valor : receita_bruta * (ext.pulse_pago_percentual / 100))
+      : 0;
 
     // ── Suporte Premium ──
     // Elegível: pontual >= 75k OU agência com >= 300k em contrato <= 3 meses
