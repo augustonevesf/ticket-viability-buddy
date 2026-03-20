@@ -175,13 +175,21 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <span className="text-xs font-medium text-muted-foreground">Região:</span>
           <button
             onClick={() => upd("taxa")("taxa_administrativa")(0.12)}
-            className="px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 hover:opacity-80 border border-green-600/30"
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${
+              inputs.taxa.taxa_administrativa > 0.10
+                ? "bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 border-green-600/30"
+                : "bg-muted text-muted-foreground/50 border-border"
+            }`}
           >
             🇧🇷 Brasil
           </button>
           <button
             onClick={() => upd("taxa")("taxa_administrativa")(0.10)}
-            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 border border-amber-500/20"
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all border ${
+              inputs.taxa.taxa_administrativa <= 0.10
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                : "bg-muted text-muted-foreground/50 border-border"
+            }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
           >
             RJ — Máx. 10%
