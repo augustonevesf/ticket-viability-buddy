@@ -178,18 +178,18 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             onClick={() => upd("taxa")("taxa_administrativa")(0.12)}
             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${
               inputs.taxa.taxa_administrativa > 0.10
-                ? "bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 border-green-600/30"
-                : "bg-muted text-muted-foreground/50 border-border"
+                ? "bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 border-green-600/30 scale-110 shadow-sm"
+                : "bg-muted text-muted-foreground/50 border-border scale-100"
             }`}
           >
             🇧🇷 Brasil
           </button>
           <button
             onClick={() => upd("taxa")("taxa_administrativa")(0.10)}
-            className={`relative px-4 py-2 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
+            className={`relative px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border overflow-hidden ${
               inputs.taxa.taxa_administrativa <= 0.10
-                ? "text-white border-stone-800 shadow-md"
-                : "text-muted-foreground/50 border-border opacity-40"
+                ? "text-white border-stone-800 shadow-md scale-110"
+                : "text-muted-foreground/50 border-border opacity-40 scale-100"
             }`}
             title="Lei Estadual 6.103/2011 — taxa máxima de 10%"
             style={{
@@ -198,7 +198,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               backgroundRepeat: "repeat",
             }}
           >
-            <span className="relative z-10 bg-black/70 px-2 py-0.5 rounded text-white">
+            <span className={`relative z-10 px-1.5 py-0.5 rounded ${inputs.taxa.taxa_administrativa <= 0.10 ? "bg-black/70 text-white" : ""}`}>
               RJ — Máx. 10%
             </span>
           </button>
