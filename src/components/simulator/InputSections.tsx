@@ -10,7 +10,7 @@ interface Props {
 
 const SectionCard: React.FC<{ title: string; children: React.ReactNode; accent?: boolean }> = ({ title, children, accent }) => (
   <div className={`bg-card rounded-2xl p-5 shadow-card ${accent ? "border-l-4 border-primary" : ""}`}>
-    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">{title}</h3>
+    <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-4">{title}</h3>
     {children}
   </div>
 );
