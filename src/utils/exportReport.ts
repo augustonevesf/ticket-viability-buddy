@@ -14,10 +14,12 @@ const DANGER_RED: [number, number, number] = [220, 38, 38];
 const PURPLE: [number, number, number] = [124, 58, 237];
 
 const statusColors: Record<string, [number, number, number]> = {
-  "Atenção": DANGER_RED,
-  "Saudável": WARNING_AMBER,
-  "Boa": SUCCESS_GREEN,
-  "Excelente": PURPLE,
+  "Negativo": [0, 0, 0],
+  "Ruim": DANGER_RED,
+  "Atenção": WARNING_AMBER,
+  "Saudável": [37, 99, 235],
+  "Boa": [0, 111, 98],
+  "Excelente": [57, 255, 20],
 };
 
 function drawSectionHeader(doc: jsPDF, y: number, title: string, color: [number, number, number] = ZIG_BLUE): number {
