@@ -13,7 +13,7 @@ function buildRows(r: SimulatorResults): string[][] {
     ["TPV Offline", fmt(r.tpv_offline)],
     ["Ticket Médio", fmt(r.ticket_medio)],
     ["", ""],
-    ["Taxa Líquida", pct(r.taxa_liquida)],
+    ["Taxa Adm. Plataforma", pct(r.taxa_liquida)],
     ["Receita Take", fmt(r.receita_take)],
   ];
   if (r.receita_antecipacao > 0) rows.push(["(+) Receita Antecipação", fmt(r.receita_antecipacao)]);
@@ -65,6 +65,7 @@ export function exportPDF(
   tipoContrato?: "pontual" | "anual",
   tempoContrato?: number,
   exclusividade?: boolean,
+  regiao?: string,
 ) {
   const doc = new jsPDF();
   const now = new Date();
@@ -98,6 +99,7 @@ export function exportPDF(
 
   // Contract info
   const contractParts: string[] = [];
+  if (regiao) contractParts.push(`Região: ${regiao}`);
   if (tipoContrato) contractParts.push(tipoContrato === "pontual" ? "Evento Pontual" : "Agência Anual");
   if (tempoContrato && tempoContrato > 0) contractParts.push(`${tempoContrato} ${tempoContrato === 1 ? "mês" : "meses"}`);
   if (exclusividade) contractParts.push("Exclusividade");
@@ -119,7 +121,7 @@ export function exportPDF(
   const sc = statusColor[results.status] || [0, 0, 0];
   doc.setFontSize(13);
   doc.setTextColor(sc[0], sc[1], sc[2]);
-  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Líquida: ${pct(results.taxa_liquida)}`, 14, yPos);
+  doc.text(`Status: ${results.status}  |  Margem/TPV: ${results.margem_sobre_tpv.toFixed(2)}%  |  Taxa Adm. Plataforma: ${pct(results.taxa_liquida)}`, 14, yPos);
   yPos += 4;
 
   doc.setTextColor(0);

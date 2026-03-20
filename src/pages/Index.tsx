@@ -46,6 +46,7 @@ const Index = () => {
               tipoContrato={inputs.cliente.tipo}
               tempoContrato={inputs.cliente.tempo_contrato}
               exclusividade={inputs.cliente.exclusividade}
+              taxaAdministrativa={inputs.taxa.taxa_administrativa}
             />
           </div>
         </div>

@@ -44,16 +44,19 @@ interface Props {
   tipoContrato?: "pontual" | "anual";
   tempoContrato?: number;
   exclusividade?: boolean;
+  taxaAdministrativa?: number;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, taxaAdministrativa }) => {
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
 
+  const regiao = taxaAdministrativa !== undefined && taxaAdministrativa <= 0.10 ? "RJ (Lei 6.103/2011)" : "Brasil";
+
   const handleExportPDF = async () => {
     const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade);
+    exportPDF(results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, regiao);
   };
 
   return (
@@ -125,7 +128,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
 
         <div className="border-t border-border pt-4 space-y-1">
           <div className="flex justify-between items-center py-1.5">
-            <span className="text-xs font-medium text-muted-foreground tracking-wide">Taxa Líquida</span>
+            <span className="text-xs font-medium text-muted-foreground tracking-wide">Taxa Adm. Plataforma</span>
             <span className="text-lg font-semibold tabular-nums text-primary">
               {formatPercent(results.taxa_liquida)}
             </span>
@@ -157,7 +160,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
             <MetricRow label="TPV Offline" value={formatCurrency(results.tpv_offline)} muted />
           </div>
           <div className="py-3">
-            <MetricRow label="Taxa Líquida (após rebate)" value={formatPercent(results.taxa_liquida)} />
+            <MetricRow label="Taxa Adm. Plataforma (após rebate)" value={formatPercent(results.taxa_liquida)} />
             {results.rebate_valor > 0 && (
               <MetricRow label="(−) Rebate concedido" value={formatCurrency(results.rebate_valor)} muted />
             )}
