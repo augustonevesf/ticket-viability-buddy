@@ -56,6 +56,7 @@ export interface SimulatorInputs {
   };
   taxa: {
     taxa_administrativa: number;
+    rebate: number;
     taxa_antecipacao: number;
     taxa_processamento: number;
     taxa_minima_ativa: boolean;
@@ -100,6 +101,7 @@ export interface SimulatorResults {
   custo_adquirencia_total: number;
 
   taxa_liquida: number;
+  rebate_valor: number;
   receita_take: number;
   receita_antecipacao: number;
   receita_processamento: number;
@@ -135,6 +137,7 @@ export const getDefaultInputs = (): SimulatorInputs => ({
   distribuicao: { online_percent: 0.99 },
   taxa: {
     taxa_administrativa: 0.10,
+    rebate: 0,
     taxa_antecipacao: 0,
     taxa_processamento: 0,
     taxa_minima_ativa: false,
@@ -180,8 +183,9 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
 
     const custo_adquirencia_total = custo_adquirencia_online + custo_adquirencia_offline;
 
-    // ── Taxa líquida (apenas administrativa) ──
-    const taxa_liquida = inputs.taxa.taxa_administrativa;
+    // ── Taxa líquida (administrativa − rebate) ──
+    const taxa_liquida = inputs.taxa.taxa_administrativa - inputs.taxa.rebate;
+    const rebate_valor = tpv_online * inputs.taxa.rebate;
 
     // ── Receita ──
     const receita_take = TPV * taxa_liquida;
@@ -277,7 +281,7 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     return {
       tpv: TPV, tpv_online, tpv_offline,
       custo_adquirencia_online, custo_adquirencia_offline, custo_adquirencia_total,
-      taxa_liquida, receita_take, receita_antecipacao, receita_processamento, receita_minima, receita_bruta,
+      taxa_liquida, rebate_valor, receita_take, receita_antecipacao, receita_processamento, receita_minima, receita_bruta,
       impostos_valor, receita_liquida,
       custo_antifraude, custo_comissao, custo_servidor, custo_maquinas, custo_impressao,
       custos_totais,

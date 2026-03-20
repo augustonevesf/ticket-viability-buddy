@@ -130,6 +130,12 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
               {formatPercent(results.taxa_liquida)}
             </span>
           </div>
+          {results.rebate_valor > 0 && (
+            <div className="flex justify-between items-center py-1">
+              <span className="text-xs text-warning">Rebate concedido</span>
+              <span className="text-xs font-medium tabular-nums text-warning">{formatCurrency(results.rebate_valor)}</span>
+            </div>
+          )}
           {results.ticket_medio > 0 && (
             <div className="flex justify-between items-center py-1.5">
               <span className="text-xs font-medium text-muted-foreground tracking-wide">Ticket Médio</span>
@@ -151,7 +157,10 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
             <MetricRow label="TPV Offline" value={formatCurrency(results.tpv_offline)} muted />
           </div>
           <div className="py-3">
-            <MetricRow label="Taxa Líquida" value={formatPercent(results.taxa_liquida)} />
+            <MetricRow label="Taxa Líquida (após rebate)" value={formatPercent(results.taxa_liquida)} />
+            {results.rebate_valor > 0 && (
+              <MetricRow label="(−) Rebate concedido" value={formatCurrency(results.rebate_valor)} muted />
+            )}
             <MetricRow label="Receita Take" value={formatCurrency(results.receita_take)} muted />
             {results.receita_antecipacao > 0 && (
               <MetricRow label="(+) Receita Antecipação" value={formatCurrency(results.receita_antecipacao)} muted />
@@ -224,6 +233,22 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
         >
           <FileDown className="w-4 h-4" />
           Exportar PDF
+        </button>
+      </div>
+
+      {/* Módulos em breve */}
+      <div className="flex gap-3">
+        <button
+          disabled
+          className="flex-1 flex items-center justify-center gap-2 bg-muted text-muted-foreground rounded-xl px-4 py-3 text-sm font-medium cursor-not-allowed opacity-60"
+        >
+          Advance (em breve)
+        </button>
+        <button
+          disabled
+          className="flex-1 flex items-center justify-center gap-2 bg-muted text-muted-foreground rounded-xl px-4 py-3 text-sm font-medium cursor-not-allowed opacity-60"
+        >
+          Patrocínio (em breve)
         </button>
       </div>
     </div>
