@@ -261,6 +261,7 @@ export function exportPDF(
   if (results.rebate_valor > 0) rows.push(["(−) Rebate concedido", fmt(results.rebate_valor)]);
   if (results.receita_antecipacao > 0) rows.push(["(+) Receita Antecipação", fmt(results.receita_antecipacao)]);
   if (results.receita_processamento > 0) rows.push(["(+) Receita Processamento (crédito online)", fmt(results.receita_processamento)]);
+  if (results.receita_parcelamento > 0) rows.push(["(+) Parcelamento (1,9%)", fmt(results.receita_parcelamento)]);
   if (results.receita_minima > 0) rows.push(["Receita Mínima (MG Ingresso)", fmt(results.receita_minima)]);
   rows.push(
     ["Receita Bruta", fmt(results.receita_bruta)],
@@ -278,6 +279,10 @@ export function exportPDF(
     ["(−) Comissão (5%)", fmt(results.custo_comissao)],
     ["(−) Servidor", fmt(results.custo_servidor)],
     ["(−) Impressão", fmt(results.custo_impressao)],
+  );
+  if (results.custo_lugar_marcado > 0) rows.push(["(−) Lugar Marcado (Seats I/O)", fmt(results.custo_lugar_marcado)]);
+  rows.push(
+    ["(−) Parcelamento (adq. 1,75%)", fmt(results.custo_parcelamento)],
     ["Custos Totais", fmt(results.custos_totais)],
   );
 
