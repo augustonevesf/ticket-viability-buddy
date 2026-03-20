@@ -50,6 +50,7 @@ const Index = () => {
           <div className="lg:col-span-5">
             <SummaryPanel
               results={results}
+              inputs={inputs}
               clienteName={inputs.cliente.nome || undefined}
               executivoName={inputs.cliente.executivo || undefined}
               tipoContrato={inputs.cliente.tipo}
