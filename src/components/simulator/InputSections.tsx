@@ -133,15 +133,17 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <SimulatorInput
-              label="Tempo de Contrato (meses)"
-              value={inputs.cliente.tempo_contrato}
-              onChange={(v) => upd("cliente")("tempo_contrato")(v)}
-              min={0}
-              allowEmpty
-            />
-          </div>
+          {inputs.cliente.tipo === "anual" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <SimulatorInput
+                label="Tempo de Contrato (meses)"
+                value={inputs.cliente.tempo_contrato}
+                onChange={(v) => upd("cliente")("tempo_contrato")(v)}
+                min={0}
+                allowEmpty
+              />
+            </div>
+          )}
 
           {inputs.cliente.tipo === "anual" && (
             <div className="mt-4">
