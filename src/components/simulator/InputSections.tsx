@@ -487,25 +487,146 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
         })()}
       </SectionCard>
 
-      <div className="opacity-50 pointer-events-none select-none space-y-4">
-        <SectionCard title="Advance">
-          <p className="text-xs text-muted-foreground">
-            Valor adiantado ao produtor que retorna à Zig com juros. <span className="font-medium">Em edição.</span>
-          </p>
-        </SectionCard>
+      {/* ═══════════════════ ADVANCE ═══════════════════ */}
+      <SectionCard title="💰 Advance">
+        <p className="text-xs text-muted-foreground mb-3">
+          Valor adiantado ao produtor que retorna integralmente à Zig com juros.
+        </p>
+        <SimulatorToggle
+          label="Ativar Advance"
+          checked={inputs.extras.advance_ativo}
+          onChange={(v) => upd("extras")("advance_ativo")(v as any)}
+        />
+        {inputs.extras.advance_ativo && (
+          <div className="mt-4 space-y-3">
+            <SimulatorInput
+              label="Valor emprestado"
+              value={inputs.extras.advance_valor}
+              onChange={(v) => upd("extras")("advance_valor")(v)}
+              prefix="R$"
+              min={0}
+              allowEmpty
+            />
+            <SimulatorInput
+              label="Taxa de juros (a.m.)"
+              value={inputs.extras.advance_juros_am}
+              onChange={(v) => upd("extras")("advance_juros_am")(v)}
+              suffix="%"
+              step={0.1}
+              min={0}
+              allowEmpty
+            />
+            {inputs.extras.advance_valor > 0 && (
+              <div className="bg-muted/60 rounded-xl p-3 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Receita de juros</span>
+                  <span className="font-semibold text-foreground tabular-nums">
+                    {(inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Juros mínimo (R$ 2.500/mês)</span>
+                  <span className={`font-semibold tabular-nums ${inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100) >= 2500 ? "text-emerald-600" : "text-[hsl(0,72%,51%)]"}`}>
+                    {inputs.extras.advance_valor * (inputs.extras.advance_juros_am / 100) >= 2500 ? "✓ Acima do mínimo" : "✗ Abaixo do mínimo"}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </SectionCard>
 
-        <SectionCard title="Patrocínio">
-          <p className="text-xs text-muted-foreground">
-            Valor concedido como patrocínio — dedução direta da margem Zig. <span className="font-medium">Em edição.</span>
-          </p>
-        </SectionCard>
+      {/* ═══════════════════ PATROCÍNIO ═══════════════════ */}
+      <SectionCard title="🤝 Patrocínio">
+        <p className="text-xs text-muted-foreground mb-3">
+          Valor pago ao cliente como patrocínio — dedução direta da margem Zig. Precisa fazer sentido financeiro.
+        </p>
+        <SimulatorToggle
+          label="Ativar Patrocínio"
+          checked={inputs.extras.patrocinio_ativo}
+          onChange={(v) => upd("extras")("patrocinio_ativo")(v as any)}
+        />
+        {inputs.extras.patrocinio_ativo && (
+          <div className="mt-4 space-y-3">
+            <SimulatorInput
+              label="Valor do Patrocínio"
+              value={inputs.extras.patrocinio_valor}
+              onChange={(v) => upd("extras")("patrocinio_valor")(v)}
+              prefix="R$"
+              min={0}
+              allowEmpty
+            />
+            {inputs.extras.patrocinio_valor > 0 && (
+              <p className="text-xs text-[hsl(0,72%,51%)] font-medium">
+                ⚠️ Dedução de {inputs.extras.patrocinio_valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} na margem
+              </p>
+            )}
+          </div>
+        )}
+      </SectionCard>
 
-        <SectionCard title="Zig Pulse Pago">
-          <p className="text-xs text-muted-foreground">
-            Receita adicional Zig pelo uso do Pulse Pago. <span className="font-medium">Em edição.</span>
-          </p>
-        </SectionCard>
-      </div>
+      {/* ═══════════════════ ZIG PULSE PAGO ═══════════════════ */}
+      <SectionCard title="⚡ Zig Pulse Pago">
+        <p className="text-xs text-muted-foreground mb-3">
+          Receita adicional Zig para impulsionar o marketing do cliente.
+        </p>
+        <SimulatorToggle
+          label="Ativar Zig Pulse Pago"
+          checked={inputs.extras.pulse_pago_ativo}
+          onChange={(v) => upd("extras")("pulse_pago_ativo")(v as any)}
+        />
+        {inputs.extras.pulse_pago_ativo && (
+          <div className="mt-4 space-y-3">
+            <div className="flex gap-2">
+              <button
+                onClick={() => upd("extras")("pulse_pago_tipo" as any)("percentual" as any)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  (inputs.extras as any).pulse_pago_tipo !== "fixo"
+                    ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                    : "bg-muted text-muted-foreground scale-100"
+                }`}
+              >
+                % sobre Faturamento Bruto
+              </button>
+              <button
+                onClick={() => upd("extras")("pulse_pago_tipo" as any)("fixo" as any)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  (inputs.extras as any).pulse_pago_tipo === "fixo"
+                    ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+                    : "bg-muted text-muted-foreground scale-100"
+                }`}
+              >
+                Valor Fixo
+              </button>
+            </div>
+
+            {(inputs.extras as any).pulse_pago_tipo === "fixo" ? (
+              <SimulatorInput
+                label="Valor Fixo Zig Pulse"
+                value={inputs.extras.pulse_pago_valor}
+                onChange={(v) => upd("extras")("pulse_pago_valor")(v)}
+                prefix="R$"
+                min={0}
+                allowEmpty
+              />
+            ) : (
+              <>
+                <SimulatorInput
+                  label="% sobre Faturamento Bruto"
+                  value={(inputs.extras as any).pulse_pago_percentual || 0}
+                  onChange={(v) => {
+                    upd("extras")("pulse_pago_percentual" as any)(v);
+                  }}
+                  suffix="%"
+                  step={0.1}
+                  min={0}
+                  allowEmpty
+                />
+              </>
+            )}
+          </div>
+        )}
+      </SectionCard>
 
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
