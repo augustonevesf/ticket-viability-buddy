@@ -125,7 +125,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoN
 
         <div className="border-t border-border pt-4 space-y-1">
           <div className="flex justify-between items-center py-1.5">
-            <span className="text-xs font-medium text-muted-foreground tracking-wide">Taxa Líquida</span>
+            <span className="text-xs font-medium text-muted-foreground tracking-wide">Taxa Adm. Plataforma</span>
             <span className="text-lg font-semibold tabular-nums text-primary">
               {formatPercent(results.taxa_liquida)}
             </span>
