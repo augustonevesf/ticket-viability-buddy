@@ -41,6 +41,10 @@ export interface SimulatorInputs {
     nome: string;
     cnpj: string;
     executivo: string;
+    tipo: "pontual" | "anual";
+    tempo_contrato: number; // meses
+    exclusividade: boolean;
+    tempo_exclusividade: number; // meses
   };
   evento: {
     tpv_total: number;
