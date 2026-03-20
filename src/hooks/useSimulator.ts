@@ -256,11 +256,11 @@ export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
     const margem_sobre_tpv = TPV !== 0 ? (margem / TPV) * 100 : 0;
 
     let status: SimulatorResults["status"];
-    if (margem_sobre_tpv >= 6) status = "Boa";
-    else if (margem_sobre_tpv >= 4) status = "Média";
-    else status = "Ruim";
+    if (margem_sobre_tpv >= 5) status = "Excelente";
+    else if (margem_sobre_tpv >= 3) status = "Saudável";
+    else status = "Atenção";
 
-    const alerta = margem <= 0 || margem_sobre_tpv < 2;
+    const alerta = margem <= 0 || margem_sobre_tpv < 1;
 
     // ── PDV (ignorado se 100% online) ──
     const is100Online = inputs.distribuicao.online_percent >= 1;
