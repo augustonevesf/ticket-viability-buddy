@@ -156,6 +156,7 @@ export interface SimulatorResults {
 export type DealStatus = SimulatorResults["status"];
 
 export const getDefaultInputs = (): SimulatorInputs => ({
+  mapa_assentos: false,
   cliente: { nome: "", cnpj: "", executivo: "", tipo: "pontual", tempo_contrato: 0, exclusividade: false, tempo_exclusividade: 0 },
   evento: { tpv_total: 0, publico_estimado: 0, ticket_medio_calculado: 0 },
   distribuicao: { online_percent: 0.99 },
