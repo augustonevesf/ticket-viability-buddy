@@ -8,7 +8,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-primary flex flex-col items-center justify-center px-6">
       {/* Logo */}
-      <img src={zigLogo} alt="Zig" className="w-48 md:w-64 mb-16 drop-shadow-lg" />
+      <img src={zigLogo} alt="Zig" className="w-48 md:w-64 mb-6 drop-shadow-lg" />
+      <p className="text-white/80 text-lg md:text-xl font-medium mb-12 tracking-tight">Bem-vindo, bora vender? 🚀</p>
 
       {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md sm:max-w-lg">
