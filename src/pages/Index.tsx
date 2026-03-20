@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSimulator, getDefaultInputs } from "@/hooks/useSimulator";
 import { InputSections } from "@/components/simulator/InputSections";
 import { SummaryPanel } from "@/components/simulator/SummaryPanel";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, ArrowLeft } from "lucide-react";
 
 const Index = () => {
   const [inputs, setInputs] = useState(getDefaultInputs);
