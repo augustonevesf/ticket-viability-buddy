@@ -53,7 +53,8 @@ interface Props {
   taxaAdministrativa?: number;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, taxaAdministrativa }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, taxaAdministrativa }) => {
+  const [showInsights, setShowInsights] = useState(false);
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
