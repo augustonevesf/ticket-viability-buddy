@@ -220,7 +220,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           </button>
           {inputs.taxa.regiao === "rj" && (
             <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
-              🔒 Taxa travada em 10% — Lei 6.103/2011. Negocie processamento ou antecipação para aumentar receita.
+              🏖️ Taxa travada em 10% — Lei 6.103/2011. Negocie processamento ou antecipação para aumentar receita.
             </span>
           )}
         </div>
