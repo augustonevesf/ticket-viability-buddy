@@ -169,6 +169,15 @@ export const getDefaultInputs = (): SimulatorInputs => ({
     custo_cancelamento: 0.50,
     mg_por_maquina: 40,
   },
+  extras: {
+    advance_ativo: false,
+    advance_valor: 0,
+    advance_juros_am: 2.5,
+    patrocinio_ativo: false,
+    patrocinio_valor: 0,
+    pulse_pago_ativo: false,
+    pulse_pago_valor: 0,
+  },
 });
 
 export function useSimulator(inputs: SimulatorInputs): SimulatorResults {
