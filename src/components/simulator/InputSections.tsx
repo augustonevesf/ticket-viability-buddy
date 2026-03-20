@@ -322,10 +322,11 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* ═══════════════════ CUSTOS OFICIAIS ═══════════════════ */}
       <div className="mt-2">
-        <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Custos Zig Oficiais</h2>
+        <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3">Custos Zig Oficiais</h2>
       </div>
 
-      <SectionCard title="Custos sobre Operação Online">
+      <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação Online</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
           <ConstRow label="Crédito antecipado" value="1,29%" />
           <ConstRow label="Advance (tomada)" value="1,05%" />
@@ -336,15 +337,16 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           <ConstRow label="Comissão" value="5,00%" />
           <ConstRow label="Servidor" value="0,05%" />
         </div>
-      </SectionCard>
+      </div>
 
-      <SectionCard title="Custos sobre Operação Offline">
+      <div className="bg-muted/50 rounded-2xl p-5 border border-border/50">
+        <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-4">Custos sobre Operação Offline</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
           <ConstRow label="Custo de adquirência" value="2,40%" />
           <ConstRow label="Custo de impressão" value="0,00%" />
           <ConstRow label="Custo de máquinas" value="R$ 40,00" />
         </div>
-      </SectionCard>
+      </div>
 
       {/* Régua de Comissionamento */}
       <SectionCard title="Régua de Comissionamento do Executivo">
