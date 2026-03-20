@@ -171,8 +171,14 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
 
       {/* BLOCO 4 — Negociação Ingresso */}
       <SectionCard title="Negociação Ingresso">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
           <span className="text-xs font-medium text-muted-foreground">Região:</span>
+          <button
+            onClick={() => upd("taxa")("taxa_administrativa")(0.12)}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 text-blue-900 hover:opacity-80 border border-green-600/30"
+          >
+            🇧🇷 Brasil
+          </button>
           <button
             onClick={() => upd("taxa")("taxa_administrativa")(0.10)}
             className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 border border-amber-500/20"
@@ -181,7 +187,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             RJ — Máx. 10%
           </button>
           <span className="text-[10px] text-muted-foreground/60 max-w-xs leading-tight">
-            Lei 6.103/2011: conveniência limitada a 10% do valor de face (Lei 6321/2012).
+            RJ: Lei 6.103/2011 — conveniência limitada a 10% do valor de face (Lei 6321/2012).
           </span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
