@@ -63,7 +63,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
   // Se tem produtos extras que aumentam margem, troca a frase
   const temProdutosExtras = inputs.taxa.taxa_processamento > 0 || inputs.taxa.taxa_antecipacao > 0;
   if (temProdutosExtras && (results.status === "Boa" || results.status === "Excelente")) {
-    cfg.frase = "Ouse sonhar, ouse inovar! 🌟";
+    cfg.frase = "Ouse sonhar, ouse inovar! 🏆";
   }
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
