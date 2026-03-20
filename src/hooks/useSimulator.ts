@@ -142,7 +142,7 @@ export interface SimulatorResults {
   suporte_premium_elegivel: boolean;
   suporte_premium_receita: number;
 
-  status: "Excelente" | "Boa" | "Saudável" | "Atenção";
+  status: "Excelente" | "Boa" | "Saudável" | "Atenção" | "Ruim" | "Negativo";
   alerta: boolean;
 
   pdv: PdvResults;
