@@ -237,7 +237,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
           </SectionCard>
 
           <SectionCard title="Taxas — Receita Zig (PDV)" accent>
-            <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <div className="flex items-center gap-3 mb-2">
               <button
                 onClick={() => upd("pdv")("taxa_segmentada")(true)}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
@@ -249,7 +249,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                 Taxa Segmentada
               </button>
               <button
-                onClick={() => upd("pdv")("taxa_segmentada")(false)}
+                onClick={() => { upd("pdv")("taxa_segmentada")(false); setPdvDefaults(false); }}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   !inputs.pdv.taxa_segmentada
                     ? "bg-primary text-primary-foreground"
@@ -258,7 +258,10 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               >
                 Taxa Única
               </button>
+            </div>
+            <div className="mb-4">
               <button
+                disabled={!inputs.pdv.taxa_segmentada}
                 onClick={() => {
                   setPdvDefaults(true);
                   setInputs((prev) => ({
@@ -274,10 +277,12 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
                     },
                   }));
                 }}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-                  pdvDefaults
-                    ? "bg-emerald-500 text-white"
-                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+                className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                  !inputs.pdv.taxa_segmentada
+                    ? "bg-muted text-muted-foreground/40 cursor-not-allowed"
+                    : pdvDefaults
+                      ? "bg-emerald-500 text-white"
+                      : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
                 }`}
               >
                 Taxa Padrão
