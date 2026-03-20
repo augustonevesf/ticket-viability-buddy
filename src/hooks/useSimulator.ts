@@ -123,6 +123,7 @@ export interface SimulatorResults {
   receita_take: number;
   receita_antecipacao: number;
   receita_processamento: number;
+  receita_parcelamento: number;
   receita_minima: number;
   receita_bruta: number;
 
@@ -134,6 +135,8 @@ export interface SimulatorResults {
   custo_servidor: number;
   custo_maquinas: number;
   custo_impressao: number;
+  custo_lugar_marcado: number;
+  custo_parcelamento: number;
   custos_totais: number;
 
   margem: number;
