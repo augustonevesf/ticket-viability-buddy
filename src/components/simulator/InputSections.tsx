@@ -17,9 +17,9 @@ const SectionCard: React.FC<{ title: string; children: React.ReactNode; accent?:
   </div>
 );
 
-const ReadOnly: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+const ReadOnly: React.FC<{ label: React.ReactNode; value: string }> = ({ label, value }) => (
   <div className="flex flex-col gap-1.5">
-    <label className="text-xs font-medium text-muted-foreground tracking-wide">{label}</label>
+    <span className="text-xs font-medium text-muted-foreground tracking-wide">{label}</span>
     <div className="bg-muted rounded-xl px-3 py-2.5 text-sm tabular-nums text-muted-foreground">
       {value}
     </div>
