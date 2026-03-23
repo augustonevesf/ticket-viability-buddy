@@ -76,7 +76,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             label="Nome do Cliente *"
             value={inputs.cliente.nome}
             onChange={(v) => upd("cliente")("nome")(v)}
-            placeholder="Nome obrigatório"
+            placeholder="Obrigatório"
           />
           <SimulatorTextInput
             label="CNPJ ou CPF"
