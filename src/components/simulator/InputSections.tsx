@@ -76,7 +76,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             label="Nome do Cliente *"
             value={inputs.cliente.nome}
             onChange={(v) => upd("cliente")("nome")(v)}
-            placeholder="Nome obrigatório"
+            placeholder="Obrigatório"
           />
           <SimulatorTextInput
             label="CNPJ ou CPF"
@@ -100,13 +100,13 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               }
               upd("cliente")("cnpj")(formatted);
             }}
-            placeholder="Obrigatório para exportar PDF"
+            placeholder="Obrigatório"
           />
           <SimulatorTextInput
             label="Nome do Executivo"
             value={inputs.cliente.executivo}
             onChange={(v) => upd("cliente")("executivo")(v)}
-            placeholder="Responsável"
+            placeholder="Obrigatório"
           />
         </div>
         {/* Tipo + Contrato + Exclusividade */}
