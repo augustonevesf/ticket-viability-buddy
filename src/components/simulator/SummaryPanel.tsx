@@ -75,7 +75,7 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
     { campo: "CNPJ ou CPF", valido: !!inputs.cliente.cnpj.trim() },
     { campo: "Nome do Executivo", valido: !!inputs.cliente.executivo.trim() },
     { campo: "Tipo de Contrato", valido: !!inputs.cliente.tipo },
-    { campo: "Tempo de Contrato", valido: inputs.cliente.tempo_contrato > 0 },
+    ...(inputs.cliente.tipo === "anual" ? [{ campo: "Tempo de Contrato", valido: inputs.cliente.tempo_contrato > 0 }] : []),
   ];
   const camposFaltando = camposObrigatorios.filter((c) => !c.valido);
   const podeExportar = camposFaltando.length === 0;
