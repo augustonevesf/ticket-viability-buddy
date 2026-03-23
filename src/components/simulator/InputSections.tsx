@@ -100,7 +100,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
               }
               upd("cliente")("cnpj")(formatted);
             }}
-            placeholder="Obrigatório para exportar PDF"
+            placeholder="Obrigatório"
           />
           <SimulatorTextInput
             label="Nome do Executivo"
