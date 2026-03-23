@@ -106,7 +106,7 @@ export const InputSections: React.FC<Props> = ({ inputs, setInputs }) => {
             label="Nome do Executivo"
             value={inputs.cliente.executivo}
             onChange={(v) => upd("cliente")("executivo")(v)}
-            placeholder="Responsável"
+            placeholder="Obrigatório"
           />
         </div>
         {/* Tipo + Contrato + Exclusividade */}
