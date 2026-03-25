@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import zigLogo from "@/assets/logo-zig.svg";
-import { Ticket, Utensils } from "lucide-react";
+import { Ticket, Utensils, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-primary flex flex-col items-center justify-center px-6">
