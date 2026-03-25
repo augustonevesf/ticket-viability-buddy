@@ -8,7 +8,22 @@ const Home = () => {
   const { user, signOut } = useAuth();
 
   return (
-    <div className="min-h-screen bg-primary flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-primary flex flex-col items-center justify-center px-6 relative">
+      {/* Logout */}
+      <button
+        onClick={async () => { await signOut(); navigate("/auth"); }}
+        className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white/70 text-sm hover:bg-white/20 hover:text-white transition-all"
+      >
+        <LogOut className="w-4 h-4" />
+        Sair
+      </button>
+
+      {user && (
+        <p className="absolute top-5 left-5 text-white/40 text-xs">
+          {user.email}
+        </p>
+      )}
+
       {/* Logo */}
       <img src={zigLogo} alt="Zig" className="w-48 md:w-64 mb-6 drop-shadow-lg" />
       <p className="text-white/80 text-lg md:text-xl font-medium mb-12 tracking-tight">Bem-vindo, bora vender? 🚀</p>
