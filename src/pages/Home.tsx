@@ -42,12 +42,11 @@ const Home = () => {
 
         <button
           onClick={() => navigate("/ab")}
-          className="flex-1 group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 px-8 py-6 text-white transition-all duration-300 hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98] opacity-80"
+          className="flex-1 group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 px-8 py-6 text-white transition-all duration-300 hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98]"
         >
           <div className="flex flex-col items-center gap-3">
             <Utensils className="w-8 h-8 text-white/90" />
             <span className="text-lg font-semibold tracking-tight">Viabilidade A&B</span>
-            <span className="text-xs text-white/50 font-medium">Em breve</span>
           </div>
         </button>
       </div>
