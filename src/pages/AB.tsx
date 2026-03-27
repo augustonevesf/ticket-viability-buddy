@@ -137,8 +137,9 @@ const AB = () => {
               inputs={inputs}
               onSave={handleSave}
               onExportPDF={() => {
-                const { exportABPDF } = require("@/utils/exportReportAB");
-                exportABPDF(results, inputs, currentIdViabilidade, idHub, idProposta);
+                import("@/utils/exportReportAB").then(({ exportABPDF }) => {
+                  exportABPDF(results, inputs, currentIdViabilidade, idHub, idProposta);
+                });
               }}
               idViabilidade={currentIdViabilidade}
             />
