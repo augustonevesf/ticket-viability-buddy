@@ -1,8 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ABResults, ABInputs } from "@/hooks/useSimulatorAB";
-import { AlertTriangle } from "lucide-react";
-import { getMCCCosts } from "@/data/mccTable";
+import { AlertTriangle, FileDown, Save } from "lucide-react";
 import { MCC_LABELS } from "@/data/mccTable";
 
 type Status = ABResults["status"];
@@ -43,15 +42,36 @@ const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?
 interface Props {
   results: ABResults;
   inputs: ABInputs;
+  onSave?: () => void;
+  onExportPDF?: () => void;
+  idViabilidade?: string;
 }
 
-export const ABSummaryPanel: React.FC<Props> = ({ results, inputs }) => {
+export const ABSummaryPanel: React.FC<Props> = ({ results, inputs, onSave, onExportPDF, idViabilidade }) => {
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_estimada * (100 / 60)));
   const mccLabel = MCC_LABELS[inputs.cliente.mcc] || inputs.cliente.mcc;
 
   return (
     <div className="sticky top-6 space-y-4">
+      {/* Action buttons */}
+      <div className="flex gap-2">
+        <button
+          onClick={onSave}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+        >
+          <Save className="w-4 h-4" />
+          {idViabilidade ? "Atualizar" : "Salvar"}
+        </button>
+        <button
+          onClick={onExportPDF}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-semibold hover:bg-muted/80 transition-colors"
+        >
+          <FileDown className="w-4 h-4" />
+          PDF
+        </button>
+      </div>
+
       {/* Client info */}
       {inputs.cliente.nome && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl px-4 py-3">
