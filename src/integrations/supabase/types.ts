@@ -92,6 +92,69 @@ export type Database = {
         }
         Relationships: []
       }
+      ticket_constants: {
+        Row: {
+          data: Json
+          id: string
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          data?: Json
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          data?: Json
+          id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      ticket_simulations: {
+        Row: {
+          client_name: string | null
+          created_at: string | null
+          id: string
+          id_hub: string | null
+          id_proposta: string | null
+          id_viabilidade: string
+          inputs: Json
+          results: Json
+          updated_at: string | null
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string | null
+          id?: string
+          id_hub?: string | null
+          id_proposta?: string | null
+          id_viabilidade: string
+          inputs: Json
+          results: Json
+          updated_at?: string | null
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string | null
+          id?: string
+          id_hub?: string | null
+          id_proposta?: string | null
+          id_viabilidade?: string
+          inputs?: Json
+          results?: Json
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

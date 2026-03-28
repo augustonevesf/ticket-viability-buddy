@@ -1,17 +1,17 @@
 import React from "react";
 import { X, Plus, FileText, Loader2, Copy } from "lucide-react";
-import { ABSimulation } from "@/hooks/useABHistory";
+import { TicketSimulation } from "@/hooks/useTicketHistory";
 
 interface Props {
-  simulations: ABSimulation[];
+  simulations: TicketSimulation[];
   loading: boolean;
-  onLoad: (sim: ABSimulation) => void;
+  onLoad: (sim: TicketSimulation) => void;
   onNew: () => void;
-  onDuplicate: (sim: ABSimulation) => void;
+  onDuplicate: (sim: TicketSimulation) => void;
   onClose: () => void;
 }
 
-export const ABHistoryPanel: React.FC<Props> = ({ simulations, loading, onLoad, onNew, onDuplicate, onClose }) => {
+export const TicketHistoryPanel: React.FC<Props> = ({ simulations, loading, onLoad, onNew, onDuplicate, onClose }) => {
   return (
     <div className="bg-card border-b border-border px-6 py-4">
       <div className="max-w-7xl mx-auto">

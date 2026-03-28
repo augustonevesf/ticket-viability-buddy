@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SimulatorResults, SimulatorInputs, DealStatus } from "@/hooks/useSimulator";
-import { FileDown, AlertTriangle, Lightbulb, X } from "lucide-react";
+import { FileDown, AlertTriangle, Lightbulb, X, Save } from "lucide-react";
 import { generateInsights, Insight } from "@/utils/generateInsights";
 
 const formatCurrency = (v: number) =>
@@ -48,6 +48,9 @@ const MetricRow: React.FC<{ label: string; value: string; muted?: boolean; bold?
 interface Props {
   results: SimulatorResults;
   inputs: SimulatorInputs;
+  onSave?: () => void;
+  onExportPDF?: () => void;
+  idViabilidade?: string;
   clienteName?: string;
   executivoName?: string;
   tipoContrato?: "pontual" | "anual";
@@ -56,19 +59,16 @@ interface Props {
   taxaAdministrativa?: number;
 }
 
-export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, taxaAdministrativa }) => {
+export const SummaryPanel: React.FC<Props> = ({ results, inputs, onSave, onExportPDF, idViabilidade, clienteName, executivoName, tipoContrato, tempoContrato, exclusividade, taxaAdministrativa }) => {
   const [showInsights, setShowInsights] = useState(false);
   const cfg = { ...statusConfig[results.status] };
 
-  // Se tem produtos extras que aumentam margem, troca a frase
   const temProdutosExtras = inputs.taxa.taxa_processamento > 0 || inputs.taxa.taxa_antecipacao > 0;
   if (temProdutosExtras && (results.status === "Boa" || results.status === "Excelente")) {
     cfg.frase = "Ouse sonhar, ouse inovar! 🏆";
   }
   const barPct = Math.max(0, Math.min(100, results.margem_sobre_tpv * (100 / 10)));
   const pdv = results.pdv;
-
-  const regiao = inputs.taxa.regiao === "rj" ? "RJ (Lei 6.103/2011)" : "Brasil";
 
   const camposObrigatorios = [
     { campo: "Nome do Cliente", valido: !!inputs.cliente.nome.trim() },
@@ -80,14 +80,44 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
   const camposFaltando = camposObrigatorios.filter((c) => !c.valido);
   const podeExportar = camposFaltando.length === 0;
 
-  const handleExportPDF = async () => {
-    if (!podeExportar) return;
-    const { exportPDF } = await import("@/utils/exportReport");
-    exportPDF(results, inputs, regiao);
-  };
-
   return (
     <div className="sticky top-6 space-y-4">
+      {/* Action buttons — standardized position (top) */}
+      <div className="flex gap-2">
+        <button
+          onClick={onSave}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+        >
+          <Save className="w-4 h-4" />
+          {idViabilidade ? "Atualizar" : "Salvar"}
+        </button>
+        <button
+          onClick={onExportPDF}
+          disabled={!podeExportar}
+          className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            podeExportar
+              ? "bg-muted text-foreground hover:bg-muted/80"
+              : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+          }`}
+          title={!podeExportar ? `Preencha: ${camposFaltando.map(c => c.campo).join(", ")}` : ""}
+        >
+          <FileDown className="w-4 h-4" />
+          PDF
+        </button>
+        <button
+          onClick={() => setShowInsights(!showInsights)}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-warning/10 text-warning border border-warning/20 text-sm font-medium hover:bg-warning/20 transition-colors"
+        >
+          <Lightbulb className="w-4 h-4" />
+          Insight
+        </button>
+      </div>
+      {!podeExportar && (
+        <p className="text-xs text-destructive">
+          Campos obrigatórios p/ PDF: {camposFaltando.map(c => c.campo).join(", ")}
+        </p>
+      )}
+
       {clienteName && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl px-4 py-3">
           <p className="text-xs text-muted-foreground">Cliente</p>
@@ -335,36 +365,6 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, clienteName, ex
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Actions */}
-      <div className="flex gap-3">
-        <button
-          onClick={() => setShowInsights(!showInsights)}
-          className="flex items-center justify-center gap-2 bg-warning/10 text-warning border border-warning/20 rounded-xl px-4 py-3 text-sm font-medium hover:bg-warning/20 transition-colors active:scale-[0.97]"
-        >
-          <Lightbulb className="w-4 h-4" />
-          Insight
-        </button>
-        <button
-          onClick={handleExportPDF}
-          disabled={!podeExportar}
-          className={`flex-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all active:scale-[0.97] ${
-            podeExportar
-              ? "bg-primary text-primary-foreground hover:opacity-90"
-              : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-          }`}
-          title={!podeExportar ? `Preencha: ${camposFaltando.map(c => c.campo).join(", ")}` : ""}
-        >
-          <FileDown className="w-4 h-4" />
-          Exportar PDF
-        </button>
-      </div>
-      {!podeExportar && (
-        <p className="text-xs text-destructive mt-1">
-          Campos obrigatórios: {camposFaltando.map(c => c.campo).join(", ")}
-        </p>
-      )}
-
     </div>
   );
 };

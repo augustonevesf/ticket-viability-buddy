@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ABResults, ABInputs } from "@/hooks/useSimulatorAB";
-import { AlertTriangle, FileDown, Save } from "lucide-react";
+import { AlertTriangle, FileDown, Save, Lightbulb, X } from "lucide-react";
 import { MCC_LABELS } from "@/data/mccTable";
+import { generateInsightsAB } from "@/utils/generateInsightsAB";
 
 type Status = ABResults["status"];
 
@@ -48,13 +49,14 @@ interface Props {
 }
 
 export const ABSummaryPanel: React.FC<Props> = ({ results, inputs, onSave, onExportPDF, idViabilidade }) => {
+  const [showInsights, setShowInsights] = useState(false);
   const cfg = statusConfig[results.status];
   const barPct = Math.max(0, Math.min(100, results.margem_estimada * (100 / 60)));
   const mccLabel = MCC_LABELS[inputs.cliente.mcc] || inputs.cliente.mcc;
 
   return (
     <div className="sticky top-6 space-y-4">
-      {/* Action buttons */}
+      {/* Action buttons — standardized position (top), same as Tickets */}
       <div className="flex gap-2">
         <button
           onClick={onSave}
@@ -70,7 +72,70 @@ export const ABSummaryPanel: React.FC<Props> = ({ results, inputs, onSave, onExp
           <FileDown className="w-4 h-4" />
           PDF
         </button>
+        <button
+          onClick={() => setShowInsights(!showInsights)}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-warning/10 text-warning border border-warning/20 text-sm font-medium hover:bg-warning/20 transition-colors"
+        >
+          <Lightbulb className="w-4 h-4" />
+          Insight
+        </button>
       </div>
+
+      {/* Insights panel */}
+      <AnimatePresence>
+        {showInsights && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="bg-card rounded-2xl p-5 shadow-card border border-primary/20">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-warning" />
+                  Insights A&B
+                </h4>
+                <button onClick={() => setShowInsights(false)} className="p-1 rounded-lg hover:bg-muted transition-colors">
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {generateInsightsAB(inputs, results).map((insight, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.08, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex gap-3 p-3 rounded-xl bg-muted/50"
+                  >
+                    <span className="text-lg flex-shrink-0">{insight.icon}</span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-xs font-semibold text-foreground">{insight.title}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                          insight.impact === "alto" ? "bg-destructive/10 text-destructive" :
+                          insight.impact === "medio" ? "bg-warning/10 text-warning" :
+                          "bg-muted text-muted-foreground"
+                        }`}>
+                          {insight.impact}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{insight.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+                {generateInsightsAB(inputs, results).length === 0 && (
+                  <p className="text-xs text-muted-foreground text-center py-4">
+                    ✅ Nenhuma sugestão no momento. A operação está bem configurada!
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Client info */}
       {inputs.cliente.nome && (
