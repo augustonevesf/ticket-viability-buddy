@@ -57,6 +57,15 @@ const AB = () => {
     toast.success(`Simulação ${sim.id_viabilidade} carregada.`);
   };
 
+  const handleDuplicate = (sim: any) => {
+    setInputs({ ...sim.inputs, cliente: { ...sim.inputs.cliente, nome: `${sim.inputs.cliente.nome} (cópia)` } });
+    setIdHub(sim.id_hub || "");
+    setIdProposta(sim.id_proposta || "");
+    setCurrentIdViabilidade(undefined);
+    setShowHistory(false);
+    toast.info("Simulação duplicada. Edite e salve como nova.");
+  };
+
   const handleNew = () => {
     setInputs(getDefaultABInputs());
     setIdHub("");
@@ -110,6 +119,7 @@ const AB = () => {
           loading={historyLoading}
           onLoad={handleLoad}
           onNew={handleNew}
+          onDuplicate={handleDuplicate}
           onClose={() => setShowHistory(false)}
         />
       )}

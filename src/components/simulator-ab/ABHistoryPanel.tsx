@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Plus, FileText, Loader2 } from "lucide-react";
+import { X, Plus, FileText, Loader2, Copy } from "lucide-react";
 import { ABSimulation } from "@/hooks/useABHistory";
 
 interface Props {
@@ -7,12 +7,11 @@ interface Props {
   loading: boolean;
   onLoad: (sim: ABSimulation) => void;
   onNew: () => void;
+  onDuplicate: (sim: ABSimulation) => void;
   onClose: () => void;
 }
 
-const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-export const ABHistoryPanel: React.FC<Props> = ({ simulations, loading, onLoad, onNew, onClose }) => {
+export const ABHistoryPanel: React.FC<Props> = ({ simulations, loading, onLoad, onNew, onDuplicate, onClose }) => {
   return (
     <div className="bg-card border-b border-border px-6 py-4">
       <div className="max-w-7xl mx-auto">
@@ -37,29 +36,33 @@ export const ABHistoryPanel: React.FC<Props> = ({ simulations, loading, onLoad, 
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-64 overflow-y-auto">
             {simulations.map(sim => (
-              <button
-                key={sim.id}
-                onClick={() => onLoad(sim)}
-                className="text-left bg-muted/50 hover:bg-muted rounded-xl p-3 transition-colors border border-border/50"
-              >
-                <div className="flex items-start gap-2">
-                  <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{sim.client_name || "Sem nome"}</p>
-                    <p className="text-[11px] text-primary font-mono">{sim.id_viabilidade}</p>
-                    <div className="flex gap-2 mt-1">
-                      {sim.id_hub && <span className="text-[10px] text-muted-foreground">Hub: {sim.id_hub}</span>}
-                      {sim.id_proposta && <span className="text-[10px] text-muted-foreground">Prop: {sim.id_proposta}</span>}
-                    </div>
-                    <div className="flex items-center justify-between mt-1.5">
-                      <span className="text-[10px] text-muted-foreground">
-                        {new Date(sim.created_at).toLocaleDateString("pt-BR")}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">{sim.user_email}</span>
+              <div key={sim.id} className="text-left bg-muted/50 hover:bg-muted rounded-xl p-3 transition-colors border border-border/50">
+                <button onClick={() => onLoad(sim)} className="w-full text-left">
+                  <div className="flex items-start gap-2">
+                    <FileText className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-foreground truncate">{sim.client_name || "Sem nome"}</p>
+                      <p className="text-[11px] text-primary font-mono">{sim.id_viabilidade}</p>
+                      <div className="flex gap-2 mt-1">
+                        {sim.id_hub && <span className="text-[10px] text-muted-foreground">Hub: {sim.id_hub}</span>}
+                        {sim.id_proposta && <span className="text-[10px] text-muted-foreground">Prop: {sim.id_proposta}</span>}
+                      </div>
+                      <div className="flex items-center justify-between mt-1.5">
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(sim.created_at).toLocaleDateString("pt-BR")}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{sim.user_email}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </button>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onDuplicate(sim); }}
+                  className="mt-2 flex items-center gap-1 px-2 py-1 rounded-md bg-primary/10 text-primary text-[10px] font-semibold hover:bg-primary/20 transition-colors w-full justify-center"
+                >
+                  <Copy className="w-3 h-3" /> Duplicar
+                </button>
+              </div>
             ))}
           </div>
         )}
