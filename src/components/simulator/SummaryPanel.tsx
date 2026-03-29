@@ -118,6 +118,62 @@ export const SummaryPanel: React.FC<Props> = ({ results, inputs, onSave, onExpor
         </p>
       )}
 
+      {/* Insights panel — right after buttons, same as A&B */}
+      <AnimatePresence>
+        {showInsights && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="bg-card rounded-2xl p-5 shadow-card border border-primary/20">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-warning" />
+                  Insights para vender mais
+                </h4>
+                <button onClick={() => setShowInsights(false)} className="p-1 rounded-lg hover:bg-muted transition-colors">
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {generateInsights(inputs, results).map((insight, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.08, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex gap-3 p-3 rounded-xl bg-muted/50"
+                  >
+                    <span className="text-lg flex-shrink-0">{insight.icon}</span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-xs font-semibold text-foreground">{insight.title}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                          insight.impact === "alto" ? "bg-destructive/10 text-destructive" :
+                          insight.impact === "medio" ? "bg-warning/10 text-warning" :
+                          "bg-muted text-muted-foreground"
+                        }`}>
+                          {insight.impact}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{insight.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+                {generateInsights(inputs, results).length === 0 && (
+                  <p className="text-xs text-muted-foreground text-center py-4">
+                    ✅ Nenhuma sugestão no momento. A operação está bem configurada!
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {clienteName && (
         <div className="bg-primary/5 border border-primary/20 rounded-2xl px-4 py-3">
           <p className="text-xs text-muted-foreground">Cliente</p>
