@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSimulatorAB, getDefaultABInputs, ABInputs } from "@/hooks/useSimulatorAB";
-import { ABInputSections } from "@/components/simulator-ab/ABInputSections";
-import { ABSummaryPanel } from "@/components/simulator-ab/ABSummaryPanel";
+import { useSimulatorABCasas, getDefaultABCasasInputs, ABCasasInputs } from "@/hooks/useSimulatorABCasas";
+import { ABCasasInputSections } from "@/components/simulator-ab-casas/ABCasasInputSections";
+import { ABCasasSummaryPanel } from "@/components/simulator-ab-casas/ABCasasSummaryPanel";
 import { ABHistoryPanel } from "@/components/simulator-ab/ABHistoryPanel";
 import { ABAdminPanel } from "@/components/simulator-ab/ABAdminPanel";
 import { useABHistory } from "@/hooks/useABHistory";
@@ -10,10 +10,10 @@ import { useABAdmin } from "@/hooks/useABAdmin";
 import { Sun, Moon, ArrowLeft, History, Settings } from "lucide-react";
 import { toast } from "sonner";
 
-const AB = () => {
+const ABCasas = () => {
   const navigate = useNavigate();
-  const [inputs, setInputs] = useState(getDefaultABInputs);
-  const results = useSimulatorAB(inputs);
+  const [inputs, setInputs] = useState(getDefaultABCasasInputs);
+  const results = useSimulatorABCasas(inputs);
   const { simulations, loading: historyLoading, saveSimulation, fetchSimulations } = useABHistory();
   const { isAdmin, mergedConstants, saveConstants, lastUpdatedBy, lastUpdatedAt, loading: adminLoading } = useABAdmin();
 
@@ -24,22 +24,28 @@ const AB = () => {
   const [showAdmin, setShowAdmin] = useState(false);
 
   const [dark, setDark] = useState(() => {
-    if (typeof window !== "undefined") {
-      return document.documentElement.classList.contains("dark");
-    }
+    if (typeof window !== "undefined") return document.documentElement.classList.contains("dark");
     return false;
   });
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-  }, [dark]);
+  useEffect(() => { document.documentElement.classList.toggle("dark", dark); }, [dark]);
+
+  // Filter only "casa" type simulations from history
+  const casaSimulations = simulations.filter((s: any) => {
+    try {
+      const inp = s.inputs as any;
+      return inp?.configuracao?.tipo === "casa" || inp?.cliente !== undefined;
+    } catch { return true; }
+  });
 
   const handleSave = async () => {
     if (!inputs.cliente.nome) {
       toast.error("Preencha o nome do cliente antes de salvar.");
       return;
     }
-    const id = await saveSimulation(inputs, results, idHub, idProposta, currentIdViabilidade);
+    // Wrap inputs to include tipo marker for history filtering
+    const wrappedInputs = { ...inputs, configuracao: { ...inputs.configuracao, tipo: "casa" as const } } as any;
+    const id = await saveSimulation(wrappedInputs, results as any, idHub, idProposta, currentIdViabilidade);
     if (id) {
       setCurrentIdViabilidade(id);
       toast.success(`Simulação salva! ID: ${id}`);
@@ -49,7 +55,8 @@ const AB = () => {
   };
 
   const handleLoad = (sim: any) => {
-    setInputs(sim.inputs);
+    const simInputs = sim.inputs as ABCasasInputs;
+    setInputs(simInputs);
     setIdHub(sim.id_hub || "");
     setIdProposta(sim.id_proposta || "");
     setCurrentIdViabilidade(sim.id_viabilidade);
@@ -58,7 +65,8 @@ const AB = () => {
   };
 
   const handleDuplicate = (sim: any) => {
-    setInputs({ ...sim.inputs, cliente: { ...sim.inputs.cliente, nome: `${sim.inputs.cliente.nome} (cópia)` } });
+    const simInputs = sim.inputs as ABCasasInputs;
+    setInputs({ ...simInputs, cliente: { ...simInputs.cliente, nome: `${simInputs.cliente.nome} (cópia)` } });
     setIdHub(sim.id_hub || "");
     setIdProposta(sim.id_proposta || "");
     setCurrentIdViabilidade(undefined);
@@ -67,7 +75,7 @@ const AB = () => {
   };
 
   const handleNew = () => {
-    setInputs(getDefaultABInputs());
+    setInputs(getDefaultABCasasInputs());
     setIdHub("");
     setIdProposta("");
     setCurrentIdViabilidade(undefined);
@@ -82,7 +90,7 @@ const AB = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">Viabilidade AEB — Eventos</h1>
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">Viabilidade AEB — Casas</h1>
             {currentIdViabilidade && (
               <p className="text-xs text-muted-foreground mt-0.5">ID: {currentIdViabilidade}</p>
             )}
@@ -104,24 +112,11 @@ const AB = () => {
       </header>
 
       {showAdmin && isAdmin && (
-        <ABAdminPanel
-          mergedConstants={mergedConstants}
-          onSave={saveConstants}
-          lastUpdatedBy={lastUpdatedBy}
-          lastUpdatedAt={lastUpdatedAt}
-          onClose={() => setShowAdmin(false)}
-        />
+        <ABAdminPanel mergedConstants={mergedConstants} onSave={saveConstants} lastUpdatedBy={lastUpdatedBy} lastUpdatedAt={lastUpdatedAt} onClose={() => setShowAdmin(false)} />
       )}
 
       {showHistory && (
-        <ABHistoryPanel
-          simulations={simulations}
-          loading={historyLoading}
-          onLoad={handleLoad}
-          onNew={handleNew}
-          onDuplicate={handleDuplicate}
-          onClose={() => setShowHistory(false)}
-        />
+        <ABHistoryPanel simulations={casaSimulations as any} loading={historyLoading} onLoad={handleLoad} onNew={handleNew} onDuplicate={handleDuplicate} onClose={() => setShowHistory(false)} />
       )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
@@ -139,16 +134,16 @@ const AB = () => {
                   className="w-full bg-input border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-foreground placeholder:text-muted-foreground" />
               </div>
             </div>
-            <ABInputSections inputs={inputs} setInputs={setInputs} />
+            <ABCasasInputSections inputs={inputs} setInputs={setInputs} />
           </div>
           <div className="lg:col-span-5">
-            <ABSummaryPanel
+            <ABCasasSummaryPanel
               results={results}
               inputs={inputs}
               onSave={handleSave}
               onExportPDF={() => {
-                import("@/utils/exportReportAB").then(({ exportABPDF }) => {
-                  exportABPDF(results, inputs, currentIdViabilidade, idHub, idProposta);
+                import("@/utils/exportReportABCasas").then(({ exportABCasasPDF }) => {
+                  exportABCasasPDF(results, inputs, currentIdViabilidade, idHub, idProposta);
                 });
               }}
               idViabilidade={currentIdViabilidade}
@@ -164,4 +159,4 @@ const AB = () => {
   );
 };
 
-export default AB;
+export default ABCasas;
