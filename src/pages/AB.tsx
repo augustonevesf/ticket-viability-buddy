@@ -82,7 +82,7 @@ const AB = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">Viabilidade Comercial A&B</h1>
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">Viabilidade AEB — Eventos</h1>
             {currentIdViabilidade && (
               <p className="text-xs text-muted-foreground mt-0.5">ID: {currentIdViabilidade}</p>
             )}
@@ -158,7 +158,7 @@ const AB = () => {
       </main>
 
       <footer className="py-4 text-center text-[10px] text-muted-foreground/50 select-none">
-        Criado por: Felipe Augusto Neves · Versão 1.0
+        Criado por: Felipe Augusto Neves · Versão 2.0
       </footer>
     </div>
   );
